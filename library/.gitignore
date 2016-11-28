@@ -1,0 +1,14 @@
+.cache-main
+.cache-tests
+.classpath
+.project
+.sbtserver/
+.settings/
+bin/
+dist/
+logs/
+project/.sbtserver
+target/
+target-javadoc/
+target-scaladoc/
+*~

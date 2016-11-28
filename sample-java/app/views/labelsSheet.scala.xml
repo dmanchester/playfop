@@ -1,0 +1,31 @@
+@(paper: models.PaperSizeAndWhiteSpace, units: com.dmanchester.playfop.api.Units, rows: Int, cols: Int, imageURI: String, label: models.Label)<?xml version="1.0" encoding="UTF-8"?>
+
+@import views.util.Calc
+
+@labelWidth = @{Calc.getLabelWidth(paper, cols)}
+@labelHeight = @{Calc.getLabelHeight(paper, rows)}
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="sheet" page-width="@units.format(paper.getWidth)" page-height="@units.format(paper.getHeight)" margin-top="@units.format(paper.getMargin)" margin-left="@units.format(paper.getMargin)">
+      <fo:region-body region-name="xsl-region-body"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="sheet">
+    <fo:flow flow-name="xsl-region-body">
+      @for(row <- 0 until rows) {
+        @defining(row * (labelHeight + paper.getInterLabelGutter)) {vertOffset =>
+          @for(col <- 0 until cols) {
+            @defining(col * (labelWidth + paper.getInterLabelGutter)) {horizOffset =>
+              <fo:block-container absolute-position="absolute"
+                left="@units.format(horizOffset)" top="@units.format(vertOffset)">
+                @labelFragment(labelWidth, labelHeight, paper.getIntraLabelPadding, units,
+                  true /* border */, imageURI, label)
+              </fo:block-container>
+            }
+          }
+        }
+      }
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

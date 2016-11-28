@@ -1,0 +1,81 @@
+@(labelForm: Form[Label], fontFamilies: List[String], fontSizesInPoints: Map[String, String], imageNames: List[String])
+
+@import views.util.NavbarItem
+
+@formLabelCols = @{"col-md-2"}
+@inputCols = @{"col-md-4"}
+@previewText = @{"Preview of a single label"}
+
+@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor(formLabelCols, inputCols) }
+
+@main("Design Your Labels", NavbarItem.DESIGN) {
+
+  @b3.form(routes.Application.generateLabelsSheetAsPDF(), 'id -> "label-form") {
+
+    @b3.textarea(labelForm("text"), '_label -> "Text", 'maxlength -> Label.TextMaxLength, 'rows -> 4)
+
+    @b3.select(labelForm("fontFamily"), helper.options(fontFamilies), '_label -> "Font")
+
+    @b3.select(labelForm("fontSizeInPoints"), helper.options(fontSizesInPoints), '_label -> "Font Size")
+
+    @b3.select(labelForm("imageName"), helper.options(imageNames), '_label -> "Image")
+
+    <div class="form-group">
+      <label class="control-label @formLabelCols" for="text">
+        Preview<br/><span id="auto-update-text"/>  @* span's text populated with jQuery *@
+      </label>
+      <div class="@inputCols">
+        <img id="label-preview" src="@routes.Assets.at("images/blank-preview.png")" alt="@previewText" title="@previewText"/>
+      </div>
+    </div>
+
+    @b3.submit('class -> "btn btn-primary"){ Generate sheet }
+  }
+
+  <script>
+    // Establish a namespace for application's variables and functions.
+    var PFL = {};  // short for "PlayFOPLabels"
+
+    PFL.updateDelayInMS = 1000;
+    PFL.textWillAutoUpdate = "Auto-updates";
+    PFL.textAutoUpdating = "Auto-updating...";
+    PFL.updateTimeoutID = null;
+
+    PFL.applyTextWillAutoUpdate = function() {
+      $( "#auto-update-text" ).text(PFL.textWillAutoUpdate);
+    }
+
+    PFL.applyTextAutoUpdating = function() {
+      $( "#auto-update-text" ).text(PFL.textAutoUpdating);
+    }
+
+    PFL.updatePreview = function() {
+      PFL.applyTextAutoUpdating();
+      var queryString = $( "#label-form" ).serialize();
+      var previewSrc = "@routes.Application.generateSingleLabelAsPNG()?" + queryString;
+      $( "#label-preview" ).attr("src", previewSrc);
+    }
+
+    PFL.updatePreviewAfterDelay = function() {
+
+      // If the most recently scheduled timeout hasn't fired yet, clear it, to
+      // be replaced by the new one. (If it has fired, clearTimeout() has no
+      // effect.)
+      window.clearTimeout(PFL.updateTimeoutID);
+
+      // Set a new timeout.
+      PFL.updateTimeoutID = window.setTimeout(PFL.updatePreview, PFL.updateDelayInMS);
+    }
+
+    $( document ).ready(function() {
+
+      // Bind handlers.
+      $( "#label-form select" ).on( "change", PFL.updatePreview );
+      $( "#label-form textarea" ).on( "input propertychange", PFL.updatePreviewAfterDelay );  // from http://stackoverflow.com/questions/11338592/how-can-i-bind-to-the-change-event-of-a-textarea-in-jquery
+      $( "#label-preview" ).on( "load", PFL.applyTextWillAutoUpdate );  // preview has updated; indicate it will do so again when user changes design
+
+      // Generate initial preview.
+      PFL.updatePreview();
+    });
+  </script>
+}

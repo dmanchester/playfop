@@ -1,0 +1,10 @@
+#label-preview {
+  /* border styling to match Bootstrap's "form-control" class */
+  border: 1px solid rgb(204, 204, 204);
+  border-radius: 4px;
+}
+
+#auto-update-text {
+  font-weight: normal;
+  font-style: italic;
+}

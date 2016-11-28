@@ -1,0 +1,30 @@
+@(labelWidth: Double, labelHeight: Double, padding: Double, units: com.dmanchester.playfop.api.Units, border: Boolean, imageURI: Option[String], label: models.Label)
+
+@import com.dmanchester.playfop.api.Units
+@import com.dmanchester.playfop.api.Formatters
+
+@imageHeightAndWidth = @{labelHeight - 2 * padding}
+@pt = @{new Units("pt", 0)}
+
+<fo:block-container width="@units.format(labelWidth)" height="@units.format(labelHeight)"
+  font-family="@label.fontFamily" font-size="@pt.format(label.fontSizeInPoints)" overflow="hidden"
+  @if(border) {
+    border="black solid 1pt"
+  }>
+  <fo:table>
+    <fo:table-body>
+      <fo:table-row>
+        <fo:table-cell width="@units.format(labelHeight)" padding="@units.format(padding)">
+          <fo:block>
+            @imageURI.map { uri =>
+              <fo:external-graphic src="@uri" height="@units.format(imageHeightAndWidth)" content-height="scale-to-fit"/>
+            }
+          </fo:block>
+        </fo:table-cell>
+        <fo:table-cell padding-top="@units.format(padding)">
+          @Formatters.makeNewlinesIntoFOBlocks(Formatters.makeSpacesNonBreaking(label.text))
+        </fo:table-cell>
+      </fo:table-row>
+    </fo:table-body>
+  </fo:table>
+</fo:block-container>
