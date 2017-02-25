@@ -16,7 +16,6 @@ import play.api.data.Forms.text
 import play.api.mvc.Action
 import play.api.mvc.Controller
 import views.util.Calc
-import com.dmanchester.playfop.api.ClasspathURIResolver
 import com.dmanchester.playfop.sapi.PlayFop
 import com.dmanchester.playfop.api.Units
 
@@ -46,17 +45,6 @@ object Application extends Controller {
   private val InitialImageName = "Cityscape"
 
   private val SingleLabelScaleFactor = 3
-  
-  private val FopConfigPDFAutoDetectFonts =
-      <fop version="1.0">
-        <renderers>
-          <renderer mime="application/pdf">
-            <fonts>
-              <auto-detect/>
-            </fonts>
-          </renderer>
-        </renderers>
-      </fop>
 
   private val LabelForm = Form(
     mapping(
@@ -91,8 +79,8 @@ object Application extends Controller {
   }
 
   private def getFontFamilies() = {
-    
-    val fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), FopConfigPDFAutoDetectFonts)
+
+    val fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
 
     val fontInfo = fop.getDefaultHandler().asInstanceOf[FOTreeBuilder].getEventHandler().getFontInfo()
 
@@ -116,16 +104,10 @@ object Application extends Controller {
         BadRequest(formWithErrors.errorsAsJson)
       },
       label => {
-        val classpathURIResolver = new ClasspathURIResolver()
-        val imageURI = label.imageName.
-          flatMap(ImageNamesToPaths.get(_)).
-          map(classpathURIResolver.createHref(_))
+
+        val imageURI: Option[String] = getImageURI(label.imageName)
 
         val mimeType = MimeConstants.MIME_PNG
-
-        val foUserAgentBlock = { foUserAgent: FOUserAgent =>
-          foUserAgent.setURIResolver(classpathURIResolver)
-        }
 
         val labelWidthInMM = SingleLabelScaleFactor * Calc.labelWidth(SheetSizeAndWhiteSpaceInMM, SheetCols)
         val labelHeightInMM = SingleLabelScaleFactor * Calc.labelHeight(SheetSizeAndWhiteSpaceInMM, SheetRows)
@@ -134,12 +116,17 @@ object Application extends Controller {
         Ok(
           PlayFop.process(
             views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, mm, imageURI, label.scale(SingleLabelScaleFactor)),
-            mimeType,
-            foUserAgentBlock
+            mimeType
           )
         ).as(mimeType)
       }
     )
+  }
+
+  private def getImageURI(imageName: Option[String]): Option[String] = {
+
+    imageName.flatMap(imageName => ImageNamesToPaths.get(imageName)).
+        map(imagePath => this.getClass().getClassLoader().getResource(imagePath).toString())
   }
 
   def generateLabelsSheetAsPDF() = Action { implicit request =>
@@ -150,24 +137,21 @@ object Application extends Controller {
         BadRequest(formWithErrors.errorsAsJson)
       },
       label => {
-        val classpathURIResolver = new ClasspathURIResolver()
-        val imageURI = label.imageName.
-          flatMap(ImageNamesToPaths.get(_)).
-          map(classpathURIResolver.createHref(_))
+
+        val imageURI: Option[String] = getImageURI(label.imageName)
 
         val mimeType = MimeConstants.MIME_PDF
 
         val foUserAgentBlock = { foUserAgent: FOUserAgent =>
           foUserAgent.setCreator(SheetPdfCreator)
-          foUserAgent.setURIResolver(classpathURIResolver)
         }
 
         Ok(
           PlayFop.process(
             views.xml.labelsSheet.render(SheetSizeAndWhiteSpaceInMM, mm, SheetRows, SheetCols, imageURI, label),
             mimeType,
-            FopConfigPDFAutoDetectFonts,
-            foUserAgentBlock
+            autoDetectFontsForPDF = true,
+            foUserAgentBlock = foUserAgentBlock
           )
         ).as(mimeType).withHeaders(
           CONTENT_DISPOSITION -> s"attachment; filename=$SheetFilename"

@@ -27,7 +27,6 @@ import play.twirl.api.XmlFormat;
 public class PlayFopTest {
 
     private static final String PDF_TEXT = "Hello there";
-    private static final String PDF_VERSION = "1.5";
     private static final String PDF_AUTHOR = "PlayFopTest";
     
     private static final Xml XSLFO = XmlFormat.raw(
@@ -43,15 +42,6 @@ public class PlayFopTest {
         "        </fo:flow>" +
         "    </fo:page-sequence>" +
         "</fo:root>");
-
-    private static final String FOP_CONFIG =
-        "<fop version=\"1.0\">" +
-        "    <renderers>" +
-        "        <renderer mime=\"application/pdf\">" +
-        "            <version>" + PDF_VERSION + "</version>" +
-        "        </renderer>" +
-        "    </renderers>" +
-        "</fop>";
 
     private static final FOUserAgentBlock FO_USER_AGENT_BLOCK = new FOUserAgentBlock() {
         
@@ -71,34 +61,17 @@ public class PlayFopTest {
     }
 
     @Test
-    public void testProcess_xslfo_outputFormat_fopConfig() {
+    public void testProcess_xslfo_outputFormat_autoDetectFontsForPDF_foUserAgentBlock() {
 
-        byte[] pdfBytes = PlayFop.process(XSLFO, MimeConstants.MIME_PDF, FOP_CONFIG);
-        PDDocument pdDocument = toPDDocument(pdfBytes);
-
-        checkText(pdDocument);
-        checkForVersionFromFopConfig(pdDocument);
-    }
-
-    @Test
-    public void testProcess_xslfo_outputFormat_foUserAgentBlock() {
-
-        byte[] pdfBytes = PlayFop.process(XSLFO, MimeConstants.MIME_PDF, FO_USER_AGENT_BLOCK);
+        ProcessOptions processOptions = new ProcessOptions.Builder().
+                autoDetectFontsForPDF(true).foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
+        byte[] pdfBytes = PlayFop.process(XSLFO, MimeConstants.MIME_PDF, processOptions);
         PDDocument pdDocument = toPDDocument(pdfBytes);
 
         checkText(pdDocument);
         checkForAuthorFromFOUserAgentBlock(pdDocument);
-    }
 
-    @Test
-    public void testProcess_xslfo_outputFormat_fopConfig_foUserAgentBlock() {
-
-        byte[] pdfBytes = PlayFop.process(XSLFO, MimeConstants.MIME_PDF, FOP_CONFIG, FO_USER_AGENT_BLOCK);
-        PDDocument pdDocument = toPDDocument(pdfBytes);
-
-        checkText(pdDocument);
-        checkForVersionFromFopConfig(pdDocument);
-        checkForAuthorFromFOUserAgentBlock(pdDocument);
+        // TODO How to validate that autoDetectFontsForPDF was consulted?
     }
 
     @Test
@@ -113,40 +86,19 @@ public class PlayFopTest {
     }
 
     @Test
-    public void testNewFop_outputFormat_fopConfig_output() {
+    public void testNewFop_outputFormat_output_autoDetectFontsForPDF_foUserAgentBlock() {
 
+        ProcessOptions processOptions = new ProcessOptions.Builder().
+                autoDetectFontsForPDF(true).foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, FOP_CONFIG);
-        process(XSLFO, fop);
-        PDDocument pdDocument = toPDDocument(output.toByteArray());
-
-        checkText(pdDocument);
-        checkForVersionFromFopConfig(pdDocument);
-    }
-
-    @Test
-    public void testNewFop_outputFormat_foUserAgentBlock_output() {
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, FO_USER_AGENT_BLOCK);
+        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, processOptions);
         process(XSLFO, fop);
         PDDocument pdDocument = toPDDocument(output.toByteArray());
 
         checkText(pdDocument);
         checkForAuthorFromFOUserAgentBlock(pdDocument);
-    }
 
-    @Test
-    public void testNewFop_outputFormat_fopConfig_foUserAgentBlock_output() {
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, FOP_CONFIG, FO_USER_AGENT_BLOCK);
-        process(XSLFO, fop);
-        PDDocument pdDocument = toPDDocument(output.toByteArray());
-
-        checkText(pdDocument);
-        checkForVersionFromFopConfig(pdDocument);
-        checkForAuthorFromFOUserAgentBlock(pdDocument);
+        // TODO How to validate that autoDetectFontsForPDF was consulted?
     }
 
     private PDDocument toPDDocument(byte[] pdfBytes) {
@@ -170,15 +122,6 @@ public class PlayFopTest {
         assertEquals(PDF_TEXT, pdfText);
     }
 
-    private void checkForVersionFromFopConfig(PDDocument pdDocument) {
-        String pdfVersion = Float.toString(pdDocument.getDocument().getVersion());
-        // Previous line's retrieval of version is an alternative to
-        // pdDocument.getDocumentCatalog().getVersion(), which oddly did not
-        // work.
-
-        assertEquals(PDF_VERSION, pdfVersion);
-      }
-    
     private void checkForAuthorFromFOUserAgentBlock(PDDocument pdDocument) {
         String pdfAuthor = pdDocument.getDocumentInformation().getAuthor();
         assertEquals(PDF_AUTHOR, pdfAuthor);

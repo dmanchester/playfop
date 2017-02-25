@@ -49,20 +49,6 @@ object TestHelpers {
     XmlFormat.raw(stringWriter.toString())
   }
 
-  /** Generates simple XML for configuring an `org.apache.fop.apps.Fop`.
-    * Specifies a given PDF version for output.
-    *
-    * @param pdfVersion the PDF version
-    */
-  def fopConfig(pdfVersion: String) =
-    <fop version="1.0">
-      <renderers>
-        <renderer mime="application/pdf">
-          <version>{pdfVersion}</version>
-        </renderer>
-      </renderers>
-    </fop>
-
   def textFromPDFBytes(pdfBytes: Array[Byte]) = {
     val pdDocument = toPDDocument(pdfBytes)
     new PDFTextStripper().getText(pdDocument).trim()

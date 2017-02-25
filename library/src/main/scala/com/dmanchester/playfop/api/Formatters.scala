@@ -1,6 +1,7 @@
 package com.dmanchester.playfop.api
 
-import play.twirl.api.{Xml,XmlFormat}
+import play.twirl.api.Xml
+import play.twirl.api.XmlFormat
 
 /** Miscellaneous methods that may be useful in formatting text before it is
   * included in an XSL-FO template and rendered by Apache FOP.

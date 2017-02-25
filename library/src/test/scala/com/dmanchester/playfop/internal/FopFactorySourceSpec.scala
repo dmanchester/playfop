@@ -8,25 +8,23 @@ class FopFactoryCacheSpec extends Specification {
   
   private val FopConfig =
     <fop version={BogusFopVersion}/>
-  
-  "getWithDefaultConfig()" should {
-    "return the same instance when called repeatedly" in {
-      val cache = new FopFactorySource()
-      cache.getWithDefaultConfig must beTheSameAs(cache.getWithDefaultConfig)
-    }
-  }
 
-  "getWithCustomConfig(fopConfigXml)" should {
+  "get()" should {
+    "return the same instance when called repeatedly without fopConfigXml" in {
+      val cache = new FopFactorySource()
+      cache.get(None) must beTheSameAs(cache.get(None))
+    }
+
     "return the same instance when called repeatedly with the same fopConfigXml" in {
       val cache = new FopFactorySource()
-      cache.getWithCustomConfig(FopConfig) must beTheSameAs(
-        cache.getWithCustomConfig(FopConfig)
+      cache.get(Some(FopConfig)) must beTheSameAs(
+        cache.get(Some(FopConfig))
       )
     }
 
     "apply the fopConfigXml it receives" in {
       val cache = new FopFactorySource()
-      val factory = cache.getWithCustomConfig(FopConfig)
+      val factory = cache.get(Some(FopConfig))
       factory.getUserConfig.getAttribute("version") must beEqualTo(BogusFopVersion)
     }
   }

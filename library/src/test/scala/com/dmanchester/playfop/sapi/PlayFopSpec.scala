@@ -25,12 +25,9 @@ import play.twirl.api.XmlFormat
 class PlayFopSpec extends Specification {
 
   val PdfText = "Hello there"
-  val PdfVersion = "1.5"
   val PdfAuthor = "PlayFopSpec"
 
   val Xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
-
-  val FopConfig = TestHelpers.fopConfig(PdfVersion)
 
   val FOUserAgentBlock = { foUserAgent: FOUserAgent =>
     foUserAgent.setAuthor(PdfAuthor)
@@ -45,45 +42,16 @@ class PlayFopSpec extends Specification {
     }
   }
 
-  "process(xslfo, outputFormat, fopConfig)" should {
-    "render the XSL-FO in the chosen format, applying the FOP configuration" in {
+  "process(xslfo, outputFormat, autoDetectFontsForPDF, foUserAgentBlock)" should {
+    "render the XSL-FO in the chosen format, auto-detecting fonts and applying the FOUserAgent block" in {
 
-      val pdfBytes = PlayFop.process(Xslfo, MimeConstants.MIME_PDF, FopConfig)
-
-      TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
-      TestHelpers.versionFromPDFBytes(pdfBytes) must beEqualTo(PdfVersion)
-    }
-  }
-
-  "process(xslfo, outputFormat, foUserAgentBlock)" should {
-    "render the XSL-FO in the chosen format, applying the FOUserAgent block" in {
-
-      val pdfBytes = PlayFop.process(Xslfo, MimeConstants.MIME_PDF, FOUserAgentBlock)
+      val pdfBytes = PlayFop.process(Xslfo, MimeConstants.MIME_PDF,
+          autoDetectFontsForPDF = true, foUserAgentBlock = FOUserAgentBlock)
 
       TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
       TestHelpers.authorFromPDFBytes(pdfBytes) must beEqualTo(PdfAuthor)
-    }
-  }
 
-  "process(xslfo, outputFormat, fopConfig, foUserAgentBlock)" should {
-    "render the XSL-FO in the chosen format, applying the FOP configuration and the FOUserAgent block" in {
-
-      val pdfBytes = PlayFop.process(Xslfo, MimeConstants.MIME_PDF, FopConfig, FOUserAgentBlock)
-
-      TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
-      TestHelpers.versionFromPDFBytes(pdfBytes) must beEqualTo(PdfVersion)
-      TestHelpers.authorFromPDFBytes(pdfBytes) must beEqualTo(PdfAuthor)
-    }
-  }
-
-  "process(xslfo, outputFormat, Some(fopConfig), Some(foUserAgentBlock))" should {
-    "render the XSL-FO in the chosen format, applying the FOP configuration and the FOUserAgent block" in {
-
-      val pdfBytes = PlayFop.process(Xslfo, MimeConstants.MIME_PDF, Some(FopConfig), Some(FOUserAgentBlock))
-
-      TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
-      TestHelpers.versionFromPDFBytes(pdfBytes) must beEqualTo(PdfVersion)
-      TestHelpers.authorFromPDFBytes(pdfBytes) must beEqualTo(PdfAuthor)
+      // TODO How to validate that autoDetectFontsForPDF was consulted?
     }
   }
 
@@ -98,57 +66,19 @@ class PlayFopSpec extends Specification {
     }
   }
 
-  "newFop(outputFormat, fopConfig, output)" should {
-    "obtain an Fop for the output format, applying the FOP configuration" in {
-
-      val output = new ByteArrayOutputStream()
-      val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, FopConfig)
-      process(Xslfo, fop)
-
-      val outputAsByteArray = output.toByteArray()
-      TestHelpers.textFromPDFBytes(outputAsByteArray) must beEqualTo(PdfText)
-      TestHelpers.versionFromPDFBytes(outputAsByteArray) must beEqualTo(PdfVersion)
-    }
-  }
-
-  "newFop(outputFormat, foUserAgentBlock, output)" should {
-    "obtain an Fop for the output format, applying the FOUserAgent block" in {
-
-      val output = new ByteArrayOutputStream()
-      val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, FOUserAgentBlock)
-      process(Xslfo, fop)
-
-      val outputAsByteArray = output.toByteArray()
-      TestHelpers.textFromPDFBytes(outputAsByteArray) must beEqualTo(PdfText)
-      TestHelpers.authorFromPDFBytes(outputAsByteArray) must beEqualTo(PdfAuthor)
-    }
-  }
-
   "newFop(outputFormat, fopConfig, foUserAgentBlock, output)" should {
-    "obtain an Fop for the output format, applying the FOP configuration and the FOUserAgent block" in {
+    "obtain an Fop for the output format, auto-detecting fonts and applying the FOUserAgent block" in {
 
       val output = new ByteArrayOutputStream()
-      val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, FopConfig, FOUserAgentBlock)
+      val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output,
+          autoDetectFontsForPDF = true, foUserAgentBlock = FOUserAgentBlock)
       process(Xslfo, fop)
 
       val outputAsByteArray = output.toByteArray()
       TestHelpers.textFromPDFBytes(outputAsByteArray) must beEqualTo(PdfText)
-      TestHelpers.versionFromPDFBytes(outputAsByteArray) must beEqualTo(PdfVersion)
       TestHelpers.authorFromPDFBytes(outputAsByteArray) must beEqualTo(PdfAuthor)
-    }
-  }
 
-  "newFop(outputFormat, Some(fopConfig), Some(foUserAgentBlock), output)" should {
-    "obtain an Fop for the output format, applying the FOP configuration and the FOUserAgent block" in {
-
-      val output = new ByteArrayOutputStream()
-      val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, Some(FopConfig), Some(FOUserAgentBlock))
-      process(Xslfo, fop)
-
-      val outputAsByteArray = output.toByteArray()
-      TestHelpers.textFromPDFBytes(outputAsByteArray) must beEqualTo(PdfText)
-      TestHelpers.versionFromPDFBytes(outputAsByteArray) must beEqualTo(PdfVersion)
-      TestHelpers.authorFromPDFBytes(outputAsByteArray) must beEqualTo(PdfAuthor)
+      // TODO How to validate that autoDetectFontsForPDF was consulted?
     }
   }
 

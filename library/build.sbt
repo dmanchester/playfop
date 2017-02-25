@@ -116,15 +116,7 @@ lazy val commonSettings = Seq(
   publishDir := new File("./dist"),
   libraryDependencies ++= Seq(
     "com.typesafe.play" %% "play" % "2.3.0" % "provided",
-    // For background on the following five lines' declaration for Apache FOP,
-    // see https://oklampy.wordpress.com/2013/05/30/working-around-bad-dependency-declarations/
-    // and Jens' comment there.
-    "org.apache.xmlgraphics" % "fop" % "1.1"
-      exclude("org.apache.avalon.framework", "avalon-framework-api")
-      exclude("org.apache.avalon.framework", "avalon-framework-impl"),
-    "avalon-framework" % "avalon-framework-api" % "4.2.0",
-    "avalon-framework" % "avalon-framework-impl" % "4.2.0",
-    "com.typesafe.play" %% "play-test" % "2.3.0" % "test",
+    "org.apache.xmlgraphics" % "fop" % "2.1",
     "org.apache.pdfbox" % "pdfbox" % "1.8.9" % "test",
     // The following PlayFOP dependencies are shared with other libraries
     // specified in this file. We allow those libraries' use of them to

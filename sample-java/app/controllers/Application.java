@@ -24,10 +24,10 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import views.util.Calc;
 
-import com.dmanchester.playfop.api.ClasspathURIResolver;
 import com.dmanchester.playfop.api.Units;
 import com.dmanchester.playfop.japi.FOUserAgentBlock;
 import com.dmanchester.playfop.japi.PlayFop;
+import com.dmanchester.playfop.japi.ProcessOptions;
 
 public class Application extends Controller {
 
@@ -52,17 +52,6 @@ public class Application extends Controller {
     private static final String INITIAL_IMAGE_NAME = "Cityscape";
 
     private static final int SINGLE_LABEL_SCALE_FACTOR = 3;
-
-    private static final String FOP_CONFIG__PDF__AUTO_DETECT_FONTS =
-            "<fop version=\"1.0\">" +
-            "  <renderers>" +
-            "    <renderer mime=\"application/pdf\">" +
-            "      <fonts>" +
-            "        <auto-detect/>" +
-            "      </fonts>" +
-            "    </renderer>" +
-            "  </renderers>" +
-            "</fop>";
 
     private static Map<String, String> getImageNamesToPaths() {
 
@@ -108,7 +97,10 @@ public class Application extends Controller {
 
     private static List<String> getFontFamilies() {
 
-        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), FOP_CONFIG__PDF__AUTO_DETECT_FONTS);
+        ProcessOptions processOptions = new ProcessOptions.Builder().
+                autoDetectFontsForPDF(true).build();
+
+        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), processOptions);
 
         FontInfo fontInfo;
         try {
@@ -150,24 +142,13 @@ public class Application extends Controller {
             return badRequest(labelForm.errorsAsJson());
         }
 
-        final ClasspathURIResolver classpathURIResolver = new ClasspathURIResolver();
-
         Label label = labelForm.get();
 
-        String imagePath = IMAGE_NAMES_TO_PATHS.get(label.imageName);
-        String imageURI = (imagePath == null) ? null : classpathURIResolver.createHref(imagePath);
+        String imageURI = getImageURI(label.imageName);
         // In the case of a null imageURI, template simply doesn't show an
         // image.
 
         String mimeType = MimeConstants.MIME_PNG;
-
-        FOUserAgentBlock foUserAgentBlock = new FOUserAgentBlock() {
-
-            @Override
-            public void withFOUserAgent(FOUserAgent foUserAgent) {
-                foUserAgent.setURIResolver(classpathURIResolver);
-            }
-        };
 
         double labelWidthInMM = SINGLE_LABEL_SCALE_FACTOR * Calc.getLabelWidth(SHEET_SIZE_AND_WHITESPACE_IN_MM, SHEET_COLS);
         double labelHeightInMM = SINGLE_LABEL_SCALE_FACTOR * Calc.getLabelHeight(SHEET_SIZE_AND_WHITESPACE_IN_MM, SHEET_ROWS);
@@ -175,9 +156,17 @@ public class Application extends Controller {
 
         return ok(PlayFop.process(
                 views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, MM, imageURI, label.scale(SINGLE_LABEL_SCALE_FACTOR)),
-                mimeType,
-                foUserAgentBlock
+                mimeType
             )).as(mimeType);        
+    }
+
+    private static String getImageURI(String imageName) {
+
+        String imagePath = IMAGE_NAMES_TO_PATHS.get(imageName);
+        String imageURI = (imagePath == null) ? null :
+            Application.class.getClassLoader().getResource(imagePath).toString();
+
+        return imageURI;
     }
 
     public static Result generateLabelsSheetAsPDF() {
@@ -188,12 +177,9 @@ public class Application extends Controller {
             return badRequest(labelForm.errorsAsJson());
         }
 
-        final ClasspathURIResolver classpathURIResolver = new ClasspathURIResolver();
-
         Label label = labelForm.get();
 
-        String imagePath = IMAGE_NAMES_TO_PATHS.get(label.imageName);
-        String imageURI = (imagePath == null) ? null : classpathURIResolver.createHref(imagePath);
+        String imageURI = getImageURI(label.imageName);
         // See comment above about a null imageURI leading the template to not
         // show an image.
 
@@ -203,9 +189,11 @@ public class Application extends Controller {
             @Override
             public void withFOUserAgent(FOUserAgent foUserAgent) {
                 foUserAgent.setCreator(SHEET_PDF_CREATOR);
-                foUserAgent.setURIResolver(classpathURIResolver);
             }
         };
+
+        ProcessOptions processOptions = new ProcessOptions.Builder().
+                autoDetectFontsForPDF(true).foUserAgentBlock(foUserAgentBlock).build();
 
         String contentDispHeader = String.format("attachment; filename=%s", SHEET_FILENAME);
         response().setHeader("Content-Disposition", contentDispHeader);  // TODO Once app is on Play 2.4, switch to HeaderNames.CONTENT_DISPOSITION
@@ -213,8 +201,7 @@ public class Application extends Controller {
         return ok(PlayFop.process(
                 views.xml.labelsSheet.render(SHEET_SIZE_AND_WHITESPACE_IN_MM, MM, SHEET_ROWS, SHEET_COLS, imageURI, label),
                 mimeType,
-                FOP_CONFIG__PDF__AUTO_DETECT_FONTS,
-                foUserAgentBlock
+                processOptions
             )).as(mimeType);        
     }
 
