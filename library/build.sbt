@@ -124,7 +124,6 @@ lazy val commonSettings = Seq(
     // ".../target/resolution-cache/reports" for more information.
     "com.typesafe.play" %% "twirl-api" % "1.0.0" % "provided",  // see also: https://github.com/playframework/playframework/blob/2.3.0/framework/project/Dependencies.scala
     "org.slf4j" % "slf4j-api" % "1.7.6",
-    "commons-io" % "commons-io" % "1.3.1",                      // pretty old (2007?), but sufficient for our needs
     "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
     "org.specs2" %% "specs2-core" % "2.3.12" % "test",
     "junit" % "junit" % "4.11" % "test",
