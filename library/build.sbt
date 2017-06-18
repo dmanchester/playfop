@@ -127,7 +127,8 @@ lazy val commonSettings = Seq(
     "commons-io" % "commons-io" % "1.3.1",                      // pretty old (2007?), but sufficient for our needs
     "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
     "org.specs2" %% "specs2-core" % "2.3.12" % "test",
-    "junit" % "junit" % "4.11" % "test"
+    "junit" % "junit" % "4.11" % "test",
+    "com.novocode" % "junit-interface" % "0.11" % "test"
     // ...end shared dependencies.
   ),
   resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",  // per https://etorreborre.github.io/specs2/website/SPECS2-3.6/quickstart.html
