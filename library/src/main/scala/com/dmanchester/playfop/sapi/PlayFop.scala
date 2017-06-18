@@ -44,7 +44,7 @@ object PlayFop {
     if (logger.isTraceEnabled()) {
       logger.trace(s"XSL-FO:\n$xslfo")
     }
-    
+
     val output = new ByteArrayOutputStream()
     val fop = newFop(outputFormat, output, autoDetectFontsForPDF, foUserAgentBlock)
 

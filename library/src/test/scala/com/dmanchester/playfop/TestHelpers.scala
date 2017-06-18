@@ -55,13 +55,6 @@ object TestHelpers {
     new PDFTextStripper().getText(pdDocument).trim()
   }
 
-  def versionFromPDFBytes(pdfBytes: Array[Byte]) = {
-    val pdDocument = toPDDocument(pdfBytes)
-    pdDocument.getDocument().getVersion().toString()
-    // Previous line's retrieval of version is an alternative to
-    // pdDocument.getDocumentCatalog().getVersion(), which oddly did not work.
-  }
-
   def authorFromPDFBytes(pdfBytes: Array[Byte]) = {
     val pdDocument = toPDDocument(pdfBytes)
     pdDocument.getDocumentInformation().getAuthor()

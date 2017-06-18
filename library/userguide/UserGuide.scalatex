@@ -75,11 +75,11 @@
           @td{Java} @td{com.dmanchester.playfop.japi.PlayFop (Javadoc TODO LINK)}
 
       @p
-        Then, at the point in your code where you wish to generate output, invoke one of the @code{process} methods.
+        Then, at the point in your code where you wish to generate output, invoke the @code{process} method.
         The method will return the output as a byte array, which can be returned in an HTTP response, saved to a file, etc.
 
       @p
-        The simplest @code{process} variant accepts two arguments: the XSL-FO output of a Twirl XML template; and an output format/MIME type, typically sourced from @code{org.apache.xmlgraphics.util.MimeConstants}.
+        The simplest @code{process} invocation involves two arguments: the XSL-FO output of a Twirl XML template; and an output format/MIME type, typically sourced from @code{org.apache.xmlgraphics.util.MimeConstants}.
         For example, given @code{someTemplate.scala.xml}...
 
       @hl.xml
@@ -120,107 +120,44 @@
       @img(src:="simple-process-example--png.png", style:="border:1px solid #777;")
 
       @p
-        Further @code{process} variants enable you to customize Apache FOP's behavior in processing your XSL-FO.
+        You can also pass to @code{process} either or both of the following options:
+
+        @ul
+          @li
+            @code{autoDetectFontsForPDF}: Whether, when creating PDF files, Apache FOP should automatically detect operating system fonts (and make them available for PDF files).
+          @li
+            @code{FOUserAgent} block: A block of code that modifies the @code{FOUserAgent} that Apache FOP will use.
+            Useful for setting a PDF file's subject, author, etc.
 
       @p
-        Some variants allow you to pass in configuration XML for Apache FOP.
+        In Scala applications, you typically supply these options as named arguments.
+        The @code{FOUserAgent} block is an @code{FOUserAgent}-accepting function.
 
       @p
-        Other variants allow you to configure an @code{FOUserAgent} via a code block you specify.
-        In the Scala case, the code block is an @code{FOUserAgent}-accepting function; in Java, it's an implementation of the single-method @code{FOUserAgentBlock} interface.
+        In Java applications, you supply these items via a builder.
+        The @code{FOUserAgent} block is an implementation of the single-method @code{FOUserAgentBlock} interface.
 
       @p
-        For example:
+        The following code examples present the syntax for using @code{autoDetectFontsForPDF} and the @code{FOUserAgent} block.
 
       @p
         @b{Complex @code{process} Example, Scala}
         @hl.ref(
           wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
-          start = "val fopConfigPDFAutoDetectFonts =",
+          start = "val foUserAgentBlock = { foUserAgent: FOUserAgent =>",
           end = "// END Complex Scala 'process' sample")
 
       @p
         @b{Complex @code{process} Example, Java}
         @hl.ref(
           wd/'src/'test/'java/'com/'dmanchester/'playfop/'japi/'userguide/"UserGuideCodeSamplesTest.java",
-          start = "String fopConfigPDFAutoDetectFonts =",
+          start = "FOUserAgentBlock foUserAgentBlock = new FOUserAgentBlock() {",
           end = "// END Complex Java 'process' sample")
 
       @p
         The resulting PDF (Scala or Java):
 
       @img(src:="complex-process-example--pdf.png")
-
-
-    @sect{Incorporating Graphics from Your Application: the ClasspathURIResolver Class}
-
-      @p
-        Apache FOP supports graphics in output via the @code{<fo:external-graphic>} element.
-        PlayFOP builds upon that support, allowing you to incorporate graphics from your Play application's classpath.
-        This eases application packaging, as you needn't deploy graphics to the filesystem or at a URL.
-
-      @p
-        To facilitate the use of classpath graphics, PlayFOP defines a @code{playfop:} URI scheme and the @code{ClasspathURIResolver} class. To use them:
-
-      @ol
-        @li
-          Place your graphic on your classpath.
-          @br
-          @i
-            The Play documentation is not especially clear on where resources must be located for them to be on an application's classpath.
-            However, one option is to place them under the @code{conf} directory.
-
-        @li
-          Create a @code{playfop:} URI for your graphic via @code{ClasspathURIResolver.createHref}.
-
-        @li
-          In your XSL-FO, render the @code{<fo:external-graphic>} element with that URI.
-
-        @li
-          When processing your XSL-FO, use a @code{process} variant that supports @code{FOUserAgent} configuration.
-          Invoke @code{FOUserAgent.setURIResolver}, passing a @code{ClasspathURIResolver}.
-
-      @p
-        For example, given...
-
-      @ul
-        @li
-          on your classpath, graphic @code{"emoji_u1f309_bridge.svg"}
-          (a @lnk("color emoji", "https://github.com/googlei18n/noto-emoji/tree/master/svg")
-          from Google's @lnk("Noto font family", "https://www.google.com/get/noto/")); and
-
-        @li
-          @code{someTemplateWithAnImage} that accepts an @code{imageURI} as an argument and places it in an @code{<fo:external-graphic/>} element
-
-      @p
-        ...you could generate a PDF as follows:
-
-      @p
-        @b{@code{ClasspathURIResolver} Example, Scala}
-        @hl.ref(
-          wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
-          start = "val classpathURIResolver = new ClasspathURIResolver()",
-          end = "// END Scala ClasspathURIResolver sample")
-
-      @p
-        @b{@code{ClasspathURIResolver} Example, Java}
-        @hl.ref(
-          wd/'src/'test/'java/'com/'dmanchester/'playfop/'japi/'userguide/"UserGuideCodeSamplesTest.java",
-          start = "final ClasspathURIResolver classpathURIResolver",
-          end = "// END Java ClasspathURIResolver sample")
-
-      @p
-        The resulting PDF (Scala or Java):
-
-      @img(src:="classpathuriresolver-example--pdf.png", style:="border:1px solid #777;")
-
-      @p
-        @b{Security Note:} Creating @code{playfop:} URIs directly from user input/HTTP parameters is strongly discouraged, as it could allow access to application configuration or other sensitive files.
-        One alternative is a whitelist of graphics' paths, with only paths from the list used in URI creation.
-
-      @p
-        While the @code{ClasspathURIResolver} code is thread-safe, the thread safety of its superclass is not documented.
-        Thus, it is best not to share a @code{ClasspathURIResolver} instance across threads.
 
     @sect{Applying Apache FOP Units to Values: the Units Class}
 
