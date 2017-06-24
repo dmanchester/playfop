@@ -49,14 +49,12 @@ class PlayFopSpec extends Specification {
   "process(xslfo, outputFormat, autoDetectFontsForPDF)" should {
     "render the XSL-FO with the chosen font" in {
 
-      val fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
-
       // To confirm a specific font is used, we choose one outside the PDF
       // format's base 14 fonts. (If we were to choose a base font, it could
       // potentially get used by default, even if process() weren't rendering
       // the XSL-FO correctly.)
 
-      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(getFontFamilies(fop))
+      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(getFontFamilies())
       val xslfo = TestHelpers.wrapInXslfoDocument(Text(PdfText), Some(fontFamily))
 
       val pdfBytes = PlayFop.process(xslfo, MimeConstants.MIME_PDF, autoDetectFontsForPDF = true)
@@ -94,7 +92,7 @@ class PlayFopSpec extends Specification {
 
       val output = new ByteArrayOutputStream()
       val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, autoDetectFontsForPDF = true)
-      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(getFontFamilies(fop))
+      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(getFontFamilies())
       val xslfo = TestHelpers.wrapInXslfoDocument(Text(PdfText), Some(fontFamily))
 
       process(xslfo, fop)
@@ -136,7 +134,7 @@ class PlayFopSpec extends Specification {
     transformer.transform(source, result)
   }
 
-  private def getFontFamilies(fop: Fop) = {
+  private def getFontFamilies() = {
 
     val fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
 
