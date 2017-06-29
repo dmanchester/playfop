@@ -1,11 +1,18 @@
 package com.dmanchester.playfop.japi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -14,9 +21,17 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.fo.FOTreeBuilder;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.Typeface;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.junit.Test;
@@ -29,49 +44,45 @@ public class PlayFopTest {
     private static final String PDF_TEXT = "Hello there";
     private static final String PDF_AUTHOR = "PlayFopTest";
     
-    private static final Xml XSLFO = XmlFormat.raw(
-        "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">" +
-        "    <fo:layout-master-set>" +
-        "        <fo:simple-page-master master-name=\"label\">" +
-        "            <fo:region-body region-name=\"xsl-region-body\"/>" +
-        "        </fo:simple-page-master>" +
-        "    </fo:layout-master-set>" +
-        "    <fo:page-sequence master-reference=\"label\">" +
-        "        <fo:flow flow-name=\"xsl-region-body\">" +
-        "            <fo:block>" + PDF_TEXT + "</fo:block>" +
-        "        </fo:flow>" +
-        "    </fo:page-sequence>" +
-        "</fo:root>");
+    private static final Pattern BASE_14_FONT = Pattern.compile("Times|Courier|Helvetica|Symbol|Zapf");
+    private static final Pattern NO_WHITESPACE = Pattern.compile("^\\w*$");
 
     private static final FOUserAgentBlock FO_USER_AGENT_BLOCK = new FOUserAgentBlock() {
-        
+
         @Override
         public void withFOUserAgent(FOUserAgent foUserAgent) {
             foUserAgent.setAuthor(PDF_AUTHOR);
         }
     };
-    
+
     @Test
     public void testProcess_xslfo_outputFormat() {
 
-        byte[] pdfBytes = PlayFop.process(XSLFO, MimeConstants.MIME_PDF);
-        PDDocument pdDocument = toPDDocument(pdfBytes);
-
-        checkText(pdDocument);
+        byte[] pdfBytes = PlayFop.process(wrapInXslfoDocument(PDF_TEXT), MimeConstants.MIME_PDF);
+        checkText(pdfBytes, PDF_TEXT);
     }
 
     @Test
-    public void testProcess_xslfo_outputFormat_autoDetectFontsForPDF_foUserAgentBlock() {
+    public void testProcess_xslfo_outputFormat_autoDetectFontsForPDF() {
+
+        String fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName();
 
         ProcessOptions processOptions = new ProcessOptions.Builder().
-                autoDetectFontsForPDF(true).foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
-        byte[] pdfBytes = PlayFop.process(XSLFO, MimeConstants.MIME_PDF, processOptions);
-        PDDocument pdDocument = toPDDocument(pdfBytes);
+                autoDetectFontsForPDF(true).build();
+        byte[] pdfBytes = PlayFop.process(wrapInXslfoDocument(PDF_TEXT, fontFamily), MimeConstants.MIME_PDF, processOptions);
 
-        checkText(pdDocument);
-        checkForAuthorFromFOUserAgentBlock(pdDocument);
+        checkForFontFamily(pdfBytes, fontFamily);
+    }
 
-        // TODO How to validate that autoDetectFontsForPDF was consulted?
+    @Test
+    public void testProcess_xslfo_outputFormat_foUserAgentBlock() {
+
+        ProcessOptions processOptions = new ProcessOptions.Builder().
+                foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
+        byte[] pdfBytes = PlayFop.process(wrapInXslfoDocument(PDF_TEXT), MimeConstants.MIME_PDF, processOptions);
+
+        checkText(pdfBytes, PDF_TEXT);
+        checkForAuthorFromFOUserAgentBlock(pdfBytes, PDF_AUTHOR);
     }
 
     @Test
@@ -79,26 +90,152 @@ public class PlayFopTest {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, output);
-        process(XSLFO, fop);
-        PDDocument pdDocument = toPDDocument(output.toByteArray());
+        process(wrapInXslfoDocument(PDF_TEXT), fop);
 
-        checkText(pdDocument);
+        checkText(output.toByteArray(), PDF_TEXT);
     }
 
     @Test
-    public void testNewFop_outputFormat_output_autoDetectFontsForPDF_foUserAgentBlock() {
+    public void testNewFop_outputFormat_output_autoDetectFontsForPDF() {
+
+        String fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName();
 
         ProcessOptions processOptions = new ProcessOptions.Builder().
-                autoDetectFontsForPDF(true).foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
+                autoDetectFontsForPDF(true).build();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, processOptions);
-        process(XSLFO, fop);
-        PDDocument pdDocument = toPDDocument(output.toByteArray());
+        process(wrapInXslfoDocument(PDF_TEXT, fontFamily), fop);
 
-        checkText(pdDocument);
-        checkForAuthorFromFOUserAgentBlock(pdDocument);
+        checkForFontFamily(output.toByteArray(), fontFamily);
+    }
 
-        // TODO How to validate that autoDetectFontsForPDF was consulted?
+    @Test
+    public void testNewFop_outputFormat_output_foUserAgentBlock() {
+
+        ProcessOptions processOptions = new ProcessOptions.Builder().
+                foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, processOptions);
+        process(wrapInXslfoDocument(PDF_TEXT), fop);
+
+        byte[] pdfBytes = output.toByteArray();
+        checkText(pdfBytes, PDF_TEXT);
+        checkForAuthorFromFOUserAgentBlock(pdfBytes, PDF_AUTHOR);
+    }
+
+    private Xml wrapInXslfoDocument(String text) {
+        return wrapInXslfoDocument(text, null);
+    }
+
+    private Xml wrapInXslfoDocument(String text, String fontFamily) {
+
+        String foBlockStartTag = (fontFamily == null) ? "<fo:block>" : "<fo:block font-family=\"" + fontFamily + "\">";
+        String foBlock = foBlockStartTag + text + "</fo:block>";
+
+        return XmlFormat.raw(
+                "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">" +
+                "    <fo:layout-master-set>" +
+                "        <fo:simple-page-master master-name=\"label\">" +
+                "            <fo:region-body region-name=\"xsl-region-body\"/>" +
+                "        </fo:simple-page-master>" +
+                "    </fo:layout-master-set>" +
+                "    <fo:page-sequence master-reference=\"label\">" +
+                "        <fo:flow flow-name=\"xsl-region-body\">" +
+                             foBlock +
+                "        </fo:flow>" +
+                "    </fo:page-sequence>" +
+                "</fo:root>");
+    }
+
+    private String chooseFontFamilyOutsideBase14WithSingleWordName() {
+
+        List<String> fontFamilies = getFontFamilies();
+
+        return IterableUtils.find(fontFamilies, new Predicate<String>() {
+
+            @Override
+            public boolean evaluate(String fontFamily) {
+
+                boolean base14font = BASE_14_FONT.matcher(fontFamily).find();
+                boolean noWhitespace = NO_WHITESPACE.matcher(fontFamily).find();
+
+                return !base14font && noWhitespace;
+            }
+        });
+    }
+
+    private List<String> getFontFamilies() {
+
+        ProcessOptions processOptions = new ProcessOptions.Builder().
+                autoDetectFontsForPDF(true).build();
+
+        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), processOptions);
+
+        FontInfo fontInfo;
+        try {
+            fontInfo = ((FOTreeBuilder)fop.getDefaultHandler()).getEventHandler().getFontInfo();
+        } catch (FOPException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        Collection<Typeface> typefaces = fontInfo.getFonts().values();
+
+        List<String> fontNames = new ArrayList<String>(typefaces.size());
+        for (Typeface typeface : typefaces) {
+            fontNames.add(typeface.getFullName());
+        }
+
+        return fontNames;
+    }
+
+    private void checkText(byte[] pdfBytes, String text) {
+
+        PDDocument pdDocument = toPDDocument(pdfBytes);
+
+        String pdfText;
+        try {
+            pdfText = new PDFTextStripper().getText(pdDocument).trim();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        assertEquals(text, pdfText);
+    }
+
+    private void checkForAuthorFromFOUserAgentBlock(byte[] pdfBytes, String author) {
+
+        PDDocument pdDocument = toPDDocument(pdfBytes);
+
+        String pdfAuthor = pdDocument.getDocumentInformation().getAuthor();
+        assertEquals(author, pdfAuthor);
+    }
+
+    private void checkForFontFamily(byte[] pdfBytes, final String fontFamily) {
+
+        PDDocument pdDocument = toPDDocument(pdfBytes);
+
+        @SuppressWarnings("unchecked")
+        List<PDPage> pdPages = (List<PDPage>)pdDocument.getDocumentCatalog().getAllPages();
+
+        Set<String> fonts = new HashSet<>();
+
+        for (PDPage pdPage : pdPages) {
+
+            Collection<PDFont> pdFontsOnPage = pdPage.getResources().getFonts().values();
+
+            for (PDFont pdFontOnPage : pdFontsOnPage) {
+                fonts.add(pdFontOnPage.getBaseFont());
+            }
+        }
+
+        boolean fontFound = IterableUtils.matchesAny(fonts, new Predicate<String>() {
+            @Override
+            public boolean evaluate(String font) {
+                return font.contains(fontFamily);
+            }
+        });
+
+        assertTrue(fontFound);
     }
 
     private PDDocument toPDDocument(byte[] pdfBytes) {
@@ -108,23 +245,6 @@ public class PlayFopTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void checkText(PDDocument pdDocument) {
-
-        String pdfText;
-        try {
-            pdfText = new PDFTextStripper().getText(pdDocument).trim();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        assertEquals(PDF_TEXT, pdfText);
-    }
-
-    private void checkForAuthorFromFOUserAgentBlock(PDDocument pdDocument) {
-        String pdfAuthor = pdDocument.getDocumentInformation().getAuthor();
-        assertEquals(PDF_AUTHOR, pdfAuthor);
     }
 
     private void process(Xml xslfo, Fop fop) {

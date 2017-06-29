@@ -20,14 +20,17 @@ import play.twirl.api.XmlFormat
   */
 object TestHelpers {
 
-  /** Wraps an XML Node in a simple XSL-FO document, optionally applying a font.
+  /** Wraps text in a simple XSL-FO document, optionally applying a font.
     * Returns the document as Twirl XML.
     *
-    * @param node the Node to wrap
+    * @param text the text to wrap
     * @fontFamily the font to apply (optional)
     */
-  def wrapInXslfoDocument(node: Node, fontFamily: Option[String] = None): Xml = {
-    val fontFamilyAsText = fontFamily.map { Text(_) }
+  def wrapInXslfoDocument(text: String, fontFamily: Option[String] = None): Xml = {
+
+    val textAsXMLText = Text(text)
+    val fontFamilyAsXMLText = fontFamily.map { Text(_) }
+
     toTwirlXml(
       <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
         <fo:layout-master-set>
@@ -37,7 +40,7 @@ object TestHelpers {
         </fo:layout-master-set>
         <fo:page-sequence master-reference="label">
           <fo:flow flow-name="xsl-region-body">
-            <fo:block font-family={fontFamilyAsText}>{node}</fo:block>
+            <fo:block font-family={fontFamilyAsXMLText}>{textAsXMLText}</fo:block>
           </fo:flow>
         </fo:page-sequence>
       </fo:root>

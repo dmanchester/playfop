@@ -118,6 +118,7 @@ lazy val commonSettings = Seq(
     "com.typesafe.play" %% "play" % "2.3.0" % "provided",
     "org.apache.xmlgraphics" % "fop" % "2.1",
     "org.apache.pdfbox" % "pdfbox" % "1.8.9" % "test",
+    "org.apache.commons" % "commons-collections4" % "4.1" % "test",
     // The following PlayFOP dependencies are shared with other libraries
     // specified in this file. We allow those libraries' use of them to
     // determine the version numbers below. Consult

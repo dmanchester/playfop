@@ -25,7 +25,6 @@ import play.twirl.api.Xml
 import play.twirl.api.XmlFormat
 
 import scala.collection.JavaConverters._
-import scala.xml.Text
 
 class PlayFopSpec extends Specification {
 
@@ -39,7 +38,7 @@ class PlayFopSpec extends Specification {
   "process(xslfo, outputFormat)" should {
     "render the XSL-FO in the chosen format" in {
 
-      val xslfo = TestHelpers.wrapInXslfoDocument(Text(PdfText))
+      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
       val pdfBytes = PlayFop.process(xslfo, MimeConstants.MIME_PDF)
 
       TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
@@ -54,19 +53,19 @@ class PlayFopSpec extends Specification {
       // potentially get used by default, even if process() weren't rendering
       // the XSL-FO correctly.)
 
-      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(getFontFamilies())
-      val xslfo = TestHelpers.wrapInXslfoDocument(Text(PdfText), Some(fontFamily))
+      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName()
+      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText, Some(fontFamily))
 
       val pdfBytes = PlayFop.process(xslfo, MimeConstants.MIME_PDF, autoDetectFontsForPDF = true)
 
-      TestHelpers.fontsFromPDFBytes(pdfBytes) must contain(fontFamily)
+      TestHelpers.fontsFromPDFBytes(pdfBytes) must containMatch(fontFamily)
     }
   }
 
   "process(xslfo, outputFormat, foUserAgentBlock)" should {
     "render the XSL-FO in the chosen format, applying the FOUserAgent block" in {
 
-      val xslfo = TestHelpers.wrapInXslfoDocument(Text(PdfText))
+      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
       val pdfBytes = PlayFop.process(xslfo, MimeConstants.MIME_PDF, foUserAgentBlock = FOUserAgentBlock)
 
       TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
@@ -79,7 +78,7 @@ class PlayFopSpec extends Specification {
 
       val output = new ByteArrayOutputStream()
       val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output)
-      val xslfo = TestHelpers.wrapInXslfoDocument(Text(PdfText))
+      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
 
       process(xslfo, fop)
 
@@ -92,12 +91,12 @@ class PlayFopSpec extends Specification {
 
       val output = new ByteArrayOutputStream()
       val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, autoDetectFontsForPDF = true)
-      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(getFontFamilies())
-      val xslfo = TestHelpers.wrapInXslfoDocument(Text(PdfText), Some(fontFamily))
+      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName()
+      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText, Some(fontFamily))
 
       process(xslfo, fop)
 
-      TestHelpers.fontsFromPDFBytes(output.toByteArray()) must contain(fontFamily)
+      TestHelpers.fontsFromPDFBytes(output.toByteArray()) must containMatch(fontFamily)
     }
   }
 
@@ -106,7 +105,7 @@ class PlayFopSpec extends Specification {
 
       val output = new ByteArrayOutputStream()
       val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, foUserAgentBlock = FOUserAgentBlock)
-      val xslfo = TestHelpers.wrapInXslfoDocument(Text(PdfText))
+      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
 
       process(xslfo, fop)
 
@@ -134,6 +133,19 @@ class PlayFopSpec extends Specification {
     transformer.transform(source, result)
   }
 
+  private def chooseFontFamilyOutsideBase14WithSingleWordName() = {
+
+    val fontFamilies = getFontFamilies()
+
+    fontFamilies.find { fontFamily =>
+      "Times|Courier|Helvetica|Symbol|Zapf".r.findFirstIn(fontFamily).isEmpty &&
+        "^\\w*$".r.findFirstIn(fontFamily).isDefined
+    }.get
+    // It would be highly unusual for there to be no font families that meet
+    // both criteria. So, the previous line throwing an Exception in the "None"
+    // case is actually desirable.
+  }
+
   private def getFontFamilies() = {
 
     val fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
@@ -143,16 +155,5 @@ class PlayFopSpec extends Specification {
     val typefaces = fontInfo.getFonts().values().asScala
 
     typefaces.map(_.getFullName()).toSeq
-  }
-
-  private def chooseFontFamilyOutsideBase14WithSingleWordName(fontFamilies: Iterable[String]) = {
-
-    fontFamilies.find { fontFamily =>
-      "Times|Courier|Helvetica|Symbol|Zapf".r.findFirstIn(fontFamily).isEmpty &&
-        "^\\w*$".r.findFirstIn(fontFamily).isDefined
-    }.get
-    // It would be highly unusual for there to be no font families that meet
-    // both criteria. So, the previous line throwing an Exception in the "None"
-    // case is actually desirable.
   }
 }
