@@ -54,7 +54,7 @@ object Application extends Controller {
       "imageName" -> optional(text)
     )(Label.apply)(Label.unapply)
   )
-  
+
   def index() = Action {
     Redirect(routes.Application.designLabels())
   }

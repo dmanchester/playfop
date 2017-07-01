@@ -21,14 +21,14 @@ object Formatters {
   def makeSpacesNonBreaking(text: String): String = {
     text.replace(' ', NBSP);
   }
-  
+
   /** Wraps each newline-terminated run of characters within `text` in
     * `<fo:block>`...`</fo:block>`. If there are standalone newlines, and if
     * they are not at the end of `text`, represents them with an `<fo:block>`
     * that renders as a blank line.
     *
     * Disregards newlines at the end of `text`.
-    *  
+    *
     * @param text
     * @return a Play Twirl `[[https://www.playframework.com/documentation/2.4.x/api/scala/index.html#play.twirl.api.Xml Xml]]`
     * instance (as opposed to a `scala-xml` one) reflecting the newline wrapping

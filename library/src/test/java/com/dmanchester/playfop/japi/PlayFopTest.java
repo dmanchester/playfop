@@ -45,7 +45,7 @@ public class PlayFopTest {
 
     private static final String PDF_TEXT = "Hello there";
     private static final String PDF_AUTHOR = "PlayFopTest";
-    
+
     private static final Pattern BASE_14_FONT = Pattern.compile("Times|Courier|Helvetica|Symbol|Zapf");
     private static final Pattern NO_WHITESPACE = Pattern.compile("^\\w*$");
 

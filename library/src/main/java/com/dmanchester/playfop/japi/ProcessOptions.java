@@ -25,9 +25,9 @@ public class ProcessOptions {
         private boolean autoDetectFontsForPDF = false;
         private FOUserAgentBlock foUserAgentBlock = new FOUserAgentBlock() {
 
-			@Override
-			public void withFOUserAgent(FOUserAgent foUserAgent) { /* no-op */ }
-		};
+            @Override
+            public void withFOUserAgent(FOUserAgent foUserAgent) { /* no-op */ }
+        };
 
         /**
          * Whether operating system fonts should be auto-detected and made
@@ -36,10 +36,10 @@ public class ProcessOptions {
          * @param autoDetectFontsForPDF
          * @return
          */
-		public Builder autoDetectFontsForPDF(boolean autoDetectFontsForPDF) {
-			this.autoDetectFontsForPDF = autoDetectFontsForPDF;
-			return this;
-		}
+        public Builder autoDetectFontsForPDF(boolean autoDetectFontsForPDF) {
+            this.autoDetectFontsForPDF = autoDetectFontsForPDF;
+            return this;
+        }
 
         /**
          * Specifies a block of code that acts on an Apache FOP
@@ -49,10 +49,10 @@ public class ProcessOptions {
          * @param foUserAgentBlock
          * @return
          */
-		public Builder foUserAgentBlock(FOUserAgentBlock foUserAgentBlock) {
-			this.foUserAgentBlock = foUserAgentBlock;
-			return this;
-		}
+        public Builder foUserAgentBlock(FOUserAgentBlock foUserAgentBlock) {
+            this.foUserAgentBlock = foUserAgentBlock;
+            return this;
+        }
 
         public ProcessOptions build() {
             return new ProcessOptions(this);
@@ -65,10 +65,10 @@ public class ProcessOptions {
     }
 
     public boolean isAutoDetectFontsForPDF() {
-		return autoDetectFontsForPDF;
-	}
+        return autoDetectFontsForPDF;
+    }
 
     public FOUserAgentBlock getFoUserAgentBlock() {
-		return foUserAgentBlock;
-	}
+        return foUserAgentBlock;
+    }
 }

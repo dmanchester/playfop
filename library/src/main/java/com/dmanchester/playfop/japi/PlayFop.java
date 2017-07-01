@@ -15,7 +15,7 @@ import scala.runtime.BoxedUnit;
  */
 public class PlayFop {
 
-	private static final ProcessOptions DEFAULT_PROCESS_OPTIONS = new ProcessOptions.Builder().build();
+    private static final ProcessOptions DEFAULT_PROCESS_OPTIONS = new ProcessOptions.Builder().build();
 
     // A private constructor to prevent client code from instantiating this
     // class.

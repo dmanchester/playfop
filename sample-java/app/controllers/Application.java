@@ -157,7 +157,7 @@ public class Application extends Controller {
         return ok(PlayFop.process(
                 views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, MM, imageURI, label.scale(SINGLE_LABEL_SCALE_FACTOR)),
                 mimeType
-            )).as(mimeType);        
+            )).as(mimeType);
     }
 
     private static String getImageURI(String imageName) {
@@ -202,7 +202,7 @@ public class Application extends Controller {
                 views.xml.labelsSheet.render(SHEET_SIZE_AND_WHITESPACE_IN_MM, MM, SHEET_ROWS, SHEET_COLS, imageURI, label),
                 mimeType,
                 processOptions
-            )).as(mimeType);        
+            )).as(mimeType);
     }
 
     public static Result showAbout() {

@@ -2,7 +2,7 @@ package com.dmanchester.playfop.api
 
 /** Formats values with a unit of measure. Output is intended for use with
   * Apache FOP.
-  * 
+  *
   * Instances of this class are thread-safe. They may be used across multiple
   * threads.
   */
@@ -21,17 +21,17 @@ class Units private (formatString: String) {
 
   /** Formats `value`, displaying it with `precision` decimal places and
     * appending `label` (e.g., "`1.2cm`").
-    * 
+    *
     * @param value value to format
     * @return `value`, formatted
     */
 def format(value: Double): String = {
     formatString.format(value)
   }
-  
+
   /** Formats `value`, displaying it with `precision` decimal places and
     * appending `label` (e.g., "`1.2cm`").
-    * 
+    *
     * @param value value to format
     * @return `value`, formatted
     */
@@ -46,11 +46,11 @@ def format(value: Double): String = {
 object Units {
 
   private def formatString(label: String, precision: Int): String = {
-    
+
     if (precision < 0) {
       throw new IllegalArgumentException(s"precision must be non-negative! (was $precision)")
     }
-    
+
     val labelEscaped = label.replace("%", "%%")
     s"%.${precision}f${labelEscaped}"  // create a format string like "%.1fmm"
   }

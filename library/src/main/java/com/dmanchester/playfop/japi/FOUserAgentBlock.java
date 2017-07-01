@@ -10,5 +10,5 @@ import org.apache.fop.apps.FOUserAgent;
  */
 public interface FOUserAgentBlock {
 
-	public void withFOUserAgent(FOUserAgent foUserAgent);
+    public void withFOUserAgent(FOUserAgent foUserAgent);
 }
