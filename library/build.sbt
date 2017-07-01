@@ -116,8 +116,7 @@ lazy val commonSettings = Seq(
   publishDir := new File("./dist"),
   libraryDependencies ++= Seq(
     "com.typesafe.play" %% "play" % "2.3.0" % "provided",
-    "org.apache.xmlgraphics" % "fop" % "2.1",
-    "org.apache.pdfbox" % "pdfbox" % "1.8.9" % "test",
+    "org.apache.xmlgraphics" % "fop" % "2.2",
     "org.apache.commons" % "commons-collections4" % "4.1" % "test",
     // The following PlayFOP dependencies are shared with other libraries
     // specified in this file. We allow those libraries' use of them to
@@ -128,7 +127,8 @@ lazy val commonSettings = Seq(
     "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
     "org.specs2" %% "specs2-core" % "2.3.12" % "test",
     "junit" % "junit" % "4.11" % "test",
-    "com.novocode" % "junit-interface" % "0.11" % "test"
+    "com.novocode" % "junit-interface" % "0.11" % "test",
+    "org.apache.pdfbox" % "pdfbox" % "2.0.4" % "test"
     // ...end shared dependencies.
   ),
   resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",  // per https://etorreborre.github.io/specs2/website/SPECS2-3.6/quickstart.html

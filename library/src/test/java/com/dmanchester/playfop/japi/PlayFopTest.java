@@ -29,10 +29,12 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.junit.Test;
 
@@ -213,18 +215,20 @@ public class PlayFopTest {
     private void checkForFontFamily(byte[] pdfBytes, final String fontFamily) {
 
         PDDocument pdDocument = toPDDocument(pdfBytes);
-
-        @SuppressWarnings("unchecked")
-        List<PDPage> pdPages = (List<PDPage>)pdDocument.getDocumentCatalog().getAllPages();
+        PDPageTree pdPageTree = pdDocument.getDocumentCatalog().getPages();
 
         Set<String> fonts = new HashSet<>();
 
-        for (PDPage pdPage : pdPages) {
+        for (PDPage pdPage : pdPageTree) {
 
-            Collection<PDFont> pdFontsOnPage = pdPage.getResources().getFonts().values();
+            PDResources pdResources = pdPage.getResources();
 
-            for (PDFont pdFontOnPage : pdFontsOnPage) {
-                fonts.add(pdFontOnPage.getBaseFont());
+            for (COSName fontName : pdResources.getFontNames()) {
+                try {
+                    fonts.add(pdResources.getFont(fontName).getName());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 

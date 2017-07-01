@@ -5,7 +5,7 @@ import java.io.StringWriter
 
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
-import org.apache.pdfbox.util.PDFTextStripper
+import org.apache.pdfbox.text.PDFTextStripper
 
 import scala.xml.Elem
 import scala.xml.Node
@@ -65,11 +65,12 @@ object TestHelpers {
 
   def fontsFromPDFBytes(pdfBytes: Array[Byte]) = {
     val pdDocument = toPDDocument(pdfBytes)
-    val pdPages: java.util.List[PDPage] = pdDocument.getDocumentCatalog().getAllPages().asInstanceOf[java.util.List[PDPage]]
+    val pdPageTree = pdDocument.getDocumentCatalog().getPages()
 
-    pdPages.asScala.foldLeft(Set.empty[String]) { case(theSet, pdPage) =>
-      val fonts = pdPage.getResources().getFonts().values().asScala.map { _.getBaseFont() }
-      theSet ++ fonts
+    pdPageTree.asScala.foldLeft(Set.empty[String]) { case(fontsSet, pdPage) =>
+      val pdResources = pdPage.getResources()
+      val fonts = pdResources.getFontNames().asScala.map { pdResources.getFont(_).getName() }
+      fontsSet ++ fonts
     }
   }
 
