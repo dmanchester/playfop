@@ -13,7 +13,6 @@ import scala.xml.XML
 import org.apache.fop.apps.FOUserAgent
 import org.apache.fop.apps.Fop
 import org.apache.fop.fo.FOTreeBuilder
-import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.xmlgraphics.util.MimeConstants
 import org.specs2.mutable.Specification
 

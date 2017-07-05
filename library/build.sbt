@@ -115,16 +115,17 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.11.7",
   publishDir := new File("./dist"),
   libraryDependencies ++= Seq(
-    "com.typesafe.play" %% "play" % "2.3.0" % "provided",
+    "com.typesafe.play" %% "play" % "2.4.11" % "provided",
     "org.apache.xmlgraphics" % "fop" % "2.2",
     "org.apache.commons" % "commons-collections4" % "4.1" % "test",
+    "com.jsuereth" %% "scala-arm" % "2.0" % "test",
     // The following PlayFOP dependencies are shared with other libraries
     // specified in this file. We allow those libraries' use of them to
     // determine the version numbers below. Consult
     // ".../target/resolution-cache/reports" for more information.
-    "com.typesafe.play" %% "twirl-api" % "1.0.0" % "provided",  // see also: https://github.com/playframework/playframework/blob/2.3.0/framework/project/Dependencies.scala
-    "org.slf4j" % "slf4j-api" % "1.7.6",
-    "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
+    "com.typesafe.play" %% "twirl-api" % "1.1.1" % "provided",
+    "org.slf4j" % "slf4j-api" % "1.7.21",
+    "org.scala-lang.modules" %% "scala-xml" % "1.0.1",
     "org.specs2" %% "specs2-core" % "2.3.12" % "test",
     "junit" % "junit" % "4.11" % "test",
     "com.novocode" % "junit-interface" % "0.11" % "test",

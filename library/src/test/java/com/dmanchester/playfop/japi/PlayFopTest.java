@@ -58,14 +58,14 @@ public class PlayFopTest {
     };
 
     @Test
-    public void testProcess_xslfo_outputFormat() {
+    public void testProcess_xslfo_outputFormat() throws IOException {
 
         byte[] pdfBytes = PlayFop.process(wrapInXslfoDocument(PDF_TEXT), MimeConstants.MIME_PDF);
         checkText(pdfBytes, PDF_TEXT);
     }
 
     @Test
-    public void testProcess_xslfo_outputFormat_autoDetectFontsForPDF() {
+    public void testProcess_xslfo_outputFormat_autoDetectFontsForPDF() throws IOException {
 
         String fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName();
 
@@ -77,7 +77,7 @@ public class PlayFopTest {
     }
 
     @Test
-    public void testProcess_xslfo_outputFormat_foUserAgentBlock() {
+    public void testProcess_xslfo_outputFormat_foUserAgentBlock() throws IOException {
 
         ProcessOptions processOptions = new ProcessOptions.Builder().
                 foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
@@ -88,7 +88,7 @@ public class PlayFopTest {
     }
 
     @Test
-    public void testNewFop_outputFormat_output() {
+    public void testNewFop_outputFormat_output() throws IOException {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, output);
@@ -98,7 +98,7 @@ public class PlayFopTest {
     }
 
     @Test
-    public void testNewFop_outputFormat_output_autoDetectFontsForPDF() {
+    public void testNewFop_outputFormat_output_autoDetectFontsForPDF() throws IOException {
 
         String fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName();
 
@@ -112,7 +112,7 @@ public class PlayFopTest {
     }
 
     @Test
-    public void testNewFop_outputFormat_output_foUserAgentBlock() {
+    public void testNewFop_outputFormat_output_foUserAgentBlock() throws IOException {
 
         ProcessOptions processOptions = new ProcessOptions.Builder().
                 foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
@@ -190,65 +190,65 @@ public class PlayFopTest {
         return fontNames;
     }
 
-    private void checkText(byte[] pdfBytes, String text) {
+    private void checkText(byte[] pdfBytes, String text) throws IOException {
 
-        PDDocument pdDocument = toPDDocument(pdfBytes);
+        try (PDDocument pdDocument = toPDDocument(pdfBytes)) {
 
-        String pdfText;
-        try {
-            pdfText = new PDFTextStripper().getText(pdDocument).trim();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            String pdfText;
+            try {
+                pdfText = new PDFTextStripper().getText(pdDocument).trim();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            assertEquals(text, pdfText);
         }
-
-        assertEquals(text, pdfText);
     }
 
-    private void checkForAuthorFromFOUserAgentBlock(byte[] pdfBytes, String author) {
+    private void checkForAuthorFromFOUserAgentBlock(byte[] pdfBytes, String author) throws IOException {
 
-        PDDocument pdDocument = toPDDocument(pdfBytes);
+        try (PDDocument pdDocument = toPDDocument(pdfBytes)) {
 
-        String pdfAuthor = pdDocument.getDocumentInformation().getAuthor();
-        assertEquals(author, pdfAuthor);
+            String pdfAuthor = pdDocument.getDocumentInformation().getAuthor();
+            assertEquals(author, pdfAuthor);
+        }
     }
 
-    private void checkForFontFamily(byte[] pdfBytes, final String fontFamily) {
+    private void checkForFontFamily(byte[] pdfBytes, final String fontFamily) throws IOException {
 
-        PDDocument pdDocument = toPDDocument(pdfBytes);
-        PDPageTree pdPageTree = pdDocument.getDocumentCatalog().getPages();
+        try (PDDocument pdDocument = toPDDocument(pdfBytes)) {
 
-        Set<String> fonts = new HashSet<>();
+            PDPageTree pdPageTree = pdDocument.getDocumentCatalog().getPages();
 
-        for (PDPage pdPage : pdPageTree) {
+            Set<String> fonts = new HashSet<>();
 
-            PDResources pdResources = pdPage.getResources();
+            for (PDPage pdPage : pdPageTree) {
 
-            for (COSName fontName : pdResources.getFontNames()) {
-                try {
-                    fonts.add(pdResources.getFont(fontName).getName());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                PDResources pdResources = pdPage.getResources();
+
+                for (COSName fontName : pdResources.getFontNames()) {
+                    try {
+                        fonts.add(pdResources.getFont(fontName).getName());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
+
+            boolean fontFound = IterableUtils.matchesAny(fonts, new Predicate<String>() {
+                @Override
+                public boolean evaluate(String font) {
+                    return font.contains(fontFamily);
+                }
+            });
+
+            assertTrue(fontFound);
         }
-
-        boolean fontFound = IterableUtils.matchesAny(fonts, new Predicate<String>() {
-            @Override
-            public boolean evaluate(String font) {
-                return font.contains(fontFamily);
-            }
-        });
-
-        assertTrue(fontFound);
     }
 
-    private PDDocument toPDDocument(byte[] pdfBytes) {
+    private PDDocument toPDDocument(byte[] pdfBytes) throws IOException {
 
-        try {
-            return PDDocument.load(new ByteArrayInputStream(pdfBytes));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return PDDocument.load(new ByteArrayInputStream(pdfBytes));
     }
 
     private void process(Xml xslfo, Fop fop) {
