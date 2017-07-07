@@ -12,15 +12,15 @@ public class Label {
     // It's notable that, here in the sample Java application, we place the max
     // length in the Java domain class. (In the Scala application, we place it
     // in the form definition.)
-    public String text;
+    private String text;
 
     @Required
-    public String fontFamily;
+    private String fontFamily;
 
     @Required
-    public Integer fontSizeInPoints;
+    private Integer fontSizeInPoints;
 
-    public String imageName;
+    private String imageName;
 
     public Label scale(int scaleFactor) {
 
@@ -32,5 +32,37 @@ public class Label {
         scaledLabel.imageName = imageName;
 
         return scaledLabel;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getFontFamily() {
+        return fontFamily;
+    }
+
+    public void setFontFamily(String fontFamily) {
+        this.fontFamily = fontFamily;
+    }
+
+    public Integer getFontSizeInPoints() {
+        return fontSizeInPoints;
+    }
+
+    public void setFontSizeInPoints(Integer fontSizeInPoints) {
+        this.fontSizeInPoints = fontSizeInPoints;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 }

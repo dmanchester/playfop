@@ -1,6 +1,7 @@
 package controllers
 
 import java.io.ByteArrayOutputStream
+import javax.inject.Inject
 import scala.collection.JavaConverters._
 import scala.collection.immutable.ListMap
 import models.Label
@@ -15,11 +16,13 @@ import play.api.data.Forms.optional
 import play.api.data.Forms.text
 import play.api.mvc.Action
 import play.api.mvc.Controller
+import play.api.i18n.I18nSupport
+import play.api.i18n.MessagesApi
 import views.util.Calc
 import com.dmanchester.playfop.sapi.PlayFop
 import com.dmanchester.playfop.api.Units
 
-object Application extends Controller {
+class Application @Inject() (val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   private val SheetSizeAndWhiteSpaceInMM = new PaperSizeAndWhiteSpace(297, 210, 20, 10, 2)  // A4
   private val mm = new Units("mm", 1)
