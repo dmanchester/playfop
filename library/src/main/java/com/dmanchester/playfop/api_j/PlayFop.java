@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.japi;
+package com.dmanchester.playfop.api_j;
 
 import java.io.OutputStream;
 
@@ -17,6 +17,8 @@ public class PlayFop {
 
     private static final ProcessOptions DEFAULT_PROCESS_OPTIONS = new ProcessOptions.Builder().build();
 
+    private com.dmanchester.playfop.api_s.PlayFop playFopScala = new com.dmanchester.playfop.internal_s.PlayFopImpl();
+
     // A private constructor to prevent client code from instantiating this
     // class.
     private PlayFop() {}
@@ -29,7 +31,7 @@ public class PlayFop {
      * @param outputFormat the format to generate
      * @return the Apache FOP output
      */
-    public static byte[] process(Xml xslfo, String outputFormat) {
+    public byte[] process(Xml xslfo, String outputFormat) {
 
         return process(xslfo, outputFormat, DEFAULT_PROCESS_OPTIONS);
     }
@@ -43,11 +45,11 @@ public class PlayFop {
      * @param processOptions the processing options
      * @return the Apache FOP output
      */
-    public static byte[] process(Xml xslfo, String outputFormat, ProcessOptions processOptions) {
+    public byte[] process(Xml xslfo, String outputFormat, ProcessOptions processOptions) {
 
         Function1<FOUserAgent, BoxedUnit> blockAsFunction = new BlockAsFunction(processOptions.getFoUserAgentBlock());
 
-        return com.dmanchester.playfop.sapi.PlayFop.process(xslfo, outputFormat, processOptions.isAutoDetectFontsForPDF(), blockAsFunction);
+        return playFopScala.process(xslfo, outputFormat, processOptions.isAutoDetectFontsForPDF(), blockAsFunction);
     }
 
     /**
@@ -64,7 +66,7 @@ public class PlayFop {
      *        should save output
      * @return the <code>Fop</code>
      */
-    public static Fop newFop(String outputFormat, OutputStream output) {
+    public Fop newFop(String outputFormat, OutputStream output) {
 
         return newFop(outputFormat, output, DEFAULT_PROCESS_OPTIONS);
     }
@@ -85,11 +87,11 @@ public class PlayFop {
      * @param processOptions the processing options
      * @return the <code>Fop</code>
      */
-    public static Fop newFop(String outputFormat, OutputStream output, ProcessOptions processOptions) {
+    public Fop newFop(String outputFormat, OutputStream output, ProcessOptions processOptions) {
 
         Function1<FOUserAgent, BoxedUnit> blockAsFunction = new BlockAsFunction(processOptions.getFoUserAgentBlock());
 
-        return com.dmanchester.playfop.sapi.PlayFop.newFop(outputFormat, output, processOptions.isAutoDetectFontsForPDF(), blockAsFunction);
+        return playFopScala.newFop(outputFormat, output, processOptions.isAutoDetectFontsForPDF(), blockAsFunction);
     }
 
     private static class BlockAsFunction extends AbstractFunction1<FOUserAgent, BoxedUnit> {

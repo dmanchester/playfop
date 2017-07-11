@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.japi;
+package com.dmanchester.playfop.api_j;
 
 import org.apache.fop.apps.FOUserAgent;
 

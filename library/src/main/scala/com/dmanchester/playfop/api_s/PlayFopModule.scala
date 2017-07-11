@@ -1,6 +1,6 @@
-package com.dmanchester.playfop.sapi
+package com.dmanchester.playfop.api_s
 
-import com.dmanchester.playfop.internal.PlayFopImpl
+import com.dmanchester.playfop.internal_s.PlayFopImpl
 
 import play.api.Configuration
 import play.api.Environment

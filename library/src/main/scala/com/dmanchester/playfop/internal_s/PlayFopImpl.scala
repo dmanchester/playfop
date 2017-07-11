@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.internal
+package com.dmanchester.playfop.internal_s
 
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
@@ -10,7 +10,7 @@ import org.apache.fop.apps.FOUserAgent
 import org.apache.fop.apps.Fop
 import org.slf4j.LoggerFactory
 
-import com.dmanchester.playfop.sapi.PlayFop
+import com.dmanchester.playfop.api_s.PlayFop
 
 import javax.inject.Singleton
 import javax.xml.transform.TransformerFactory
