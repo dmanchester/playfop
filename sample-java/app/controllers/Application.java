@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import models.Label;
 import models.PaperSizeAndWhiteSpace;
 
@@ -25,9 +27,9 @@ import play.mvc.Result;
 import views.util.Calc;
 
 import com.dmanchester.playfop.api.Units;
-import com.dmanchester.playfop.japi.FOUserAgentBlock;
-import com.dmanchester.playfop.japi.PlayFop;
-import com.dmanchester.playfop.japi.ProcessOptions;
+import com.dmanchester.playfop.api_j.FOUserAgentBlock;
+import com.dmanchester.playfop.api_j.PlayFop;
+import com.dmanchester.playfop.api_j.ProcessOptions;
 
 public class Application extends Controller {
 
@@ -62,6 +64,13 @@ public class Application extends Controller {
         imageNamesToPaths.put("Volcano", "images/emoji_u1f30b_volcano.svg");
 
         return imageNamesToPaths;
+    }
+
+    private PlayFop playFop;
+
+    @Inject
+    public Application(PlayFop playFop) {
+        this.playFop = playFop;
     }
 
     public Result index() {
@@ -100,7 +109,7 @@ public class Application extends Controller {
         ProcessOptions processOptions = new ProcessOptions.Builder().
                 autoDetectFontsForPDF(true).build();
 
-        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), processOptions);
+        Fop fop = playFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), processOptions);
 
         FontInfo fontInfo;
         try {
@@ -154,7 +163,7 @@ public class Application extends Controller {
         double labelHeightInMM = SINGLE_LABEL_SCALE_FACTOR * Calc.getLabelHeight(SHEET_SIZE_AND_WHITESPACE_IN_MM, SHEET_ROWS);
         double intraLabelPaddingInMM = SINGLE_LABEL_SCALE_FACTOR * SHEET_SIZE_AND_WHITESPACE_IN_MM.getIntraLabelPadding();
 
-        return ok(PlayFop.process(
+        return ok(playFop.process(
                 views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, MM, imageURI, label.scale(SINGLE_LABEL_SCALE_FACTOR)),
                 mimeType
             )).as(mimeType);
@@ -198,7 +207,7 @@ public class Application extends Controller {
         String contentDispHeader = String.format("attachment; filename=%s", SHEET_FILENAME);
         response().setHeader("Content-Disposition", contentDispHeader);  // TODO Once app is on Play 2.4, switch to HeaderNames.CONTENT_DISPOSITION
 
-        return ok(PlayFop.process(
+        return ok(playFop.process(
                 views.xml.labelsSheet.render(SHEET_SIZE_AND_WHITESPACE_IN_MM, MM, SHEET_ROWS, SHEET_COLS, imageURI, label),
                 mimeType,
                 processOptions

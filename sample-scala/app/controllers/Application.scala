@@ -19,10 +19,11 @@ import play.api.mvc.Controller
 import play.api.i18n.I18nSupport
 import play.api.i18n.MessagesApi
 import views.util.Calc
-import com.dmanchester.playfop.sapi.PlayFop
+import com.dmanchester.playfop.api_s.PlayFop
 import com.dmanchester.playfop.api.Units
 
-class Application @Inject() (val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
+    extends Controller with I18nSupport {
 
   private val SheetSizeAndWhiteSpaceInMM = new PaperSizeAndWhiteSpace(297, 210, 20, 10, 2)  // A4
   private val mm = new Units("mm", 1)
@@ -83,7 +84,7 @@ class Application @Inject() (val messagesApi: MessagesApi) extends Controller wi
 
   private def getFontFamilies() = {
 
-    val fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
+    val fop = playFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
 
     val fontInfo = fop.getDefaultHandler().asInstanceOf[FOTreeBuilder].getEventHandler().getFontInfo()
 
@@ -117,7 +118,7 @@ class Application @Inject() (val messagesApi: MessagesApi) extends Controller wi
         val intraLabelPaddingInMM = SingleLabelScaleFactor * SheetSizeAndWhiteSpaceInMM.intraLabelPadding
 
         Ok(
-          PlayFop.process(
+          playFop.process(
             views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, mm, imageURI, label.scale(SingleLabelScaleFactor)),
             mimeType
           )
@@ -150,7 +151,7 @@ class Application @Inject() (val messagesApi: MessagesApi) extends Controller wi
         }
 
         Ok(
-          PlayFop.process(
+          playFop.process(
             views.xml.labelsSheet.render(SheetSizeAndWhiteSpaceInMM, mm, SheetRows, SheetCols, imageURI, label),
             mimeType,
             autoDetectFontsForPDF = true,
