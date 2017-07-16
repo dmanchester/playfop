@@ -4,9 +4,9 @@ import org.specs2.mutable.Specification
 
 class FormattersSpec extends Specification {
 
-  private def NBSP = '\u00A0'  // non-breaking space
-  private def CRLF = "\r\n"
-  private def LF = "\n"
+  private val NBSP = '\u00A0'  // non-breaking space
+  private val CRLF = "\r\n"
+  private val LF = "\n"
 
   "makeSpacesNonBreaking" should {
     "replace spaces with NBSPs" in {

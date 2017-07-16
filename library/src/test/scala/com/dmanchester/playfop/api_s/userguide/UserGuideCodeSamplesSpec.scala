@@ -1,21 +1,22 @@
-package com.dmanchester.playfop.sapi.userguide
-
-import com.dmanchester.playfop.sapi.PlayFop
-import com.dmanchester.playfop.TestHelpers
+package com.dmanchester.playfop.api_s.userguide
 
 import org.apache.fop.apps.FOUserAgent
 import org.apache.xmlgraphics.util.MimeConstants
 import org.specs2.mutable.Specification
+import com.dmanchester.playfop.TestHelpers
+import com.dmanchester.playfop.api_s.PlayFop
+import com.dmanchester.playfop.internal_s.PlayFopImpl
+import com.dmanchester.playfop.playFopBlock
 
 class UserGuideCodeSamplesSpec extends Specification {
 
   "This code sample" should {
-    "render the XSL-FO as PNG" in {
+    "render the XSL-FO as PNG" in new playFopBlock {
 
 // BEGIN Simple Scala 'process' sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
-val png: Array[Byte] = PlayFop.process(
+val png: Array[Byte] = playFop.process(
   views.xml.someTemplate.render("Hello world."),
   MimeConstants.MIME_PNG
 )
@@ -26,7 +27,7 @@ val png: Array[Byte] = PlayFop.process(
   }
 
   "This code sample" should {
-    "render the XSL-FO as PDF, auto-detecting fonts and applying the FOUserAgent block" in {
+    "render the XSL-FO as PDF, auto-detecting fonts and applying the FOUserAgent block" in new playFopBlock {
 
 // BEGIN Complex Scala 'process' sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
@@ -35,7 +36,7 @@ val foUserAgentBlock = { foUserAgent: FOUserAgent =>
   foUserAgent.setAuthor("PlayFOP Sample Code")
 }
 
-val pdf: Array[Byte] = PlayFop.process(
+val pdf: Array[Byte] = playFop.process(
   views.xml.someTemplate.render("Hello again."),
   MimeConstants.MIME_PDF,
   autoDetectFontsForPDF = true,

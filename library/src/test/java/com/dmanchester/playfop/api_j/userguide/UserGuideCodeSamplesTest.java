@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.japi.userguide;
+package com.dmanchester.playfop.api_j.userguide;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,11 +8,14 @@ import org.apache.xmlgraphics.util.MimeConstants;
 import org.junit.Test;
 
 import com.dmanchester.playfop.TestHelpers;
-import com.dmanchester.playfop.japi.FOUserAgentBlock;
-import com.dmanchester.playfop.japi.PlayFop;
-import com.dmanchester.playfop.japi.ProcessOptions;
+import com.dmanchester.playfop.api_j.FOUserAgentBlock;
+import com.dmanchester.playfop.api_j.PlayFop;
+import com.dmanchester.playfop.api_j.ProcessOptions;
+import com.dmanchester.playfop.internal_j.PlayFopImpl;
 
 public class UserGuideCodeSamplesTest {
+
+    private PlayFop playFop = new PlayFopImpl();
 
     @Test
     public void testSimpleCodeSample() {
@@ -20,7 +23,7 @@ public class UserGuideCodeSamplesTest {
 // BEGIN Simple Java 'process' sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
-byte[] png = PlayFop.process(
+byte[] png = playFop.process(
     views.xml.someTemplate.render("Hello world."),
     MimeConstants.MIME_PNG
 );
@@ -45,7 +48,7 @@ FOUserAgentBlock foUserAgentBlock = new FOUserAgentBlock() {
 ProcessOptions processOptions = new ProcessOptions.Builder().
         autoDetectFontsForPDF(true).foUserAgentBlock(foUserAgentBlock).build();
 
-byte[] pdf = PlayFop.process(
+byte[] pdf = playFop.process(
     views.xml.someTemplate.render("Hello again."),
     MimeConstants.MIME_PDF,
     processOptions

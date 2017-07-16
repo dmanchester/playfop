@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.japi;
+package com.dmanchester.playfop.internal_j;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,10 +38,14 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.junit.Test;
 
+import com.dmanchester.playfop.api_j.ProcessOptions;
+import com.dmanchester.playfop.api_j.FOUserAgentBlock;
+import com.dmanchester.playfop.api_j.PlayFop;
+
 import play.twirl.api.Xml;
 import play.twirl.api.XmlFormat;
 
-public class PlayFopTest {
+public class PlayFopImplTest {
 
     private static final String PDF_TEXT = "Hello there";
     private static final String PDF_AUTHOR = "PlayFopTest";
@@ -57,10 +61,12 @@ public class PlayFopTest {
         }
     };
 
+    private PlayFop playFop = new PlayFopImpl();
+
     @Test
     public void testProcess_xslfo_outputFormat() throws IOException {
 
-        byte[] pdfBytes = PlayFop.process(wrapInXslfoDocument(PDF_TEXT), MimeConstants.MIME_PDF);
+        byte[] pdfBytes = playFop.process(wrapInXslfoDocument(PDF_TEXT), MimeConstants.MIME_PDF);
         checkText(pdfBytes, PDF_TEXT);
     }
 
@@ -71,7 +77,7 @@ public class PlayFopTest {
 
         ProcessOptions processOptions = new ProcessOptions.Builder().
                 autoDetectFontsForPDF(true).build();
-        byte[] pdfBytes = PlayFop.process(wrapInXslfoDocument(PDF_TEXT, fontFamily), MimeConstants.MIME_PDF, processOptions);
+        byte[] pdfBytes = playFop.process(wrapInXslfoDocument(PDF_TEXT, fontFamily), MimeConstants.MIME_PDF, processOptions);
 
         checkForFontFamily(pdfBytes, fontFamily);
     }
@@ -81,7 +87,7 @@ public class PlayFopTest {
 
         ProcessOptions processOptions = new ProcessOptions.Builder().
                 foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
-        byte[] pdfBytes = PlayFop.process(wrapInXslfoDocument(PDF_TEXT), MimeConstants.MIME_PDF, processOptions);
+        byte[] pdfBytes = playFop.process(wrapInXslfoDocument(PDF_TEXT), MimeConstants.MIME_PDF, processOptions);
 
         checkText(pdfBytes, PDF_TEXT);
         checkForAuthorFromFOUserAgentBlock(pdfBytes, PDF_AUTHOR);
@@ -91,7 +97,7 @@ public class PlayFopTest {
     public void testNewFop_outputFormat_output() throws IOException {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, output);
+        Fop fop = playFop.newFop(MimeConstants.MIME_PDF, output);
         process(wrapInXslfoDocument(PDF_TEXT), fop);
 
         checkText(output.toByteArray(), PDF_TEXT);
@@ -105,7 +111,7 @@ public class PlayFopTest {
         ProcessOptions processOptions = new ProcessOptions.Builder().
                 autoDetectFontsForPDF(true).build();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, processOptions);
+        Fop fop = playFop.newFop(MimeConstants.MIME_PDF, output, processOptions);
         process(wrapInXslfoDocument(PDF_TEXT, fontFamily), fop);
 
         checkForFontFamily(output.toByteArray(), fontFamily);
@@ -117,7 +123,7 @@ public class PlayFopTest {
         ProcessOptions processOptions = new ProcessOptions.Builder().
                 foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, processOptions);
+        Fop fop = playFop.newFop(MimeConstants.MIME_PDF, output, processOptions);
         process(wrapInXslfoDocument(PDF_TEXT), fop);
 
         byte[] pdfBytes = output.toByteArray();
@@ -171,7 +177,7 @@ public class PlayFopTest {
         ProcessOptions processOptions = new ProcessOptions.Builder().
                 autoDetectFontsForPDF(true).build();
 
-        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), processOptions);
+        Fop fop = playFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), processOptions);
 
         FontInfo fontInfo;
         try {

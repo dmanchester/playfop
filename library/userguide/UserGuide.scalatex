@@ -104,14 +104,14 @@
         @b{Simple @code{process} Example, Scala}
         @hl.ref(
           wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
-          start = "val png: Array[Byte] = PlayFop.process(",
+          start = "val png: Array[Byte] = playFop.process(",
           end = "// END Simple Scala 'process' sample")
 
       @p
         @b{Simple @code{process} Example, Java}
         @hl.ref(
           wd/'src/'test/'java/'com/'dmanchester/'playfop/'japi/'userguide/"UserGuideCodeSamplesTest.java",
-          start = "byte[] png = PlayFop.process(",
+          start = "byte[] png = playFop.process(",
           end = "// END Simple Java 'process' sample")
 
       @p
