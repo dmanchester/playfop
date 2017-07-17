@@ -38,7 +38,7 @@ byte[] png = playFop.process(
 // BEGIN Complex Java 'process' sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
-FOUserAgentBlock foUserAgentBlock = new FOUserAgentBlock() {
+FOUserAgentBlock myFOUserAgentBlock = new FOUserAgentBlock() {
     @Override
     public void withFOUserAgent(FOUserAgent foUserAgent) {
         foUserAgent.setAuthor("PlayFOP Sample Code");
@@ -46,7 +46,7 @@ FOUserAgentBlock foUserAgentBlock = new FOUserAgentBlock() {
 };
 
 ProcessOptions processOptions = new ProcessOptions.Builder().
-        autoDetectFontsForPDF(true).foUserAgentBlock(foUserAgentBlock).build();
+        autoDetectFontsForPDF(true).foUserAgentBlock(myFOUserAgentBlock).build();
 
 byte[] pdf = playFop.process(
     views.xml.someTemplate.render("Hello again."),

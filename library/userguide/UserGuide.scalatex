@@ -12,13 +12,13 @@
       PlayFOP offers:
     @ul
       @li
-        A concise invocation syntax. Go from XSL-FO to finished output with a single method call.
+        A concise invocation syntax. Go from XSL-FO to finished output in as little as a single method call.
       @li
-        [Transparent caching] of expensive Apache FOP objects.
-      @li
-        Easy incorporation of graphics from your application.
+        Transparent caching of expensive Apache FOP objects.
       @li
         Formatters for working with Apache FOP units, and for preserving whitespace in output.
+      @li
+        Flexible integration into your application via dependency injection.
     @p
       PlayFOP supports Play applications written in Scala or Java.
 
@@ -29,7 +29,7 @@
 
       @p
         PlayFOP's public API is divided into three packages.
-        For a given application, package @code{com.dmanchester.playfop.api} is relevant, as well as either @code{com.dmanchester.playfop.sapi} or @code{com.dmanchester.playfop.japi}, depending on the application's language:
+        For a given application, package @code{com.dmanchester.playfop.api} is relevant, as well as either @code{com.dmanchester.playfop.api_s} or @code{com.dmanchester.playfop.api_j}, depending on the application's language:
 
       @table
         @tr
@@ -37,14 +37,14 @@
         @tr
           @td{com.dmanchester.playfop.api} @td{Scala or Java} @td{[Scaladoc]}
         @tr
-          @td{com.dmanchester.playfop.sapi} @td{Scala} @td{[Scaladoc]}
+          @td{com.dmanchester.playfop.api_s} @td{Scala} @td{[Scaladoc]}
         @tr
-          @td{com.dmanchester.playfop.japi} @td{Java} @td{[Javadoc]}
+          @td{com.dmanchester.playfop.api_j} @td{Java} @td{[Javadoc]}
 
   @sect{Using PlayFOP}
 
     @p
-      To use PlayFOP, add it as a dependency to your application's @code{build.sbt}:
+      Add PlayFOP as a dependency to your application's @code{build.sbt}:
 
     @code
       libraryDependencies ++= Seq(
@@ -53,29 +53,58 @@
         "com.dmanchester" %% "playfop" % "0.4-SNAPSHOT" from "https://dmanchester.com/foo"
       )
 
-    @sect{Generating PDFs, Images, and Other Output: the PlayFop Object}
+    @p
+      Then, inject a @code{PlayFop} object that is appropriate for your application's language.
+
+    @sect{Injecting a PlayFop Object Into a Scala Application}
 
       @p
-        The @code{PlayFop} object is the core component of PlayFOP.
-        With it, you can generate the various kinds of output supported by Apache FOP.
+        In your @code{application.conf}, add:
+
+      @code
+        play.modules.enabled += "com.dmanchester.playfop.api_s.PlayFopModule"
 
       @p
-        Separate versions of the @code{PlayFop} object are available for Scala and Java applications.
-        (The Java "object" is technically a class with static methods.)
+        Then, inject a @code{PlayFop} object into your controller.
+        More specifically, and assuming you're using constructor injection, add a @code{PlayFop} class parameter (package @code{com.dmanchester.playfop.api_s}).
+        Also, if you aren't already using the @code{@@Inject} annotation (package @code{javax.inject}), apply it, too:
+
+      @hl.scala
+        class MyController @@Inject() (val playFop: PlayFop) extends Controller {
+          ...
+
+    @sect{Injecting a PlayFop Object Into a Java Application}
 
       @p
-        To use the object, import the appropriate one for your application's language:
+        In your @code{application.conf}, add:
 
-      @table
-        @tr
-          @th{Application Language} @th{Package}
-        @tr
-          @td{Scala} @td{com.dmanchester.playfop.sapi.PlayFop (Scaladoc TODO LINK)}
-        @tr
-          @td{Java} @td{com.dmanchester.playfop.japi.PlayFop (Javadoc TODO LINK)}
+      @code
+        play.modules.enabled += "com.dmanchester.playfop.api_j.PlayFopModule"
 
       @p
-        Then, at the point in your code where you wish to generate output, invoke the @code{process} method.
+        Then, inject a @code{PlayFop} instance into your controller.
+        More specifically, and assuming you're using constructor injection, add a @code{PlayFop} field (package @code{com.dmanchester.playfop.api_j}).
+        Add a constructor parameter to set it and apply the @code{@@Inject} annotation (package @code{javax.inject}):
+
+      @hl.scala
+        public class MyController extends Controller {
+
+          private PlayFop playFop;
+
+          @@Inject
+          public Application(PlayFop playFop) {
+              this.playFop = playFop;
+          }
+
+          ...
+
+    @sect{Generating PDFs, Images, and Other Output: Using the PlayFop Object}
+
+      @p
+        With the @code{PlayFop} object you inject into your application, you can generate the various kinds of output supported by Apache FOP.
+
+      @p
+        At the point in your code where you wish to generate output, invoke the @code{PlayFop} object's @code{process} method.
         The method will return the output as a byte array, which can be returned in an HTTP response, saved to a file, etc.
 
       @p
@@ -103,14 +132,14 @@
       @p
         @b{Simple @code{process} Example, Scala}
         @hl.ref(
-          wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
+          wd/'src/'test/'scala/'com/'dmanchester/'playfop/'api_s/'userguide/"UserGuideCodeSamplesSpec.scala",
           start = "val png: Array[Byte] = playFop.process(",
           end = "// END Simple Scala 'process' sample")
 
       @p
         @b{Simple @code{process} Example, Java}
         @hl.ref(
-          wd/'src/'test/'java/'com/'dmanchester/'playfop/'japi/'userguide/"UserGuideCodeSamplesTest.java",
+          wd/'src/'test/'java/'com/'dmanchester/'playfop/'api_j/'userguide/"UserGuideCodeSamplesTest.java",
           start = "byte[] png = playFop.process(",
           end = "// END Simple Java 'process' sample")
 
@@ -143,15 +172,15 @@
       @p
         @b{Complex @code{process} Example, Scala}
         @hl.ref(
-          wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
-          start = "val foUserAgentBlock = { foUserAgent: FOUserAgent =>",
+          wd/'src/'test/'scala/'com/'dmanchester/'playfop/'api_s/'userguide/"UserGuideCodeSamplesSpec.scala",
+          start = "val myFOUserAgentBlock = { foUserAgent: FOUserAgent =>",
           end = "// END Complex Scala 'process' sample")
 
       @p
         @b{Complex @code{process} Example, Java}
         @hl.ref(
-          wd/'src/'test/'java/'com/'dmanchester/'playfop/'japi/'userguide/"UserGuideCodeSamplesTest.java",
-          start = "FOUserAgentBlock foUserAgentBlock = new FOUserAgentBlock() {",
+          wd/'src/'test/'java/'com/'dmanchester/'playfop/'api_j/'userguide/"UserGuideCodeSamplesTest.java",
+          start = "FOUserAgentBlock myFOUserAgentBlock = new FOUserAgentBlock() {",
           end = "// END Complex Java 'process' sample")
 
       @p

@@ -32,7 +32,7 @@ val png: Array[Byte] = playFop.process(
 // BEGIN Complex Scala 'process' sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
-val foUserAgentBlock = { foUserAgent: FOUserAgent =>
+val myFOUserAgentBlock = { foUserAgent: FOUserAgent =>
   foUserAgent.setAuthor("PlayFOP Sample Code")
 }
 
@@ -40,7 +40,7 @@ val pdf: Array[Byte] = playFop.process(
   views.xml.someTemplate.render("Hello again."),
   MimeConstants.MIME_PDF,
   autoDetectFontsForPDF = true,
-  foUserAgentBlock = foUserAgentBlock
+  foUserAgentBlock = myFOUserAgentBlock
 )
 // END Complex Scala 'process' sample
 
