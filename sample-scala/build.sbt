@@ -4,9 +4,11 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
+
+routesGenerator := InjectedRoutesGenerator
 
 libraryDependencies ++= Seq(
   "com.dmanchester" %% "playfop" % "0.4-SNAPSHOT",
-  "com.adrianhurt" %% "play-bootstrap3" % "0.4.4-P23"
+  "com.adrianhurt" %% "play-bootstrap" % "1.1.1-P24-B3"
 )

@@ -1,11 +1,10 @@
-package com.dmanchester.playfop.internal
+package com.dmanchester.playfop.internal_s
 
 import org.specs2.mutable.Specification
 
 class FopFactoryCacheSpec extends Specification {
 
   private val BogusFopVersion = "123.456"
-
   private val FopConfig =
     <fop version={BogusFopVersion}/>
 

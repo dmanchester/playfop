@@ -1,72 +1,67 @@
-package com.dmanchester.playfop.sapi
+package com.dmanchester.playfop.internal_s
 
 import com.dmanchester.playfop.TestHelpers
-
+import com.dmanchester.playfop.api_s.PlayFop
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.StringReader
 import java.io.StringWriter
-
 import scala.xml.Elem
 import scala.xml.XML
-
 import org.apache.fop.apps.FOUserAgent
 import org.apache.fop.apps.Fop
 import org.apache.fop.fo.FOTreeBuilder
-import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.xmlgraphics.util.MimeConstants
 import org.specs2.mutable.Specification
-
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.sax.SAXResult
 import javax.xml.transform.stream.StreamSource
-
 import play.twirl.api.Xml
 import play.twirl.api.XmlFormat
-
 import scala.collection.JavaConverters._
+import com.dmanchester.playfop.playFopBlock
 
-class PlayFopSpec extends Specification {
+class PlayFopImplSpec extends Specification {
 
-  val PdfText = "Hello there"
-  val PdfAuthor = "PlayFopSpec"
+  private val PdfText = "Hello there"
+  private val PdfAuthor = "PlayFopSpec"
 
-  val FOUserAgentBlock = { foUserAgent: FOUserAgent =>
+  private val FOUserAgentBlock = { foUserAgent: FOUserAgent =>
     foUserAgent.setAuthor(PdfAuthor)
   }
 
   "process(xslfo, outputFormat)" should {
-    "render the XSL-FO in the chosen format" in {
+    "render the XSL-FO in the chosen format" in new playFopBlock {
 
       val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
-      val pdfBytes = PlayFop.process(xslfo, MimeConstants.MIME_PDF)
+      val pdfBytes = playFop.process(xslfo, MimeConstants.MIME_PDF)
 
       TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
     }
   }
 
   "process(xslfo, outputFormat, autoDetectFontsForPDF)" should {
-    "render the XSL-FO with the chosen font" in {
+    "render the XSL-FO with the chosen font" in new playFopBlock {
 
       // To confirm a specific font is used, we choose one outside the PDF
       // format's base 14 fonts. (If we were to choose a base font, it could
       // potentially get used by default, even if process() weren't rendering
       // the XSL-FO correctly.)
 
-      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName()
+      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(playFop)
       val xslfo = TestHelpers.wrapInXslfoDocument(PdfText, Some(fontFamily))
 
-      val pdfBytes = PlayFop.process(xslfo, MimeConstants.MIME_PDF, autoDetectFontsForPDF = true)
+      val pdfBytes = playFop.process(xslfo, MimeConstants.MIME_PDF, autoDetectFontsForPDF = true)
 
       TestHelpers.fontsFromPDFBytes(pdfBytes) must containMatch(fontFamily)
     }
   }
 
   "process(xslfo, outputFormat, foUserAgentBlock)" should {
-    "render the XSL-FO in the chosen format, applying the FOUserAgent block" in {
+    "render the XSL-FO in the chosen format, applying the FOUserAgent block" in new playFopBlock {
 
       val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
-      val pdfBytes = PlayFop.process(xslfo, MimeConstants.MIME_PDF, foUserAgentBlock = FOUserAgentBlock)
+      val pdfBytes = playFop.process(xslfo, MimeConstants.MIME_PDF, foUserAgentBlock = FOUserAgentBlock)
 
       TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
       TestHelpers.authorFromPDFBytes(pdfBytes) must beEqualTo(PdfAuthor)
@@ -74,10 +69,10 @@ class PlayFopSpec extends Specification {
   }
 
   "newFop(outputFormat, output)" should {
-    "obtain an Fop for the output format" in {
+    "obtain an Fop for the output format" in new playFopBlock {
 
       val output = new ByteArrayOutputStream()
-      val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output)
+      val fop = playFop.newFop(MimeConstants.MIME_PDF, output)
       val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
 
       process(xslfo, fop)
@@ -87,11 +82,11 @@ class PlayFopSpec extends Specification {
   }
 
   "newFop(outputFormat, fopConfig, autoDetectFontsForPDF)" should {
-    "obtain an Fop that respects the font choice" in {
+    "obtain an Fop that respects the font choice" in new playFopBlock {
 
       val output = new ByteArrayOutputStream()
-      val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, autoDetectFontsForPDF = true)
-      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName()
+      val fop = playFop.newFop(MimeConstants.MIME_PDF, output, autoDetectFontsForPDF = true)
+      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(playFop)
       val xslfo = TestHelpers.wrapInXslfoDocument(PdfText, Some(fontFamily))
 
       process(xslfo, fop)
@@ -101,10 +96,10 @@ class PlayFopSpec extends Specification {
   }
 
   "newFop(outputFormat, output, foUserAgentBlock)" should {
-    "obtain an Fop for the output format, applying the FOUserAgent block" in {
+    "obtain an Fop for the output format, applying the FOUserAgent block" in new playFopBlock {
 
       val output = new ByteArrayOutputStream()
-      val fop = PlayFop.newFop(MimeConstants.MIME_PDF, output, foUserAgentBlock = FOUserAgentBlock)
+      val fop = playFop.newFop(MimeConstants.MIME_PDF, output, foUserAgentBlock = FOUserAgentBlock)
       val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
 
       process(xslfo, fop)
@@ -133,9 +128,9 @@ class PlayFopSpec extends Specification {
     transformer.transform(source, result)
   }
 
-  private def chooseFontFamilyOutsideBase14WithSingleWordName() = {
+  private def chooseFontFamilyOutsideBase14WithSingleWordName(playFop: PlayFop) = {
 
-    val fontFamilies = getFontFamilies()
+    val fontFamilies = getFontFamilies(playFop)
 
     fontFamilies.find { fontFamily =>
       "Times|Courier|Helvetica|Symbol|Zapf".r.findFirstIn(fontFamily).isEmpty &&
@@ -146,9 +141,9 @@ class PlayFopSpec extends Specification {
     // case is actually desirable.
   }
 
-  private def getFontFamilies() = {
+  private def getFontFamilies(playFop: PlayFop) = {
 
-    val fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
+    val fop = playFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
 
     val fontInfo = fop.getDefaultHandler().asInstanceOf[FOTreeBuilder].getEventHandler().getFontInfo()
 

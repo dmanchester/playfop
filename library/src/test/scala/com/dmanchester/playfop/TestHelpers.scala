@@ -7,6 +7,8 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.text.PDFTextStripper
 
+import resource.managed
+
 import scala.xml.Elem
 import scala.xml.Node
 import scala.xml.Text
@@ -54,23 +56,32 @@ object TestHelpers {
   }
 
   def textFromPDFBytes(pdfBytes: Array[Byte]) = {
-    val pdDocument = toPDDocument(pdfBytes)
-    new PDFTextStripper().getText(pdDocument).trim()
+
+    managed(toPDDocument(pdfBytes)) acquireAndGet { pdDocument =>
+
+      new PDFTextStripper().getText(pdDocument).trim()
+    }
   }
 
   def authorFromPDFBytes(pdfBytes: Array[Byte]) = {
-    val pdDocument = toPDDocument(pdfBytes)
-    pdDocument.getDocumentInformation().getAuthor()
+
+    managed(toPDDocument(pdfBytes)) acquireAndGet { pdDocument =>
+
+      pdDocument.getDocumentInformation().getAuthor()
+    }
   }
 
   def fontsFromPDFBytes(pdfBytes: Array[Byte]) = {
-    val pdDocument = toPDDocument(pdfBytes)
-    val pdPageTree = pdDocument.getDocumentCatalog().getPages()
 
-    pdPageTree.asScala.foldLeft(Set.empty[String]) { case(fontsSet, pdPage) =>
-      val pdResources = pdPage.getResources()
-      val fonts = pdResources.getFontNames().asScala.map { pdResources.getFont(_).getName() }
-      fontsSet ++ fonts
+    managed(toPDDocument(pdfBytes)) acquireAndGet { pdDocument =>
+
+      val pdPageTree = pdDocument.getDocumentCatalog().getPages()
+
+      pdPageTree.asScala.foldLeft(Set.empty[String]) { case(fontsSet, pdPage) =>
+        val pdResources = pdPage.getResources()
+        val fonts = pdResources.getFontNames().asScala.map { pdResources.getFont(_).getName() }
+        fontsSet ++ fonts
+      }
     }
   }
 

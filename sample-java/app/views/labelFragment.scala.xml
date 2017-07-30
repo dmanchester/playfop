@@ -7,7 +7,7 @@
 @pt = @{new Units("pt", 0)}
 
 <fo:block-container width="@units.format(labelWidth)" height="@units.format(labelHeight)"
-  font-family="@label.fontFamily" font-size="@pt.format(label.fontSizeInPoints)" overflow="hidden"
+  font-family="@label.getFontFamily()" font-size="@pt.format(label.getFontSizeInPoints())" overflow="hidden"
   @if(border) {
     border="black solid 1pt"
   }>
@@ -22,7 +22,7 @@
           </fo:block>
         </fo:table-cell>
         <fo:table-cell padding-top="@units.format(padding)">
-          @Formatters.makeNewlinesIntoFOBlocks(Formatters.makeSpacesNonBreaking(label.text))
+          @Formatters.makeNewlinesIntoFOBlocks(Formatters.makeSpacesNonBreaking(label.getText()))
         </fo:table-cell>
       </fo:table-row>
     </fo:table-body>

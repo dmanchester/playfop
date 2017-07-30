@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import models.Label;
 import models.PaperSizeAndWhiteSpace;
 
@@ -25,9 +27,9 @@ import play.mvc.Result;
 import views.util.Calc;
 
 import com.dmanchester.playfop.api.Units;
-import com.dmanchester.playfop.japi.FOUserAgentBlock;
-import com.dmanchester.playfop.japi.PlayFop;
-import com.dmanchester.playfop.japi.ProcessOptions;
+import com.dmanchester.playfop.api_j.FOUserAgentBlock;
+import com.dmanchester.playfop.api_j.PlayFop;
+import com.dmanchester.playfop.api_j.ProcessOptions;
 
 public class Application extends Controller {
 
@@ -64,11 +66,18 @@ public class Application extends Controller {
         return imageNamesToPaths;
     }
 
-    public static Result index() {
+    private PlayFop playFop;
+
+    @Inject
+    public Application(PlayFop playFop) {
+        this.playFop = playFop;
+    }
+
+    public Result index() {
         return redirect(controllers.routes.Application.designLabels());
     }
 
-    public static Result designLabels() {
+    public Result designLabels() {
 
         List<String> fontFamilies = getFontFamilies();
         List<String> imageNames = new ArrayList<String>(IMAGE_NAMES_TO_PATHS.keySet());
@@ -77,30 +86,30 @@ public class Application extends Controller {
         return ok(views.html.labelDesign.render(getInitialForm(), fontFamilies, getFontSizesAndText(), imageNames));
     }
 
-    private static Form<Label> getInitialForm() {
+    private Form<Label> getInitialForm() {
 
         Label initialLabel = new Label();
-        initialLabel.text = INITIAL_TEXT;
-        initialLabel.fontSizeInPoints = INITIAL_FONT_SIZE_IN_POINTS;
-        initialLabel.imageName = INITIAL_IMAGE_NAME;
+        initialLabel.setText(INITIAL_TEXT);
+        initialLabel.setFontSizeInPoints(INITIAL_FONT_SIZE_IN_POINTS);
+        initialLabel.setImageName(INITIAL_IMAGE_NAME);
 
         // Confirm the initial font family is available.
         List<String> fontFamilies = getFontFamilies();
         if (fontFamilies.contains(INITIAL_FONT_FAMILY)) {
-            initialLabel.fontFamily = INITIAL_FONT_FAMILY;
+            initialLabel.setFontFamily(INITIAL_FONT_FAMILY);
         } else {
-            initialLabel.fontFamily = fontFamilies.get(0);    // we presume the List has at least one element
+            initialLabel.setFontFamily(fontFamilies.get(0));    // we presume the List has at least one element
         }
 
         return Form.form(Label.class).fill(initialLabel);
     }
 
-    private static List<String> getFontFamilies() {
+    private List<String> getFontFamilies() {
 
         ProcessOptions processOptions = new ProcessOptions.Builder().
                 autoDetectFontsForPDF(true).build();
 
-        Fop fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), processOptions);
+        Fop fop = playFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), processOptions);
 
         FontInfo fontInfo;
         try {
@@ -121,7 +130,7 @@ public class Application extends Controller {
         return fontNames;
     }
 
-    private static Map<String, String> getFontSizesAndText() {
+    private Map<String, String> getFontSizesAndText() {
 
         Map<String, String> fontSizes = new LinkedHashMap<String, String>(FONT_SIZE_IN_POINTS__END - FONT_SIZE_IN_POINTS__START + 1);
 
@@ -132,7 +141,7 @@ public class Application extends Controller {
         return fontSizes;
     }
 
-    public static Result generateSingleLabelAsPNG() {
+    public Result generateSingleLabelAsPNG() {
 
         Form<Label> labelForm = Form.form(Label.class).bindFromRequest();
         if (labelForm.hasErrors()) {
@@ -144,7 +153,7 @@ public class Application extends Controller {
 
         Label label = labelForm.get();
 
-        String imageURI = getImageURI(label.imageName);
+        String imageURI = getImageURI(label.getImageName());
         // In the case of a null imageURI, template simply doesn't show an
         // image.
 
@@ -154,13 +163,13 @@ public class Application extends Controller {
         double labelHeightInMM = SINGLE_LABEL_SCALE_FACTOR * Calc.getLabelHeight(SHEET_SIZE_AND_WHITESPACE_IN_MM, SHEET_ROWS);
         double intraLabelPaddingInMM = SINGLE_LABEL_SCALE_FACTOR * SHEET_SIZE_AND_WHITESPACE_IN_MM.getIntraLabelPadding();
 
-        return ok(PlayFop.process(
+        return ok(playFop.process(
                 views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, MM, imageURI, label.scale(SINGLE_LABEL_SCALE_FACTOR)),
                 mimeType
             )).as(mimeType);
     }
 
-    private static String getImageURI(String imageName) {
+    private String getImageURI(String imageName) {
 
         String imagePath = IMAGE_NAMES_TO_PATHS.get(imageName);
         String imageURI = (imagePath == null) ? null :
@@ -169,7 +178,7 @@ public class Application extends Controller {
         return imageURI;
     }
 
-    public static Result generateLabelsSheetAsPDF() {
+    public Result generateLabelsSheetAsPDF() {
 
         Form<Label> labelForm = Form.form(Label.class).bindFromRequest();
         if (labelForm.hasErrors()) {
@@ -179,7 +188,7 @@ public class Application extends Controller {
 
         Label label = labelForm.get();
 
-        String imageURI = getImageURI(label.imageName);
+        String imageURI = getImageURI(label.getImageName());
         // See comment above about a null imageURI leading the template to not
         // show an image.
 
@@ -198,14 +207,14 @@ public class Application extends Controller {
         String contentDispHeader = String.format("attachment; filename=%s", SHEET_FILENAME);
         response().setHeader("Content-Disposition", contentDispHeader);  // TODO Once app is on Play 2.4, switch to HeaderNames.CONTENT_DISPOSITION
 
-        return ok(PlayFop.process(
+        return ok(playFop.process(
                 views.xml.labelsSheet.render(SHEET_SIZE_AND_WHITESPACE_IN_MM, MM, SHEET_ROWS, SHEET_COLS, imageURI, label),
                 mimeType,
                 processOptions
             )).as(mimeType);
     }
 
-    public static Result showAbout() {
+    public Result showAbout() {
         return ok(views.html.about.render());
     }
 }

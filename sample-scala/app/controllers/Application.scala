@@ -1,6 +1,7 @@
 package controllers
 
 import java.io.ByteArrayOutputStream
+import javax.inject.Inject
 import scala.collection.JavaConverters._
 import scala.collection.immutable.ListMap
 import models.Label
@@ -15,11 +16,14 @@ import play.api.data.Forms.optional
 import play.api.data.Forms.text
 import play.api.mvc.Action
 import play.api.mvc.Controller
+import play.api.i18n.I18nSupport
+import play.api.i18n.MessagesApi
 import views.util.Calc
-import com.dmanchester.playfop.sapi.PlayFop
+import com.dmanchester.playfop.api_s.PlayFop
 import com.dmanchester.playfop.api.Units
 
-object Application extends Controller {
+class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
+    extends Controller with I18nSupport {
 
   private val SheetSizeAndWhiteSpaceInMM = new PaperSizeAndWhiteSpace(297, 210, 20, 10, 2)  // A4
   private val mm = new Units("mm", 1)
@@ -80,7 +84,7 @@ object Application extends Controller {
 
   private def getFontFamilies() = {
 
-    val fop = PlayFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
+    val fop = playFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
 
     val fontInfo = fop.getDefaultHandler().asInstanceOf[FOTreeBuilder].getEventHandler().getFontInfo()
 
@@ -114,7 +118,7 @@ object Application extends Controller {
         val intraLabelPaddingInMM = SingleLabelScaleFactor * SheetSizeAndWhiteSpaceInMM.intraLabelPadding
 
         Ok(
-          PlayFop.process(
+          playFop.process(
             views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, mm, imageURI, label.scale(SingleLabelScaleFactor)),
             mimeType
           )
@@ -147,7 +151,7 @@ object Application extends Controller {
         }
 
         Ok(
-          PlayFop.process(
+          playFop.process(
             views.xml.labelsSheet.render(SheetSizeAndWhiteSpaceInMM, mm, SheetRows, SheetCols, imageURI, label),
             mimeType,
             autoDetectFontsForPDF = true,
