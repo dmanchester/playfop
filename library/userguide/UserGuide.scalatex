@@ -330,12 +330,12 @@
             Doing so will ensure the JAR and POM are not undesirably cached by applications that use them.
         @tr
           @td
-            @code{scaladoc/doc}
+            @code{scaladocOnly/doc}
           @td
             Generates the PlayFOP Scaladoc and places it at @code{library/target-scaladoc/scala-2.11/api/index.html}.
         @tr
           @td
-            @code{javadoc/doc}
+            @code{javadocOnly/doc}
           @td
             Generates the PlayFOP Javadoc and places it at @code{library/target-javadoc/scala-2.11/api/index.html}.
         @tr
