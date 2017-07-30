@@ -23,10 +23,10 @@ import com.dmanchester.playfop.playFopBlock
 
 class PlayFopImplSpec extends Specification {
 
-  val PdfText = "Hello there"
-  val PdfAuthor = "PlayFopSpec"
+  private val PdfText = "Hello there"
+  private val PdfAuthor = "PlayFopSpec"
 
-  val FOUserAgentBlock = { foUserAgent: FOUserAgent =>
+  private val FOUserAgentBlock = { foUserAgent: FOUserAgent =>
     foUserAgent.setAuthor(PdfAuthor)
   }
 
