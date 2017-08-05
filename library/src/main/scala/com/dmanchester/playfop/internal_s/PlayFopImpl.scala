@@ -18,6 +18,11 @@ import javax.xml.transform.sax.SAXResult
 import javax.xml.transform.stream.StreamSource
 import play.twirl.api.Xml
 
+/** The standard implementation of `[[com.dmanchester.playfop.api_s.PlayFop PlayFop]]`.
+  *
+  * Instances of this class are thread-safe. They may be used across multiple
+  * threads.
+  */
 @Singleton
 class PlayFopImpl extends PlayFop {
 

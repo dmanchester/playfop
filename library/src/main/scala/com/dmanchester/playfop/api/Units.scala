@@ -30,7 +30,7 @@ def format(value: Double): String = {
   }
 
   /** Formats `value`, displaying it with `precision` decimal places and
-    * appending `label` (e.g., "`1.2cm`").
+    * appending `label` (e.g., "`1.0cm`").
     *
     * @param value value to format
     * @return `value`, formatted
@@ -40,8 +40,8 @@ def format(value: Double): String = {
   }
 }
 
-/** Companion object of the [[Units]] class. Consists of private members for the
-  * class's use.
+/** Companion object of the `[[Units]]` class. Consists of private members for
+  * the class's use.
   */
 object Units {
 

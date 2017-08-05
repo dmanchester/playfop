@@ -8,6 +8,8 @@ import org.apache.fop.apps.Fop
 import play.twirl.api.Xml
 
 /** The primary entry point into PlayFOP for Scala applications.
+  *
+  * Classes that extend this trait are expected to be thread-safe.
   */
 trait PlayFop {
 
@@ -29,7 +31,7 @@ trait PlayFop {
     * output) and/or applying a code block to the `FOUserAgent`. Sets up the
     * `Fop` to save output to the supplied `OutputStream` in the supplied format.
     *
-    * '''Note:''' The `newFop` method is offered primarily for client code to
+    * '''Note:''' This method is offered primarily for client code to
     * interrogate the Apache FOP environment (for example, to determine
     * available fonts). Code wishing to process XSL-FO with Apache FOP should
     * rely on the `process` method instead.

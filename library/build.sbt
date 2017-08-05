@@ -134,5 +134,6 @@ lazy val commonSettings = Seq(
   ),
   resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",  // per https://etorreborre.github.io/specs2/website/SPECS2-3.6/quickstart.html
   scalacOptions ++= Seq("-deprecation", "-feature"),  // per http://alvinalexander.com/scala/scala-sbt-re-run-with-deprecation-feature-message
+  scalacOptions in Compile ++= Seq("-doc-root-content", "doc-root-content.txt"),
   scalacOptions in Test ++= Seq("-Yrangepos")  // also per specs2 Quick Start
 )

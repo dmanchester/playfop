@@ -16,6 +16,12 @@ import com.dmanchester.playfop.api_j.FOUserAgentBlock;
 import com.dmanchester.playfop.api_j.PlayFop;
 import com.dmanchester.playfop.api_j.ProcessOptions;
 
+/**
+ * The standard implementation of {@link PlayFop}.
+ *
+ * Instances of this class are thread-safe. They may be used across multiple
+ * threads.
+ */
 @Singleton
 public class PlayFopImpl implements PlayFop {
 

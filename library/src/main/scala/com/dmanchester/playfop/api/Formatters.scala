@@ -30,8 +30,8 @@ object Formatters {
     * Disregards newlines at the end of `text`.
     *
     * @param text
-    * @return a Play Twirl `[[https://www.playframework.com/documentation/2.4.x/api/scala/index.html#play.twirl.api.Xml Xml]]`
-    * instance (as opposed to a `scala-xml` one) reflecting the newline wrapping
+    * @return a Play Twirl `[[https://www.playframework.com/documentation/2.6.x/api/scala/index.html#play.twirl.api.Xml Xml]]`
+    * instance reflecting the newline wrapping
     */
   def makeNewlinesIntoFOBlocks(text: String): play.twirl.api.Xml = {
 

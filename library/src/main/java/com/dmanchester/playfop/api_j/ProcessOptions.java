@@ -3,8 +3,8 @@ package com.dmanchester.playfop.api_j;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
- * Processing options for <code>PlayFop</code> invocations. Instances can be
- * constructed via the Builder inner class.
+ * Packages processing options for {@link PlayFop} invocations. Instances can be
+ * constructed via the {@link Builder} inner class.
  *
  * Instances are immutable and thread-safe unless mutability is injected via
  * the builder's <code>foUserAgentBlock</code> method.
@@ -15,9 +15,9 @@ public class ProcessOptions {
     private FOUserAgentBlock foUserAgentBlock;
 
     /**
-     * Builder class for <code>ProcessOptions<code>. A builder instance can be
-     * customized via its methods. Once customized, calling <code>build()</code>
-     * produces a <code>ProcessOptions<code>.
+     * Builder class for {@link ProcessOptions}. A builder instance can be
+     * customized via its methods. Once customized, calling {@link #build()}
+     * produces a {@link ProcessOptions}.
      */
     public static class Builder {
 
@@ -34,7 +34,7 @@ public class ProcessOptions {
          * available to Apache FOP. Only relevant to PDF output.
          *
          * @param autoDetectFontsForPDF
-         * @return
+         * @return the Builder (for chaining method calls)
          */
         public Builder autoDetectFontsForPDF(boolean autoDetectFontsForPDF) {
             this.autoDetectFontsForPDF = autoDetectFontsForPDF;
@@ -47,13 +47,18 @@ public class ProcessOptions {
          * of a PDF file).
          *
          * @param foUserAgentBlock
-         * @return
+         * @return the Builder (for chaining method calls)
          */
         public Builder foUserAgentBlock(FOUserAgentBlock foUserAgentBlock) {
             this.foUserAgentBlock = foUserAgentBlock;
             return this;
         }
 
+        /**
+         * Produces a {@link ProcessOptions}.
+         *
+         * @return the ProcessOptions
+         */
         public ProcessOptions build() {
             return new ProcessOptions(this);
         }
