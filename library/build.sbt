@@ -112,7 +112,7 @@ lazy val commonSettings = Seq(
   name := "playfop",
   organization := "com.dmanchester",
   version := "0.4-SNAPSHOT",
-  scalaVersion := "2.11.7",
+  scalaVersion := "2.11.11",
   publishDir := new File("./dist"),
   libraryDependencies ++= Seq(
     "com.typesafe.play" %% "play" % "2.4.11" % "provided",
@@ -122,7 +122,7 @@ lazy val commonSettings = Seq(
     // The following PlayFOP dependencies are shared with other libraries
     // specified in this file. We allow those libraries' use of them to
     // determine the version numbers below. Consult
-    // ".../target/resolution-cache/reports" for more information.
+    // ".../target/scala-2.11/resolution-cache/reports" for more information.
     "com.typesafe.play" %% "twirl-api" % "1.1.1" % "provided",
     "org.slf4j" % "slf4j-api" % "1.7.21",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.1",
@@ -134,6 +134,6 @@ lazy val commonSettings = Seq(
   ),
   resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",  // per https://etorreborre.github.io/specs2/website/SPECS2-3.6/quickstart.html
   scalacOptions ++= Seq("-deprecation", "-feature"),  // per http://alvinalexander.com/scala/scala-sbt-re-run-with-deprecation-feature-message
-  scalacOptions in Compile ++= Seq("-doc-root-content", "doc-root-content.txt"),
+  scalacOptions in Compile in doc ++= Seq("-doc-root-content", "doc-root-content.txt"),
   scalacOptions in Test ++= Seq("-Yrangepos")  // also per specs2 Quick Start
 )
