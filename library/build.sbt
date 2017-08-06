@@ -117,6 +117,7 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= Seq(
     "com.typesafe.play" %% "play" % "2.4.11" % "provided",
     "org.apache.xmlgraphics" % "fop" % "2.2",
+    "org.specs2" %% "specs2-core" % "3.9.4" % "test",
     "org.apache.commons" % "commons-collections4" % "4.1" % "test",
     "com.jsuereth" %% "scala-arm" % "2.0" % "test",
     // The following PlayFOP dependencies are shared with other libraries
@@ -126,14 +127,12 @@ lazy val commonSettings = Seq(
     "com.typesafe.play" %% "twirl-api" % "1.1.1" % "provided",
     "org.slf4j" % "slf4j-api" % "1.7.21",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.1",
-    "org.specs2" %% "specs2-core" % "2.3.12" % "test",
     "junit" % "junit" % "4.11" % "test",
     "com.novocode" % "junit-interface" % "0.11" % "test",
     "org.apache.pdfbox" % "pdfbox" % "2.0.4" % "test"
     // ...end shared dependencies.
   ),
-  resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",  // per https://etorreborre.github.io/specs2/website/SPECS2-3.6/quickstart.html
   scalacOptions ++= Seq("-deprecation", "-feature"),  // per http://alvinalexander.com/scala/scala-sbt-re-run-with-deprecation-feature-message
   scalacOptions in Compile in doc ++= Seq("-doc-root-content", "doc-root-content.txt"),
-  scalacOptions in Test ++= Seq("-Yrangepos")  // also per specs2 Quick Start
+  scalacOptions in Test ++= Seq("-Yrangepos")  // per https://etorreborre.github.io/specs2/website/SPECS2-3.9.1/quickstart.html
 )
