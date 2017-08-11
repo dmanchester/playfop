@@ -1,26 +1,30 @@
 package controllers
 
 import java.io.ByteArrayOutputStream
-import javax.inject.Inject
-import scala.collection.JavaConverters._
+
+import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import scala.collection.immutable.ListMap
-import models.Label
-import models.PaperSizeAndWhiteSpace
+
 import org.apache.fop.apps.FOUserAgent
 import org.apache.fop.fo.FOTreeBuilder
 import org.apache.xmlgraphics.util.MimeConstants
+
+import com.dmanchester.playfop.api.Units
+import com.dmanchester.playfop.api_s.PlayFop
+
+import javax.inject.Inject
+import models.Label
+import models.PaperSizeAndWhiteSpace
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.Forms.number
 import play.api.data.Forms.optional
 import play.api.data.Forms.text
-import play.api.mvc.Action
-import play.api.mvc.Controller
 import play.api.i18n.I18nSupport
 import play.api.i18n.MessagesApi
+import play.api.mvc.Action
+import play.api.mvc.Controller
 import views.util.Calc
-import com.dmanchester.playfop.api_s.PlayFop
-import com.dmanchester.playfop.api.Units
 
 class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
     extends Controller with I18nSupport {

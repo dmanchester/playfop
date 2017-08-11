@@ -10,9 +10,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import models.Label;
-import models.PaperSizeAndWhiteSpace;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -21,15 +18,17 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
 import org.apache.xmlgraphics.util.MimeConstants;
 
-import play.data.Form;
-import play.mvc.Controller;
-import play.mvc.Result;
-import views.util.Calc;
-
 import com.dmanchester.playfop.api.Units;
 import com.dmanchester.playfop.api_j.FOUserAgentBlock;
 import com.dmanchester.playfop.api_j.PlayFop;
 import com.dmanchester.playfop.api_j.ProcessOptions;
+
+import models.Label;
+import models.PaperSizeAndWhiteSpace;
+import play.data.Form;
+import play.mvc.Controller;
+import play.mvc.Result;
+import views.util.Calc;
 
 public class Application extends Controller {
 
