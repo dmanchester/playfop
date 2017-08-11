@@ -7,14 +7,14 @@ import javax.inject.Singleton;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 
+import com.dmanchester.playfop.api_j.FOUserAgentBlock;
+import com.dmanchester.playfop.api_j.PlayFop;
+import com.dmanchester.playfop.api_j.ProcessOptions;
+
 import play.twirl.api.Xml;
 import scala.Function1;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
-
-import com.dmanchester.playfop.api_j.FOUserAgentBlock;
-import com.dmanchester.playfop.api_j.PlayFop;
-import com.dmanchester.playfop.api_j.ProcessOptions;
 
 /**
  * The standard implementation of {@link PlayFop}.

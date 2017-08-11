@@ -1,25 +1,24 @@
 package com.dmanchester.playfop.internal_s
 
-import com.dmanchester.playfop.TestHelpers
-import com.dmanchester.playfop.api_s.PlayFop
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.StringReader
-import java.io.StringWriter
-import scala.xml.Elem
-import scala.xml.XML
+
+import scala.collection.JavaConverters.collectionAsScalaIterableConverter
+
 import org.apache.fop.apps.FOUserAgent
 import org.apache.fop.apps.Fop
 import org.apache.fop.fo.FOTreeBuilder
 import org.apache.xmlgraphics.util.MimeConstants
 import org.specs2.mutable.Specification
+
+import com.dmanchester.playfop.TestHelpers
+import com.dmanchester.playfop.api_s.PlayFop
+import com.dmanchester.playfop.playFopBlock
+
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.sax.SAXResult
 import javax.xml.transform.stream.StreamSource
 import play.twirl.api.Xml
-import play.twirl.api.XmlFormat
-import scala.collection.JavaConverters._
-import com.dmanchester.playfop.playFopBlock
 
 class PlayFopImplSpec extends Specification {
 

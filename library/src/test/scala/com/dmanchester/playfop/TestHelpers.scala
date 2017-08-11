@@ -3,20 +3,17 @@ package com.dmanchester.playfop
 import java.io.ByteArrayInputStream
 import java.io.StringWriter
 
-import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.pdmodel.PDPage
-import org.apache.pdfbox.text.PDFTextStripper
-
-import resource.managed
-
+import scala.collection.JavaConverters.iterableAsScalaIterableConverter
 import scala.xml.Elem
-import scala.xml.Node
 import scala.xml.Text
 import scala.xml.XML
-import scala.collection.JavaConverters._
+
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.text.PDFTextStripper
 
 import play.twirl.api.Xml
 import play.twirl.api.XmlFormat
+import resource.managed
 
 /** Helper methods for use in automated tests.
   */

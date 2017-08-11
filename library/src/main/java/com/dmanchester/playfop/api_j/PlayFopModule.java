@@ -1,12 +1,12 @@
 package com.dmanchester.playfop.api_j;
 
+import com.dmanchester.playfop.internal_j.PlayFopImpl;
+
 import play.api.Configuration;
 import play.api.Environment;
 import play.api.inject.Binding;
 import play.api.inject.Module;
 import scala.collection.Seq;
-
-import com.dmanchester.playfop.internal_j.PlayFopImpl;
 
 /**
  * A Play <a href="https://playframework.com/documentation/2.6.x/api/scala/index.html#play.api.inject.Module"><code>Module</code></a>

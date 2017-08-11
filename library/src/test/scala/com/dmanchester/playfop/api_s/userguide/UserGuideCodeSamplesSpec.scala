@@ -3,9 +3,8 @@ package com.dmanchester.playfop.api_s.userguide
 import org.apache.fop.apps.FOUserAgent
 import org.apache.xmlgraphics.util.MimeConstants
 import org.specs2.mutable.Specification
+
 import com.dmanchester.playfop.TestHelpers
-import com.dmanchester.playfop.api_s.PlayFop
-import com.dmanchester.playfop.internal_s.PlayFopImpl
 import com.dmanchester.playfop.playFopBlock
 
 class UserGuideCodeSamplesSpec extends Specification {

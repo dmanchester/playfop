@@ -10,7 +10,6 @@ import scala.xml.XML
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder
 import org.apache.fop.apps.FopFactory
 import org.apache.fop.apps.FopFactoryBuilder
-import org.apache.xmlgraphics.io.ResourceResolver
 import org.slf4j.LoggerFactory
 
 /** A source of `FopFactory` instances. Caches them for performance.
