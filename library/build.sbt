@@ -113,8 +113,10 @@ lazy val commonSettings = Seq(
   organization := "com.dmanchester",
   version := "0.4-SNAPSHOT",
   scalaVersion := "2.11.11",
+  autoScalaLibrary := false,
   publishDir := new File("./dist"),
   libraryDependencies ++= Seq(
+    "org.scala-lang" % "scala-library" % "2.11.11" % "provided",
     "com.typesafe.play" %% "play" % "2.4.11" % "provided",
     "org.apache.xmlgraphics" % "fop" % "2.2",
     "org.specs2" %% "specs2-core" % "3.9.4" % "test",
