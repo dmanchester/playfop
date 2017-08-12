@@ -31,6 +31,7 @@ import models.Label;
 import models.PaperSizeAndWhiteSpace;
 import play.data.Form;
 import play.mvc.Controller;
+import play.mvc.Http.HeaderNames;
 import play.mvc.Result;
 import views.util.Calc;
 
@@ -210,7 +211,7 @@ public class Application extends Controller {
                 autoDetectFontsForPDF(true).foUserAgentBlock(foUserAgentBlock).build();
 
         String contentDispHeader = String.format("attachment; filename=%s", SHEET_FILENAME);
-        response().setHeader("Content-Disposition", contentDispHeader);  // TODO Once app is on Play 2.4, switch to HeaderNames.CONTENT_DISPOSITION
+        response().setHeader(HeaderNames.CONTENT_DISPOSITION, contentDispHeader);
 
         return ok(playFop.process(
                 views.xml.labelsSheet.render(SHEET_SIZE_AND_WHITESPACE_IN_MM, MM, SHEET_ROWS, SHEET_COLS, imageURI, label),
