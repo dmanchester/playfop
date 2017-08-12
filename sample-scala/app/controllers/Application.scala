@@ -1,6 +1,8 @@
 package controllers
 
 import java.io.ByteArrayOutputStream
+import java.nio.file.Files
+import java.nio.file.Paths
 
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import scala.collection.immutable.ListMap
@@ -53,6 +55,8 @@ class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
   private val InitialImageName = "Cityscape"
 
   private val SingleLabelScaleFactor = 3
+
+  private val AboutPageAddlInfoProperty = "about.page.addl.info"
 
   private val LabelForm = Form(
     mapping(
@@ -169,6 +173,14 @@ class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
   }
 
   def showAbout() = Action {
-    Ok(views.html.about())
+
+    val addlInfoAsHtml: Option[String] = sys.props.get(AboutPageAddlInfoProperty) map { addlInfoPath =>
+
+      val addlInfoPathObj = Paths.get(addlInfoPath)
+      val addlInfoAsBytes = Files.readAllBytes(addlInfoPathObj)
+      new String(addlInfoAsBytes, "utf-8")
+    }
+
+    Ok(views.html.about(addlInfoAsHtml))
   }
 }

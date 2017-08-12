@@ -1,4 +1,4 @@
-@()
+@(addlInfoAsHtml: Option[String])
 
 @import views.util.NavbarItem
 
@@ -19,10 +19,7 @@
           <a href="https://github.com/googlei18n/noto-emoji/tree/master/svg">Color emoji</a>
           from Google's <a href="https://www.google.com/get/noto/">Noto font family</a>
       </ul>
-      <p>
-        This is the [Scala version] of PlayFOP Labels.
-        A Java version with equivalent functionality is [also available].
-      </p>
+      @addlInfoAsHtml.map { info => @Html(info) }
     </div>
   </div>
 </div>

@@ -1,6 +1,10 @@
 package controllers;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,6 +57,8 @@ public class Application extends Controller {
     private static final String INITIAL_IMAGE_NAME = "Cityscape";
 
     private static final int SINGLE_LABEL_SCALE_FACTOR = 3;
+
+    private static final String ABOUT_PAGE__ADDL_INFO_PROPERTY = "about.page.addl.info";
 
     private static Map<String, String> getImageNamesToPaths() {
 
@@ -214,6 +220,28 @@ public class Application extends Controller {
     }
 
     public Result showAbout() {
-        return ok(views.html.about.render());
+
+        String addlInfoAsHtml;
+        String addlInfoPath = System.getProperty(ABOUT_PAGE__ADDL_INFO_PROPERTY);
+
+        if (addlInfoPath == null) {
+
+            addlInfoAsHtml = null;
+
+        } else {
+
+            Path addlInfoPathObj = Paths.get(addlInfoPath);
+
+            try {
+
+                byte[] addlInfoAsBytes = Files.readAllBytes(addlInfoPathObj);
+                addlInfoAsHtml = new String(addlInfoAsBytes, "utf-8");
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return ok(views.html.about.render(addlInfoAsHtml));
     }
 }
