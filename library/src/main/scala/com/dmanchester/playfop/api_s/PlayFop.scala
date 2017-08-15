@@ -17,6 +17,8 @@ trait PlayFop {
     * output) and/or applying a code block to the `FOUserAgent`. Generates
     * output in the specified format.
     *
+    * @tparam U the return type of `foUserAgentBlock` (typically inferred, as
+    *           opposed to explicitly specified)
     * @param xslfo the XSL-FO to process
     * @param outputFormat the format to generate
     * @param autoDetectFontsForPDF whether to auto-detect fonts
@@ -36,6 +38,8 @@ trait PlayFop {
     * available fonts). Code wishing to process XSL-FO with Apache FOP should
     * rely on the `process` method instead.
     *
+    * @tparam U the return type of `foUserAgentBlock` (typically inferred, as
+    *           opposed to explicitly specified)
     * @param outputFormat the format the `Fop` should generate
     * @param output the `OutputStream` to which the `Fop` should save output
     * @param autoDetectFontsForPDF whether to auto-detect fonts
