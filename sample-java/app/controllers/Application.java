@@ -38,7 +38,10 @@ import views.util.Calc;
 public class Application extends Controller {
 
     private static final PaperSizeAndWhiteSpace SHEET_SIZE_AND_WHITESPACE_IN_MM =
-            new PaperSizeAndWhiteSpace(297, 210, 20, 10, 2);  // A4
+            new PaperSizeAndWhiteSpace(297 /* height (A4) */,
+            210 /* width (A4) */, 20 /* margin */, 10 /* interLabelGutter */,
+            2 /* intraLabelPadding */);
+
     private static final Units MM = new Units("mm", 1);
     private static final int SHEET_ROWS = 10;
     private static final int SHEET_COLS = 3;

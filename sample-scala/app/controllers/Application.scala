@@ -31,7 +31,10 @@ import views.util.Calc
 class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
     extends Controller with I18nSupport {
 
-  private val SheetSizeAndWhiteSpaceInMM = new PaperSizeAndWhiteSpace(297, 210, 20, 10, 2)  // A4
+  private val SheetSizeAndWhiteSpaceInMM = new PaperSizeAndWhiteSpace(
+      height = 297 /* A4 */, width = 210 /* A4 */, margin = 20,
+      interLabelGutter = 10, intraLabelPadding = 2)
+
   private val mm = new Units("mm", 1)
   private val SheetRows = 10
   private val SheetCols = 3
