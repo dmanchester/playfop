@@ -8,7 +8,10 @@ import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import scala.collection.immutable.ListMap
 
 import org.apache.fop.apps.FOUserAgent
+import org.apache.fop.apps.Fop
 import org.apache.fop.fo.FOTreeBuilder
+import org.apache.fop.fonts.FontInfo
+import org.apache.fop.fonts.Typeface
 import org.apache.xmlgraphics.util.MimeConstants
 
 import com.dmanchester.playfop.api.Units
@@ -93,18 +96,18 @@ class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
     LabelForm.fill(label)
   }
 
-  private def getFontFamilies() = {
+  private def getFontFamilies(): List[String] = {
 
-    val fop = playFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
+    val fop: Fop = playFop.newFop(MimeConstants.MIME_PDF, new ByteArrayOutputStream(), autoDetectFontsForPDF = true)
 
-    val fontInfo = fop.getDefaultHandler().asInstanceOf[FOTreeBuilder].getEventHandler().getFontInfo()
+    val fontInfo: FontInfo = fop.getDefaultHandler().asInstanceOf[FOTreeBuilder].getEventHandler().getFontInfo()
 
-    val typefaces = fontInfo.getFonts().values().asScala
+    val typefaces: Iterable[Typeface] = fontInfo.getFonts().values().asScala
 
     typefaces.map(_.getFullName()).toList.sorted
   }
 
-  private def getFontSizesAndText() = {
+  private def getFontSizesAndText(): Map[String, String] = {
     val fontSizesAndTextAsSeq = FontSizesInPoints.map { size => (size.toString, size + " points") }
     ListMap(fontSizesAndTextAsSeq:_*)
   }
