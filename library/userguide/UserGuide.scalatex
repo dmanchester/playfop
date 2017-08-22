@@ -1,10 +1,14 @@
 @import Main._
 
+@val version = "0.9-SNAPSHOT"
+@val siteUrl = "file:///home/dan/dmanchester-com-mockup"
+@val versionedSiteUrl = siteUrl + "/" + version
+
 @sect{PlayFOP User Guide}
 
   @p
     PlayFOP is a library for generating PDFs, images, and other types of output in @lnk("Play Framework", "https://www.playframework.com/") applications.
-    PlayFOP accepts XSL-FO that an application has generated via a Play @lnk("Twirl", "https://www.playframework.com/documentation/2.5.x/ScalaTemplates") template and processes it with @lnk("Apache FOP", "https://xmlgraphics.apache.org/fop/").
+    PlayFOP accepts XSL-FO that an application has generated via a Play @lnk("Twirl", "https://www.playframework.com/documentation/2.6.x/ScalaTemplates") template and processes it with @lnk("Apache FOP", "https://xmlgraphics.apache.org/fop/").
 
   @sect{Overview}
 
@@ -21,9 +25,8 @@
         Flexible integration into your application via dependency injection.
     @p
       PlayFOP supports Play applications written in Scala or Java.
-
-    @p
-      [TODO To what extent to link to: source on GitHub; live sample application?]
+      Its source is @lnk("available on GitHub", "https://github.com/dmanchester/playfop"),
+      and a live demo is available @lnk("here", siteUrl + "/live-demo").
 
     @sect{Package Structure}
 
@@ -31,15 +34,25 @@
         PlayFOP's public API is divided into three packages.
         For a given application, package @code{com.dmanchester.playfop.api} is relevant, as well as either @code{com.dmanchester.playfop.api_s} or @code{com.dmanchester.playfop.api_j}, depending on the application's language:
 
-      @table
-        @tr
-          @th{Package} @th{Relevant to Applications in...} @th{Documentation}
-        @tr
-          @td{com.dmanchester.playfop.api} @td{Scala or Java} @td{[Scaladoc]}
-        @tr
-          @td{com.dmanchester.playfop.api_s} @td{Scala} @td{[Scaladoc]}
-        @tr
-          @td{com.dmanchester.playfop.api_j} @td{Java} @td{[Javadoc]}
+      @table(`class`:="pure-table pure-table-bordered")
+        @thead
+          @tr
+            @th{Package}
+            @th{Relevant to Applications in...}
+            @th{Documentation}
+        @tbody
+          @tr
+            @td{@code{com.dmanchester.playfop.api}}
+            @td{Scala or Java}
+            @td{@lnk("Scaladoc", versionedSiteUrl + "/scaladoc/index.html")}
+          @tr
+            @td{@code{com.dmanchester.playfop.api_s}}
+            @td{Scala}
+            @td{@lnk("Scaladoc", versionedSiteUrl + "/scaladoc/index.html")}
+          @tr
+            @td{@code{com.dmanchester.playfop.api_j}}
+            @td{Java}
+            @td{@lnk("Javadoc", versionedSiteUrl + "/javadoc/index.html")}
 
   @sect{Using PlayFOP}
 
@@ -47,10 +60,9 @@
       Add PlayFOP as a dependency to your application's @code{build.sbt}:
 
     @code
-      libraryDependencies ++= Seq(
-        ...,
-        TODO Finalize next line
-        "com.dmanchester" %% "playfop" % "0.4-SNAPSHOT" from "https://dmanchester.com/foo"
+      libraryDependencies ++= Seq(@br
+      @{"\u00A0" * 2}...,@br
+      @{"\u00A0" * 2}"com.dmanchester" %% "playfop" % "@version"@br
       )
 
     @p
@@ -66,8 +78,8 @@
 
       @p
         Then, inject a @code{PlayFop} object into your controller.
-        More specifically, and assuming you're using constructor injection, add a @code{PlayFop} class parameter (package @code{com.dmanchester.playfop.api_s}).
-        Also, if you aren't already using the @code{@@Inject} annotation (package @code{javax.inject}), apply it, too:
+        More specifically, and assuming you're using constructor injection, add a @code{PlayFop} class parameter (package @code{com.dmanchester.playfop.api_s}),
+        and if you aren't already using the @code{@@Inject} annotation (package @code{javax.inject}), apply it, too:
 
       @hl.scala
         class MyController @@Inject() (val playFop: PlayFop) extends Controller {
@@ -167,7 +179,7 @@
         The @code{FOUserAgent} block is an implementation of the single-method @code{FOUserAgentBlock} interface.
 
       @p
-        The following code examples present the syntax for using @code{autoDetectFontsForPDF} and the @code{FOUserAgent} block.
+        The following code examples present the syntax for using @code{autoDetectFontsForPDF} and a @code{FOUserAgent} block.
 
       @p
         @b{Complex @code{process} Example, Scala}
@@ -280,15 +292,14 @@
     @sect{Logging}
 
       @p
-        You can configure logging for PlayFOP and Apache FOP via your @code{application.conf}.
+        You can configure logging for PlayFOP and Apache FOP via your @code{logback.xml} file.
         PlayFOP logs to the @code{com.dmanchester.playfop} package; Apache FOP, to the @code{org.apache.fop} and @code{logger.org.apache.xmlgraphics} packages.
-        So, your logging configuration could be:
+        So, your logging configuration might include:
 
-      @pre
-        @code
-          logger.com.dmanchester.playfop=INFO
-          logger.org.apache.fop=ERROR
-          logger.org.apache.xmlgraphics=ERROR
+      @hl.xml
+        <logger name="com.dmanchester.playfop" level="INFO" />
+        <logger name="org.apache.fop" level="ERROR" />
+        <logger name="org.apache.xmlgraphics" level="ERROR" />
 
   @sect{Developing PlayFOP}
 
@@ -297,7 +308,11 @@
       It includes a full suite of tests (@lnk("specs2", "http://etorreborre.github.io/specs2/") for Scala code, @lnk("JUnit", "http://junit.org/") for Java code).
 
     @p
-      When you're drafting changes to PlayFOP, you'll likely make use of the following @code{sbt} commands:
+      To begin developing changes to PlayFOP, update @code{build.sbt} and @code{UserGuide.scalatex} with a "@code{...-@lnk("SNAPSHOT", "http://stackoverflow.com/questions/5901378/what-exactly-is-a-maven-snapshot-and-why-do-we-need-it")}" version number.
+      (Doing so will ensure locally published JARs and POMs are not undesirably cached by applications that use them.)
+
+    @p
+      As you develop your changes, you'll likely make use of a combination of the following @code{sbt} commands:
 
     @table(`class`:="pure-table pure-table-bordered")
       @thead
@@ -325,9 +340,6 @@
             @code{publishLocal}
           @td
             Compiles the source code and places the resulting JAR and POM file in your local Ivy repository.
-            @br{} @br{}
-            When drafting changes, you'll likely want to publish @lnk("snapshot", "http://stackoverflow.com/questions/5901378/what-exactly-is-a-maven-snapshot-and-why-do-we-need-it") versions by relying on a snapshot version number in @code{build.sbt} (e.g., "1.0-SNAPSHOT").
-            Doing so will ensure the JAR and POM are not undesirably cached by applications that use them.
         @tr
           @td
             @code{scaladocOnly/doc}
@@ -343,11 +355,9 @@
             @code{userguide/run}
           @td
             Generates the user guide and places it at @code{library/userguide/target/scalatex/index.html}.
-            @br{} @br{}
-            If you add the @code{--validate} option, links in the guide will be validated when it is generated.
 
     @p
-      When your changes are final, you'll want to change to a non-snapshot version in @code{build.sbt} and execute the following commands:
+      When your changes are final, you'll want to change to a non-snapshot version number in @code{build.sbt} and @code{UserGuide.scalatex} and execute the following commands:
 
     @table(`class`:="pure-table pure-table-bordered")
       @thead
@@ -359,7 +369,7 @@
           @td
             @code{cleanAll}
           @td
-            Deletes the @code{library/dist} directory, as well as previous compilation results, previously generated Scaladoc and Javadoc, and the previously generated user's guide (if applicable).
+            Deletes the @code{library/dist} directory, as well as previous compilation results, previously generated Scaladoc and Javadoc, and the previously generated user guide (if applicable).
         @tr
           @td
             @code{publishAll}

@@ -86,7 +86,7 @@ lazy val javadocOnly = project.
 lazy val userguide = scalatex.ScalatexReadme(
   projectId = "userguide",
   wd = file(""),
-  url = "https://github.com/lihaoyi/scalatex/tree/master",  // TODO Should point to Scalatex project, or our own?
+  url = "https://github.com/dmanchester/playfop/tree/master",
   source = "UserGuide"
 ).settings(commonSettings: _*).  // only common setting we need is publishDir
   settings(
@@ -111,7 +111,7 @@ lazy val userguide = scalatex.ScalatexReadme(
 lazy val commonSettings = Seq(
   name := "playfop",
   organization := "com.dmanchester",
-  version := "0.4-SNAPSHOT",
+  version := "0.9-SNAPSHOT",
   scalaVersion := "2.11.11",
   autoScalaLibrary := false,
   publishDir := new File("./dist"),
