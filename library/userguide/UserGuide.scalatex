@@ -1,8 +1,8 @@
 @import Main._
 
 @val version = "0.9-SNAPSHOT"
-@val siteUrl = "file:///home/dan/dmanchester-com-mockup"
-@val versionedSiteUrl = siteUrl + "/" + version
+@val playFopUrl = "file:///home/dan/dmanchester-com-mockup/playfop"
+@val versionedPlayFopUrl = playFopUrl + "/" + version
 
 @sect{PlayFOP User Guide}
 
@@ -31,7 +31,7 @@
 
     @p
       PlayFOP's source is @lnk("available on GitHub", "https://github.com/dmanchester/playfop"),
-      and a live demo is available @lnk("here", siteUrl + "/live-demo").
+      and a live demo is available @lnk("here", playFopUrl + "/live-demo").
 
     @sect{Package Structure}
 
@@ -49,15 +49,15 @@
           @tr
             @td{@code{com.dmanchester.playfop.api}}
             @td{Scala or Java}
-            @td{@lnk("Scaladoc", versionedSiteUrl + "/scaladoc/index.html")}
+            @td{@lnk("Scaladoc", versionedPlayFopUrl + "/scaladoc/index.html")}
           @tr
             @td{@code{com.dmanchester.playfop.api_s}}
             @td{Scala}
-            @td{@lnk("Scaladoc", versionedSiteUrl + "/scaladoc/index.html")}
+            @td{@lnk("Scaladoc", versionedPlayFopUrl + "/scaladoc/index.html")}
           @tr
             @td{@code{com.dmanchester.playfop.api_j}}
             @td{Java}
-            @td{@lnk("Javadoc", versionedSiteUrl + "/javadoc/index.html")}
+            @td{@lnk("Javadoc", versionedPlayFopUrl + "/javadoc/index.html")}
 
   @sect{Using PlayFOP}
 
