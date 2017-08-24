@@ -6,6 +6,8 @@
 
 @sect{PlayFOP User Guide}
 
+  @p{@i{This guide applies to PlayFOP @b{@version}}.}
+
   @p
     PlayFOP is a library for generating PDFs, images, and other types of output in @lnk("Play Framework", "https://www.playframework.com/") applications.
     PlayFOP accepts XSL-FO that an application has generated via a Play @lnk("Twirl", "https://www.playframework.com/documentation/2.6.x/ScalaTemplates") template and processes it with @lnk("Apache FOP", "https://xmlgraphics.apache.org/fop/").
@@ -24,8 +26,11 @@
       @li
         Flexible integration into your application via dependency injection.
     @p
-      PlayFOP supports Play applications written in Scala or Java.
-      Its source is @lnk("available on GitHub", "https://github.com/dmanchester/playfop"),
+      PlayFOP works with Play applications written in Scala or Java.
+      It supports Scala 2.11 and Play 2.4 or later.
+
+    @p
+      PlayFOP's source is @lnk("available on GitHub", "https://github.com/dmanchester/playfop"),
       and a live demo is available @lnk("here", siteUrl + "/live-demo").
 
     @sect{Package Structure}
@@ -61,8 +66,8 @@
 
     @code
       libraryDependencies ++= Seq(@br
-      @{"\u00A0" * 2}...,@br
-      @{"\u00A0" * 2}"com.dmanchester" %% "playfop" % "@version"@br
+        ...,@br
+        "com.dmanchester" %% "playfop" % "@version"@br
       )
 
     @p
