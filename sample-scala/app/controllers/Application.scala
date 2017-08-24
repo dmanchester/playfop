@@ -45,11 +45,13 @@ class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
   private val SheetPdfCreator = "PlayFOP Labels, Scala version";  // producer already references Apache FOP, so no need to do so again here
 
   private val FontSizesInPoints = (6 to 18)
-
+  private val ImageNameCityscape = "Cityscape"
+  private val ImageNameSunrise = "Sunrise"
+  private val ImageNameVolcano = "Volcano"
   private val ImageNamesToPaths = ListMap(
-    "Cityscape" -> "images/emoji_u1f306_cityscape.svg",
-    "Sunrise" -> "images/emoji_u1f304_sunrise.svg",
-    "Volcano" -> "images/emoji_u1f30b_volcano.svg"
+    ImageNameCityscape -> "images/emoji_u1f306_cityscape.svg",
+    ImageNameSunrise -> "images/emoji_u1f304_sunrise.svg",
+    ImageNameVolcano -> "images/emoji_u1f30b_volcano.svg"
   )
 
   private val InitialText =
@@ -58,7 +60,7 @@ class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
       |Anytown, MA  09876""".stripMargin
   private val InitialFontFamily = "DejaVu Sans Condensed"
   private val InitialFontSizeInPoints = 9
-  private val InitialImageName = "Cityscape"
+  private val InitialImageName = ImageNameCityscape
 
   private val SingleLabelScaleFactor = 3
 

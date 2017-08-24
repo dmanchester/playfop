@@ -50,6 +50,9 @@ public class Application extends Controller {
 
     private static final int FONT_SIZE_IN_POINTS__START = 6;
     private static final int FONT_SIZE_IN_POINTS__END = 18;
+    private static final String IMAGE_NAME__CITYSCAPE = "Cityscape";
+    private static final String IMAGE_NAME__SUNRISE = "Sunrise";
+    private static final String IMAGE_NAME__VOLCANO = "Volcano";
     private static final Map<String, String> IMAGE_NAMES_TO_PATHS = Collections.unmodifiableMap(getImageNamesToPaths());
 
     private static final String INITIAL_TEXT =
@@ -58,7 +61,7 @@ public class Application extends Controller {
             "Anytown, MA  09876";
     private static final String INITIAL_FONT_FAMILY = "DejaVu Sans Condensed";
     private static final Integer INITIAL_FONT_SIZE_IN_POINTS = 9;
-    private static final String INITIAL_IMAGE_NAME = "Cityscape";
+    private static final String INITIAL_IMAGE_NAME = IMAGE_NAME__CITYSCAPE;
 
     private static final int SINGLE_LABEL_SCALE_FACTOR = 3;
 
@@ -68,9 +71,9 @@ public class Application extends Controller {
 
         Map<String, String> imageNamesToPaths = new LinkedHashMap<String, String>();
 
-        imageNamesToPaths.put("Cityscape", "images/emoji_u1f306_cityscape.svg");
-        imageNamesToPaths.put("Sunrise", "images/emoji_u1f304_sunrise.svg");
-        imageNamesToPaths.put("Volcano", "images/emoji_u1f30b_volcano.svg");
+        imageNamesToPaths.put(IMAGE_NAME__CITYSCAPE, "images/emoji_u1f306_cityscape.svg");
+        imageNamesToPaths.put(IMAGE_NAME__SUNRISE, "images/emoji_u1f304_sunrise.svg");
+        imageNamesToPaths.put(IMAGE_NAME__VOLCANO, "images/emoji_u1f30b_volcano.svg");
 
         return imageNamesToPaths;
     }
