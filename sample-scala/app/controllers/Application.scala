@@ -108,8 +108,8 @@ class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
   }
 
   private def getFontSizesAndText(): Map[String, String] = {
-    val fontSizesAndTextAsSeq = FontSizesInPoints.map { size => (size.toString, size + " points") }
-    ListMap(fontSizesAndTextAsSeq:_*)
+    val fontSizesAndText = FontSizesInPoints.map { size => (size.toString, size + " points") }
+    ListMap(fontSizesAndText:_*)
   }
 
   def generateSingleLabelAsPNG() = Action { implicit request =>
