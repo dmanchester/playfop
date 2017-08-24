@@ -11,7 +11,7 @@ A Java version of PlayFOP Labels with equivalent functionality is [also availabl
 Miscellaneous
 -------------
 
-PlayFOP accepts an optional `about.page.addl.info` system option.
+PlayFOP Labels accepts an optional `about.page.addl.info` system option.
 It can be set to the name of an HTML file whose contents should be added to the About page:
 
 ```
