@@ -14,6 +14,8 @@
   -->
   <logger name="play" level="INFO" />
   <logger name="com.dmanchester.playfop" level="INFO" />
+  <logger name="org.apache.fop" level="ERROR" />
+  <logger name="org.apache.xmlgraphics" level="ERROR" />
   <logger name="application" level="DEBUG" />
 
   <root level="ERROR">
