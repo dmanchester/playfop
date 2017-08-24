@@ -1,4 +1,4 @@
-@(addlInfoAsHtml: String)
+@(playFopUrl: String, addlInfoAsHtml: String)
 
 @import views.util.NavbarItem
 
@@ -8,8 +8,8 @@
   <div class="row">
     <div class="col-md-12">
       <p>
-        PlayFOP Labels is a sample <a href="https://www.playframework.com/">Play Framework</a> application for [PlayFOP] and <a href="https://xmlgraphics.apache.org/fop/">Apache FOP</a>.
-        It demonstrates generating PDFs and images (PNGs) from Play <a href="https://www.playframework.com/documentation/2.3.x/ScalaTemplates">Twirl</a> templates.
+        PlayFOP Labels is a sample <a href="https://www.playframework.com/">Play Framework</a> application for <a href="@playFopUrl">PlayFOP</a> and <a href="https://xmlgraphics.apache.org/fop/">Apache FOP</a>.
+        It demonstrates generating PDFs and images (PNGs) from Play <a href="https://www.playframework.com/documentation/2.6.x/ScalaTemplates">Twirl</a> templates.
       </p>
       <p>PlayFOP Labels relies on:</p>
       <ul>

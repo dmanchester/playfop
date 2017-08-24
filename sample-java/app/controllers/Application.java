@@ -65,6 +65,8 @@ public class Application extends Controller {
 
     private static final int SINGLE_LABEL_SCALE_FACTOR = 3;
 
+    private static final String PLAYFOP_URL = "file:///home/dan/dmanchester-com-mockup/playfop";
+
     private static final String ABOUT_PAGE__ADDL_INFO_PROPERTY = "about.page.addl.info";
 
     private static Map<String, String> getImageNamesToPaths() {
@@ -249,6 +251,6 @@ public class Application extends Controller {
             }
         }
 
-        return ok(views.html.about.render(addlInfoAsHtml));
+        return ok(views.html.about.render(PLAYFOP_URL, addlInfoAsHtml));
     }
 }

@@ -64,6 +64,8 @@ class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
 
   private val SingleLabelScaleFactor = 3
 
+  private val PlayFopUrl = "file:///home/dan/dmanchester-com-mockup/playfop"
+
   private val AboutPageAddlInfoProperty = "about.page.addl.info"
 
   private val LabelForm = Form(
@@ -189,6 +191,6 @@ class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
       new String(addlInfoAsBytes, "utf-8")
     }
 
-    Ok(views.html.about(addlInfoAsHtml))
+    Ok(views.html.about(PlayFopUrl, addlInfoAsHtml))
   }
 }
