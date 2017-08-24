@@ -86,12 +86,12 @@ class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
 
     // Confirm the initial font family is available.
     val fontFamilies = getFontFamilies()
-    val initialFontFamily = if (fontFamilies.contains(InitialFontFamily))
+    val fontFamily = if (fontFamilies.contains(InitialFontFamily))
       InitialFontFamily
     else
       fontFamilies.head  // we presume the List has at least one element
 
-    val label =  Label(InitialText, InitialFontFamily, InitialFontSizeInPoints, Some(InitialImageName))
+    val label =  Label(InitialText, fontFamily, InitialFontSizeInPoints, Some(InitialImageName))
 
     LabelForm.fill(label)
   }
