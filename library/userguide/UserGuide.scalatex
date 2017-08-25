@@ -28,6 +28,7 @@
     @p
       PlayFOP works with Play applications written in Scala or Java.
       It supports Scala 2.11 and Play 2.4 or later.
+      (It has been tested with Play 2.4 and Play 2.5.)
 
     @p
       PlayFOP's source is @lnk("available on GitHub", "https://github.com/dmanchester/playfop"),
