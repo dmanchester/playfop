@@ -67,7 +67,7 @@ class Application @Inject() (controllerComponents: ControllerComponents, val pla
 
   private val AboutPageAddlInfoProperty = "about.page.addl.info"
 
-  private val LabelForm = Form(
+  private val LabelForm: Form[Label] = Form(
     mapping(
       "text" -> text(maxLength = Label.TextMaxLength),
       "fontFamily" -> text,
@@ -85,7 +85,7 @@ class Application @Inject() (controllerComponents: ControllerComponents, val pla
     Ok(views.html.labelDesign(getInitialForm(), getFontFamilies(), getFontSizesAndText(), imageNames))
   }
 
-  private def getInitialForm() = {
+  private def getInitialForm(): Form[Label] = {
 
     // Confirm the initial font family is available.
     val fontFamilies = getFontFamilies()
@@ -146,8 +146,9 @@ class Application @Inject() (controllerComponents: ControllerComponents, val pla
 
   private def getImageURI(imageName: Option[String]): Option[String] = {
 
-    imageName.flatMap(imageName => ImageNamesToPaths.get(imageName)).
-        map(imagePath => this.getClass().getClassLoader().getResource(imagePath).toString())
+    val imagePath: Option[String] = imageName.flatMap(ImageNamesToPaths.get(_))
+
+    imagePath.map(imagePath => this.getClass().getClassLoader().getResource(imagePath).toString())
   }
 
   def generateLabelsSheetAsPDF() = Action { implicit request =>
