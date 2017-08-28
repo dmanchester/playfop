@@ -20,6 +20,7 @@ import com.dmanchester.playfop.api_s.PlayFop
 import javax.inject.Inject
 import models.Label
 import models.PaperSizeAndWhiteSpace
+import play.api.Configuration
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.Forms.number
@@ -30,8 +31,8 @@ import play.api.mvc.AbstractController
 import play.api.mvc.ControllerComponents
 import views.util.Calc
 
-class Application @Inject() (controllerComponents: ControllerComponents, val playFop: PlayFop)
-    extends AbstractController(controllerComponents) with I18nSupport {
+class Application @Inject() (config: Configuration, cc: ControllerComponents, val playFop: PlayFop)
+    extends AbstractController(cc) with I18nSupport {
 
   private val SheetSizeAndWhiteSpaceInMM = new PaperSizeAndWhiteSpace(
       height = 297 /* A4 */, width = 210 /* A4 */, margin = 20,
@@ -184,7 +185,9 @@ class Application @Inject() (controllerComponents: ControllerComponents, val pla
 
   def showAbout() = Action {
 
-    val addlInfoAsHtml: Option[String] = sys.props.get(AboutPageAddlInfoProperty) map { addlInfoPath =>
+    val addlInfoPath: Option[String] = config.get[Option[String]](AboutPageAddlInfoProperty)
+
+    val addlInfoAsHtml: Option[String] = addlInfoPath.map { addlInfoPath =>
 
       val addlInfoPathObj = Paths.get(addlInfoPath)
       val addlInfoAsBytes = Files.readAllBytes(addlInfoPathObj)
