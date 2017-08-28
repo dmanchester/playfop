@@ -28,7 +28,7 @@
     @p
       PlayFOP works with Play applications written in Scala or Java.
       It supports Scala 2.11 and Play 2.4 or later.
-      (It has been tested with Play 2.4 and Play 2.5.)
+      (It has been tested with Play 2.4 - 2.6.)
 
     @p
       PlayFOP's source is @lnk("available on GitHub", "https://github.com/dmanchester/playfop"),
@@ -85,7 +85,16 @@
       @p
         Then, inject a @code{PlayFop} object into your controller.
         More specifically, and assuming you're using constructor injection, add a @code{PlayFop} class parameter (package @code{com.dmanchester.playfop.api_s}),
-        and if you aren't already using the @code{@@Inject} annotation (package @code{javax.inject}), apply it, too:
+        and if you aren't already using the @code{@@Inject} annotation (package @code{javax.inject}), apply it, too.
+
+      @b{Scala Constructor Injection Example, Play 2.6}
+
+      @hl.scala
+        class MyController @@Inject() (cc: ControllerComponents, val playFop: PlayFop)
+            extends AbstractController(cc) {
+          ...
+
+      @b{Scala Constructor Injection Example, Play 2.4 and Play 2.5}
 
       @hl.scala
         class MyController @@Inject() (val playFop: PlayFop) extends Controller {
@@ -102,7 +111,9 @@
       @p
         Then, inject a @code{PlayFop} instance into your controller.
         More specifically, and assuming you're using constructor injection, add a @code{PlayFop} field (package @code{com.dmanchester.playfop.api_j}).
-        Add a constructor parameter to set it and apply the @code{@@Inject} annotation (package @code{javax.inject}):
+        Add a constructor parameter to set it and apply the @code{@@Inject} annotation (package @code{javax.inject}).
+
+      @b{Java Constructor Injection Example}
 
       @hl.scala
         public class MyController extends Controller {

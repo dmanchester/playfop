@@ -30,6 +30,7 @@ import com.dmanchester.playfop.api_j.ProcessOptions;
 import models.Label;
 import models.PaperSizeAndWhiteSpace;
 import play.data.Form;
+import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Http.HeaderNames;
 import play.mvc.Result;
@@ -80,10 +81,12 @@ public class Application extends Controller {
         return imageNamesToPaths;
     }
 
+    private FormFactory formFactory;
     private PlayFop playFop;
 
     @Inject
-    public Application(PlayFop playFop) {
+    public Application(FormFactory formFactory, PlayFop playFop) {
+        this.formFactory = formFactory;
         this.playFop = playFop;
     }
 
@@ -115,7 +118,7 @@ public class Application extends Controller {
             initialLabel.setFontFamily(fontFamilies.get(0));    // we presume the List has at least one element
         }
 
-        return Form.form(Label.class).fill(initialLabel);
+        return formFactory.form(Label.class).fill(initialLabel);
     }
 
     private List<String> getFontFamilies() {
@@ -157,7 +160,7 @@ public class Application extends Controller {
 
     public Result generateSingleLabelAsPNG() {
 
-        Form<Label> labelForm = Form.form(Label.class).bindFromRequest();
+        Form<Label> labelForm = formFactory.form(Label.class).bindFromRequest();
         if (labelForm.hasErrors()) {
             // UI prevents user from entering bad input; only a hand-rolled
             // input URL can trigger errors. We want to alert user to those
@@ -194,7 +197,7 @@ public class Application extends Controller {
 
     public Result generateLabelsSheetAsPDF() {
 
-        Form<Label> labelForm = Form.form(Label.class).bindFromRequest();
+        Form<Label> labelForm = formFactory.form(Label.class).bindFromRequest();
         if (labelForm.hasErrors()) {
             // See comment above about not bothering with a nice presentation.
             return badRequest(labelForm.errorsAsJson());

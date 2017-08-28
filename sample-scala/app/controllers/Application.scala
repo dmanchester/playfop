@@ -26,13 +26,12 @@ import play.api.data.Forms.number
 import play.api.data.Forms.optional
 import play.api.data.Forms.text
 import play.api.i18n.I18nSupport
-import play.api.i18n.MessagesApi
-import play.api.mvc.Action
-import play.api.mvc.Controller
+import play.api.mvc.AbstractController
+import play.api.mvc.ControllerComponents
 import views.util.Calc
 
-class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
-    extends Controller with I18nSupport {
+class Application @Inject() (controllerComponents: ControllerComponents, val playFop: PlayFop)
+    extends AbstractController(controllerComponents) with I18nSupport {
 
   private val SheetSizeAndWhiteSpaceInMM = new PaperSizeAndWhiteSpace(
       height = 297 /* A4 */, width = 210 /* A4 */, margin = 20,
@@ -81,7 +80,7 @@ class Application @Inject() (val playFop: PlayFop, val messagesApi: MessagesApi)
     Redirect(routes.Application.designLabels())
   }
 
-  def designLabels() = Action {
+  def designLabels() = Action { implicit request =>
     val imageNames = "" :: ImageNamesToPaths.keys.toList  // at top of list, offer a no-image option
     Ok(views.html.labelDesign(getInitialForm(), getFontFamilies(), getFontSizesAndText(), imageNames))
   }
