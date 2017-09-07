@@ -18,7 +18,7 @@ object Formatters {
     * @return `text`, reflecting the replacements
     */
   def makeSpacesNonBreaking(text: String): String = {
-    text.replace(' ', NBSP);
+    text.replace(' ', NBSP)
   }
 
   /** Wraps each newline-terminated run of characters within `text` in

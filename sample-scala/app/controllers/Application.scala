@@ -42,7 +42,7 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
   private val SheetRows = 10
   private val SheetCols = 3
   private val SheetFilename = "labels-sheet.pdf"
-  private val SheetPdfCreator = "PlayFOP Labels, Scala version";  // producer already references Apache FOP, so no need to do so again here
+  private val SheetPdfCreator = "PlayFOP Labels, Scala version"  // producer already references Apache FOP, so no need to do so again here
 
   private val FontSizesInPoints = (6 to 18)
   private val ImageNameCityscape = "Cityscape"
