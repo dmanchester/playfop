@@ -184,7 +184,7 @@
           @li
             @code{autoDetectFontsForPDF}: Whether, when creating PDF files, Apache FOP should automatically detect operating system fonts (and make them available for PDF files).
           @li
-            @code{FOUserAgent} block: A block of code that modifies the @code{FOUserAgent} that Apache FOP will use.
+            an @code{FOUserAgent} block: A block of code that modifies the @code{FOUserAgent} that Apache FOP will use.
             Useful for setting a PDF file's subject, author, etc.
 
       @p
@@ -196,7 +196,7 @@
         The @code{FOUserAgent} block is an implementation of the single-method @code{FOUserAgentBlock} interface.
 
       @p
-        The following code examples present the syntax for using @code{autoDetectFontsForPDF} and a @code{FOUserAgent} block.
+        The following code examples present the syntax for using @code{autoDetectFontsForPDF} and an @code{FOUserAgent} block.
 
       @p
         @b{Complex @code{process} Example, Scala}
