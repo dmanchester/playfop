@@ -136,7 +136,7 @@ lazy val commonSettings = Seq(
     // ...end shared dependencies.
   ),
   scalacOptions ++= Seq("-deprecation", "-feature"),  // per http://alvinalexander.com/scala/scala-sbt-re-run-with-deprecation-feature-message
-  scalacOptions in Compile in doc ++= Seq("-doc-root-content", "doc-root-content.txt"),
+  scalacOptions in Compile in doc ++= Seq("-doc-root-content", "doc-root-content.html"),
   scalacOptions in Test ++= Seq("-Yrangepos")  // per https://etorreborre.github.io/specs2/website/SPECS2-3.9.1/quickstart.html
 )
 
