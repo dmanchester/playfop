@@ -5,7 +5,8 @@
 .sbtserver/
 .settings/
 bin/
-dist/
+dist-2.11/
+dist-2.12/
 logs/
 project/.sbtserver
 target/

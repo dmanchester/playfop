@@ -112,12 +112,13 @@ lazy val commonSettings = Seq(
   name := "playfop",
   organization := "com.dmanchester",
   version := "0.9-SNAPSHOT",
-  scalaVersion := "2.11.11",
+  scalaVersion := "2.12.3",
+  crossScalaVersions := Seq("2.11.11", "2.12.3"),
   autoScalaLibrary := false,
-  publishDir := new File("./dist"),
+  publishDir := new File("./dist-" + CrossVersion.binaryScalaVersion(scalaVersion.value)),
   libraryDependencies ++= Seq(
-    "org.scala-lang" % "scala-library" % "2.11.11" % "provided",
-    "com.typesafe.play" %% "play" % "2.4.11" % "provided",
+    "org.scala-lang" % "scala-library" % scalaVersion.value % "provided",
+    "com.typesafe.play" %% "play" % scalaVersionToPlayVersion(scalaVersion.value) % "provided",
     "org.apache.xmlgraphics" % "fop" % "2.2",
     "org.specs2" %% "specs2-core" % "3.9.4" % "test",
     "org.apache.commons" % "commons-collections4" % "4.1" % "test",
@@ -126,9 +127,9 @@ lazy val commonSettings = Seq(
     // specified in this file. We allow those libraries' use of them to
     // determine the version numbers below. Consult
     // ".../target/scala-2.11/resolution-cache/reports" for more information.
-    "com.typesafe.play" %% "twirl-api" % "1.1.1" % "provided",
+    "com.typesafe.play" %% "twirl-api" % "1.3.4" % "provided",
     "org.slf4j" % "slf4j-api" % "1.7.21",
-    "org.scala-lang.modules" %% "scala-xml" % "1.0.1",
+    "org.scala-lang.modules" %% "scala-xml" % "1.0.6",
     "junit" % "junit" % "4.11" % "test",
     "com.novocode" % "junit-interface" % "0.11" % "test",
     "org.apache.pdfbox" % "pdfbox" % "2.0.4" % "test"
@@ -138,3 +139,20 @@ lazy val commonSettings = Seq(
   scalacOptions in Compile in doc ++= Seq("-doc-root-content", "doc-root-content.txt"),
   scalacOptions in Test ++= Seq("-Yrangepos")  // per https://etorreborre.github.io/specs2/website/SPECS2-3.9.1/quickstart.html
 )
+
+/** For a given Scala version, returns a Play version.
+  *
+  * The "major" portion of the Play version is the earliest one that PlayFOP
+  * seeks to support for that Scala version: Play 2.6.x for Scala 2.12;
+  * Play 2.4.x for Scala 2.11.
+  *
+  * The "minor" portion of the Play version simply seeks to be recent.
+  */
+lazy val scalaVersionToPlayVersion = { scalaVersion: String =>
+
+  CrossVersion.binaryScalaVersion(scalaVersion) match {
+    case "2.12" => "2.6.3"
+    case "2.11" => "2.4.11"
+    case _ => throw new UnsupportedOperationException(s"Unsupported Scala version: '$scalaVersion'")
+  }
+}
