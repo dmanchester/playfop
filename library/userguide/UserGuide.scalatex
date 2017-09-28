@@ -1,64 +1,44 @@
 @import Main._
 
 @val version = "0.9-SNAPSHOT"
-@val playFopUrl = "file:///home/dan/dmanchester-com-mockup/playfop"
+@val playFopUrl = "file:///home/dan/dmanchester-com-content/playfop"
 @val versionedPlayFopUrl = playFopUrl + "/" + version
 
 @sect{PlayFOP User Guide}
 
-  @p{@i{This guide applies to PlayFOP @b{@version}}.}
+  @p
+    @i
+      This guide applies to PlayFOP @b{@version}.
 
   @p
-    PlayFOP is a library for generating PDFs, images, and other types of output in @lnk("Play Framework", "https://www.playframework.com/") applications.
-    PlayFOP accepts XSL-FO that an application has generated via a Play @lnk("Twirl", "https://www.playframework.com/documentation/2.6.x/ScalaTemplates") template and processes it with @lnk("Apache FOP", "https://xmlgraphics.apache.org/fop/").
+    @i
+      For information on PlayFOP beyond this user guide, see its @lnk("homepage", playFopUrl).
 
-  @sect{Overview}
-
-    @p
-      PlayFOP offers:
-    @ul
-      @li
-        A concise invocation syntax. Go from XSL-FO to finished output in as little as a single method call.
-      @li
-        Transparent caching of expensive Apache FOP objects.
-      @li
-        Formatters for working with Apache FOP units, and for preserving whitespace in output.
-      @li
-        Flexible integration into your application via dependency injection.
-    @p
-      PlayFOP works with Play applications written in Scala or Java.
-      It supports Scala 2.11 and 2.12, and Play 2.4 or later.
-      (It has been tested with Play 2.4 - 2.6.)
+  @sect{Package Structure}
 
     @p
-      PlayFOP's source is @lnk("available on GitHub", "https://github.com/dmanchester/playfop"),
-      and a live demo is available @lnk("here", playFopUrl + "/live-demo").
+      PlayFOP's public API is divided into three packages.
+      For a given application, package @code{com.dmanchester.playfop.api} is relevant, as well as either @code{com.dmanchester.playfop.api_s} or @code{com.dmanchester.playfop.api_j}, depending on the application's language:
 
-    @sect{Package Structure}
-
-      @p
-        PlayFOP's public API is divided into three packages.
-        For a given application, package @code{com.dmanchester.playfop.api} is relevant, as well as either @code{com.dmanchester.playfop.api_s} or @code{com.dmanchester.playfop.api_j}, depending on the application's language:
-
-      @table(`class`:="pure-table pure-table-bordered")
-        @thead
-          @tr
-            @th{Package}
-            @th{Relevant to Applications in...}
-            @th{Documentation}
-        @tbody
-          @tr
-            @td{@code{com.dmanchester.playfop.api}}
-            @td{Scala or Java}
-            @td{@lnk("Scaladoc", versionedPlayFopUrl + "/scaladoc/index.html")}
-          @tr
-            @td{@code{com.dmanchester.playfop.api_s}}
-            @td{Scala}
-            @td{@lnk("Scaladoc", versionedPlayFopUrl + "/scaladoc/index.html")}
-          @tr
-            @td{@code{com.dmanchester.playfop.api_j}}
-            @td{Java}
-            @td{@lnk("Javadoc", versionedPlayFopUrl + "/javadoc/index.html")}
+    @table(`class`:="pure-table pure-table-bordered")
+      @thead
+        @tr
+          @th{Package}
+          @th{Relevant to Applications in...}
+          @th{Documentation}
+      @tbody
+        @tr
+          @td{@code{com.dmanchester.playfop.api}}
+          @td{Scala or Java}
+          @td{@lnk("Scaladoc", versionedPlayFopUrl + "/scaladoc/index.html")}
+        @tr
+          @td{@code{com.dmanchester.playfop.api_s}}
+          @td{Scala}
+          @td{@lnk("Scaladoc", versionedPlayFopUrl + "/scaladoc/index.html")}
+        @tr
+          @td{@code{com.dmanchester.playfop.api_j}}
+          @td{Java}
+          @td{@lnk("Javadoc", versionedPlayFopUrl + "/javadoc/index.html")}
 
   @sect{Using PlayFOP}
 
