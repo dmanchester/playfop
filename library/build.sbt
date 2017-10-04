@@ -126,12 +126,13 @@ lazy val commonSettings = Seq(
     // The following PlayFOP dependencies are shared with other libraries
     // specified in this file. We allow those libraries' use of them to
     // determine the version numbers below. Consult
-    // ".../target/scala-2.11/resolution-cache/reports" for more information.
+    // ".../target/scala-2.12/resolution-cache/reports" for more information.
     "com.typesafe.play" %% "twirl-api" % "1.3.4" % "provided",
     "org.slf4j" % "slf4j-api" % "1.7.21",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.6",
     "junit" % "junit" % "4.11" % "test",
     "com.novocode" % "junit-interface" % "0.11" % "test",
+    "ch.qos.logback" % "logback-classic" % "1.2.3" % "test",
     "org.apache.pdfbox" % "pdfbox" % "2.0.4" % "test"
     // ...end shared dependencies.
   ),
