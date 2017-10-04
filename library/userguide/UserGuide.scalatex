@@ -3,6 +3,8 @@
 @val version = "0.9-SNAPSHOT"
 @val playFopUrl = "file:///home/dan/dmanchester-com-content/playfop"
 @val versionedPlayFopUrl = playFopUrl + "/" + version
+@val scaladocUrl = versionedPlayFopUrl + "/scaladoc/com/dmanchester/playfop/api/index.html"
+@val javadocUrl = versionedPlayFopUrl + "/javadoc/index.html"
 
 @sect{PlayFOP User Guide}
 
@@ -30,15 +32,15 @@
         @tr
           @td{@code{com.dmanchester.playfop.api}}
           @td{Scala or Java}
-          @td{@lnk("Scaladoc", versionedPlayFopUrl + "/scaladoc/index.html")}
+          @td{@lnk("Scaladoc", scaladocUrl)}
         @tr
           @td{@code{com.dmanchester.playfop.api_s}}
           @td{Scala}
-          @td{@lnk("Scaladoc", versionedPlayFopUrl + "/scaladoc/index.html")}
+          @td{@lnk("Scaladoc", scaladocUrl)}
         @tr
           @td{@code{com.dmanchester.playfop.api_j}}
           @td{Java}
-          @td{@lnk("Javadoc", versionedPlayFopUrl + "/javadoc/index.html")}
+          @td{@lnk("Javadoc", javadocUrl)}
 
   @sect{Using PlayFOP}
 
