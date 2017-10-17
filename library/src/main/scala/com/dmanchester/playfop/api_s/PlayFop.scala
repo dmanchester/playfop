@@ -8,8 +8,6 @@ import org.apache.fop.apps.Fop
 import play.twirl.api.Xml
 
 /** The primary entry point into PlayFOP for Scala applications.
-  *
-  * Classes that extend this trait are expected to be thread-safe.
   */
 trait PlayFop {
 

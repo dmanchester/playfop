@@ -3,8 +3,7 @@ package com.dmanchester.playfop.api
 /** Formats values with a unit of measure. Output is intended for use with
   * Apache FOP.
   *
-  * Instances of this class are thread-safe. They may be used across multiple
-  * threads.
+  * Instances of this class are thread-safe.
   */
 class Units private (formatString: String) {
 

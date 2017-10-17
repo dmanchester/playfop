@@ -14,8 +14,10 @@ import org.slf4j.LoggerFactory
 
 /** A source of `FopFactory` instances. Caches them for performance.
   *
-  * Instances of this class are thread-safe. They may be used across multiple
-  * threads.
+  * Instances of this class are thread-safe, but there are open questions around
+  * the thread safety of `FopFactory` instances themselves. For more
+  * information, see {@link com.dmanchester.playfop.internal_s.PlayFopImpl} and
+  * the PlayFOP User Guide.
   */
 class FopFactorySource {
 

@@ -300,6 +300,29 @@
         <logger name="org.apache.fop" level="ERROR" />
         <logger name="org.apache.xmlgraphics" level="ERROR" />
 
+    @sect{Thread Safety}
+
+      @p
+        PlayFOP seeks to provide thread safety everywhere it is appropriate to do so.
+        However, there is an open question around the thread safety of Apache FOP itself.
+        The Apache FOP documentation has long @lnk("included", "https://xmlgraphics.apache.org/fop/2.2/embedding.html#multithreading") the following statement:
+
+      @blockquote
+        Apache FOP may currently not be completely thread safe.
+        The code has not been fully tested for multi-threading issues, yet.
+        If you encounter any suspicious behaviour, please notify us.
+
+      @p
+        Reviews of the @lnk("Apache FOP issue tracker", "https://issues.apache.org/jira/projects/FOP") and the @lnk("\"FOP Users\" mailing list", "http://apache-fop.1065347.n5.nabble.com/FOP-Users-f3.html")
+        do not turn up recent trouble reports around multi-threaded Apache FOP use, and @lnk("this thread", "http://apache-fop.1065347.n5.nabble.com/Multi-Threaded-FOP-td9615.html") mention good experiences.
+
+      @p
+        PlayFOP therefore takes a pragmatic approach: @b{If an application uses PlayFOP in a multi-threaded fashion, PlayFOP's use of Apache FOP is multi-threaded as well.}
+
+      @p
+        If PlayFOP's multi-threading of Apache FOP causes problems for your application, synchronizing your access to your @code{PlayFop} object should resolve them.
+        Please also comment on the related @lnk("placeholder issue", "https://github.com/dmanchester/playfop/issues/14") with details of the problems you've encountered.
+
   @sect{Developing PlayFOP}
 
     @p

@@ -20,8 +20,10 @@ import play.twirl.api.Xml
 
 /** The standard implementation of `[[com.dmanchester.playfop.api_s.PlayFop PlayFop]]`.
   *
-  * Instances of this class are thread-safe. They may be used across multiple
-  * threads.
+  * While the code within this class is thread-safe, it is PlayFOP's primary
+  * integration point with Apache FOP, and there is an open question around the
+  * thread safety of Apache FOP itself. For more information, see the "Thread
+  * Safety" discussion in the PlayFOP User Guide.
   */
 @Singleton
 class PlayFopImpl extends PlayFop {
