@@ -1,7 +1,7 @@
 @import Main._
 
 @val version = "0.9-SNAPSHOT"
-@val playFopUrl = "file:///home/dan/dmanchester-com-content/playfop"
+@val playFopUrl = "https://www.dmanchester.com/playfop"
 @val versionedPlayFopUrl = playFopUrl + "/" + version
 @val scaladocUrl = versionedPlayFopUrl + "/scaladoc/com/dmanchester/playfop/api/index.html"
 @val javadocUrl = versionedPlayFopUrl + "/javadoc/index.html"
@@ -9,12 +9,15 @@
 @sect{PlayFOP User Guide}
 
   @p
-    @i
-      This guide applies to PlayFOP @b{@version}.
+    PlayFOP is a library for generating PDFs, images, and other types of output in @lnk("Play Framework", "https://www.playframework.com/") applications.
+    PlayFOP accepts XSL-FO that an application has generated via a Play @lnk("Twirl", "https://www.playframework.com/documentation/2.6.x/ScalaTemplates") template and processes it with @lnk("Apache FOP", "https://xmlgraphics.apache.org/fop/").
+
+  @p
+    For information on PlayFOP beyond this user guide, see its @lnk("homepage", playFopUrl).
 
   @p
     @i
-      For information on PlayFOP beyond this user guide, see its @lnk("homepage", playFopUrl).
+      This guide applies to PlayFOP @b{@version}.
 
   @sect{Package Structure}
 
@@ -228,7 +231,7 @@
         ...rest of template...
 
       @p
-        @code{Units} instances are thread-safe and may be used across multiple threads.
+        @code{Units} instances are thread-safe.
 
     @sect{Preserving Whitespace: the Formatters}
 
@@ -303,7 +306,7 @@
     @sect{Thread Safety}
 
       @p
-        PlayFOP seeks to provide thread safety everywhere it is appropriate to do so.
+        PlayFOP seeks to provide thread safety everywhere it makes sense to do so, and classes' status is documented in the Scaladoc and Javadoc.
         However, there is an open question around the thread safety of Apache FOP itself.
         The Apache FOP documentation has long @lnk("included", "https://xmlgraphics.apache.org/fop/2.2/embedding.html#multithreading") the following statement:
 
@@ -314,7 +317,7 @@
 
       @p
         Reviews of the @lnk("Apache FOP issue tracker", "https://issues.apache.org/jira/projects/FOP") and the @lnk("\"FOP Users\" mailing list", "http://apache-fop.1065347.n5.nabble.com/FOP-Users-f3.html")
-        do not turn up recent trouble reports around multi-threaded Apache FOP use, and @lnk("this thread", "http://apache-fop.1065347.n5.nabble.com/Multi-Threaded-FOP-td9615.html") mention good experiences.
+        do not turn up recent trouble reports around multi-threaded Apache FOP use, and @lnk("this thread", "http://apache-fop.1065347.n5.nabble.com/Multi-Threaded-FOP-td9615.html") mentions good experiences.
 
       @p
         PlayFOP therefore takes a pragmatic approach: @b{If an application uses PlayFOP in a multi-threaded fashion, PlayFOP's use of Apache FOP is multi-threaded as well.}
@@ -408,3 +411,8 @@
               @li{JARs of the Scaladoc and Javadoc}
               @li{a ZIP of the user guide}
               @li{a JAR of the source code}
+
+  @sect{Contributors}
+
+    @p
+      PlayFOP was written by @lnk("Daniel Manchester", "https://www.dmanchester.com/").
