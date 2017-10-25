@@ -64,7 +64,7 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
 
   private val SingleLabelScaleFactor = 3
 
-  private val PlayFopUrl = "file:///home/dan/dmanchester-com-mockup/playfop"
+  private val PlayFopUrl = "https://www.dmanchester.com/playfop"
 
   private val AboutPageAddlInfoProperty = "about.page.addl.info"
 

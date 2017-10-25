@@ -66,7 +66,7 @@ public class Application extends Controller {
 
     private static final int SINGLE_LABEL_SCALE_FACTOR = 3;
 
-    private static final String PLAYFOP_URL = "file:///home/dan/dmanchester-com-mockup/playfop";
+    private static final String PLAYFOP_URL = "https://www.dmanchester.com/playfop";
 
     private static final String ABOUT_PAGE__ADDL_INFO_PROPERTY = "about.page.addl.info";
 
