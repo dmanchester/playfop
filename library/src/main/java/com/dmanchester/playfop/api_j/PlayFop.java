@@ -35,7 +35,7 @@ public interface PlayFop {
     /**
      * Creates a new <code>Fop</code> instance. Sets it up to save output to the
      * supplied <code>OutputStream</code> in the supplied format.
-     * <p/>
+     * <p>
      * <b>Note:</b> This method is offered primarily for client code to
      * interrogate the Apache FOP environment (for example, to determine
      * available fonts). Code wishing to process XSL-FO with Apache FOP should
@@ -52,7 +52,7 @@ public interface PlayFop {
      * Creates a new <code>Fop</code> instance, configuring it with the
      * processing options. Sets it up to save output to the supplied
      * <code>OutputStream</code> in the supplied format.
-     * <p/>
+     * <p>
      * <b>Note:</b> This method is offered primarily for client code to
      * interrogate the Apache FOP environment (for example, to determine
      * available fonts). Code wishing to process XSL-FO with Apache FOP should

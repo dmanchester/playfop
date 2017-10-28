@@ -33,7 +33,7 @@ public class ProcessOptions {
          * Whether operating system fonts should be auto-detected and made
          * available to Apache FOP. Only relevant to PDF output.
          *
-         * @param autoDetectFontsForPDF
+         * @param autoDetectFontsForPDF whether to auto-detect fonts
          * @return the Builder (for chaining method calls)
          */
         public Builder autoDetectFontsForPDF(boolean autoDetectFontsForPDF) {
@@ -46,7 +46,8 @@ public class ProcessOptions {
          * <code>FOUserAgent</code> to customize output (e.g., to set the author
          * of a PDF file).
          *
-         * @param foUserAgentBlock
+         * @param foUserAgentBlock the code block for the
+         *        <code>FOUserAgent</code>
          * @return the Builder (for chaining method calls)
          */
         public Builder foUserAgentBlock(FOUserAgentBlock foUserAgentBlock) {
