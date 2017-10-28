@@ -72,6 +72,7 @@ lazy val javadocOnly = project.
   settings(commonSettings: _*).
   settings(
     javaSource in Compile := file("./src/main/java"),
+    javacOptions in Compile ++= Seq("-Xdoclint:all,-html"),
     target := file("./target-javadoc"),
     publishDoc := {
       val docJarSource = (packageDoc in Compile).value
