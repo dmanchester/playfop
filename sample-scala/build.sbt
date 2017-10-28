@@ -2,7 +2,13 @@ name := """sample-scala"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file(".")).
+  enablePlugins(PlayScala).
+  settings(
+    // Avoid creating "doc" information in distribution. (That information
+    // included fonts the application would pick up but could not use.)
+    sources in (Compile, doc) := Seq.empty
+  )
 
 scalaVersion := "2.12.3"
 

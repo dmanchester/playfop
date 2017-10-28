@@ -2,7 +2,13 @@ name := """sample-java"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayJava)
+lazy val root = (project in file(".")).
+  enablePlugins(PlayJava).
+  settings(
+    // Avoid creating "doc" information in distribution. (That information
+    // included fonts the application would pick up but could not use.)
+    sources in (Compile, doc) := Seq.empty
+  )
 
 scalaVersion := "2.12.3"
 
