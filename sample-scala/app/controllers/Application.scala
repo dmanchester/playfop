@@ -158,7 +158,7 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
 
     val imagePath: Option[String] = imageName.flatMap(ImageNamesToPaths.get(_))
 
-    imagePath.map(imagePath => this.getClass().getClassLoader().getResource(imagePath).toString())
+    imagePath.map(thePath => this.getClass().getClassLoader().getResource(thePath).toString())
   }
 
   def generateLabelsSheetAsPDF() = Action { implicit request =>
@@ -196,9 +196,9 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
 
     val addlInfoPath: Option[String] = config.get[Option[String]](AboutPageAddlInfoProperty)
 
-    val addlInfoAsHtml: Option[String] = addlInfoPath.map { addlInfoPath =>
+    val addlInfoAsHtml: Option[String] = addlInfoPath.map { thePath =>
 
-      val addlInfoPathObj = Paths.get(addlInfoPath)
+      val addlInfoPathObj = Paths.get(thePath)
       val addlInfoAsBytes = Files.readAllBytes(addlInfoPathObj)
       new String(addlInfoAsBytes, "utf-8")
     }
