@@ -11,9 +11,7 @@ A Java version of PlayFOP Labels with equivalent functionality is [also availabl
 Miscellaneous
 -------------
 
-PlayFOP Labels accepts an optional `about.page.addl.info` system option.
-It can be set to the name of an HTML file whose contents should be added to the About page:
+PlayFOP Labels supports the following optional system properties, passed via `-D` on application startup:
 
-```
--Dabout.page.addl.info="/some-path/some-file.html"
-```
+* `about.page.addl.info`: the name and path of an HTML file whose contents should be added to the About page
+* `initial.font.family`: the font family that should be initially chosen on the Design page

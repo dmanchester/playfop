@@ -34,6 +34,9 @@ import views.util.Calc
 class Application @Inject() (config: Configuration, cc: ControllerComponents, val playFop: PlayFop)
     extends AbstractController(cc) with I18nSupport {
 
+  private val AboutPageAddlInfoProperty = "about.page.addl.info"
+  private val InitialFontFamilyProperty = "initial.font.family"
+
   private val SheetSizeAndWhiteSpaceInMM = new PaperSizeAndWhiteSpace(
       height = 297 /* A4 */, width = 210 /* A4 */, margin = 20,
       interLabelGutter = 10, intraLabelPadding = 2)
@@ -58,15 +61,12 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
     """John Smith
       |123 Main St.
       |Anytown, MA  09876""".stripMargin
-  private val InitialFontFamily = "DejaVu Sans Condensed"
   private val InitialFontSizeInPoints = 9
   private val InitialImageName = ImageNameCityscape
 
   private val SingleLabelScaleFactor = 3
 
   private val PlayFopUrl = "https://www.dmanchester.com/playfop"
-
-  private val AboutPageAddlInfoProperty = "about.page.addl.info"
 
   private val LabelForm: Form[Label] = Form(
     mapping(
@@ -88,14 +88,23 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
 
   private def getInitialForm(): Form[Label] = {
 
-    // Confirm the initial font family is available.
     val fontFamilies = getFontFamilies()
-    val fontFamily = if (fontFamilies.contains(InitialFontFamily))
-      InitialFontFamily
-    else
-      fontFamilies.head  // we presume the List has at least one element
 
-    val label =  Label(InitialText, fontFamily, InitialFontSizeInPoints, Some(InitialImageName))
+    val initialFontFamily: Option[String] = config.get[Option[String]](InitialFontFamilyProperty)
+
+    // If the property has been set, confirm that the font family is available.
+    initialFontFamily.foreach { initialFontFamily =>
+      if (!fontFamilies.contains(initialFontFamily)) {
+        throw new IllegalArgumentException(s"Font family $initialFontFamily not found!")
+      }
+    }
+
+    val label =  Label(
+      InitialText,
+      initialFontFamily.getOrElse(fontFamilies.head),  // if property not set, use first font family in list
+      InitialFontSizeInPoints,
+      Some(InitialImageName)
+    )
 
     LabelForm.fill(label)
   }

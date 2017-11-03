@@ -26,6 +26,7 @@ import com.dmanchester.playfop.api.Units;
 import com.dmanchester.playfop.api_j.FOUserAgentBlock;
 import com.dmanchester.playfop.api_j.PlayFop;
 import com.dmanchester.playfop.api_j.ProcessOptions;
+import com.typesafe.config.Config;
 
 import models.Label;
 import models.PaperSizeAndWhiteSpace;
@@ -37,6 +38,9 @@ import play.mvc.Result;
 import views.util.Calc;
 
 public class Application extends Controller {
+
+    private static final String ABOUT_PAGE_ADDL_INFO_PROPERTY = "about.page.addl.info";
+    private static final String INITIAL_FONT_FAMILY_PROPERTY = "initial.font.family";
 
     private static final PaperSizeAndWhiteSpace SHEET_SIZE_AND_WHITESPACE_IN_MM =
             new PaperSizeAndWhiteSpace(297 /* height (A4) */,
@@ -60,15 +64,12 @@ public class Application extends Controller {
             "John Smith\n" +
             "123 Main St.\n" +
             "Anytown, MA  09876";
-    private static final String INITIAL_FONT_FAMILY = "DejaVu Sans Condensed";
     private static final Integer INITIAL_FONT_SIZE_IN_POINTS = 9;
     private static final String INITIAL_IMAGE_NAME = IMAGE_NAME__CITYSCAPE;
 
     private static final int SINGLE_LABEL_SCALE_FACTOR = 3;
 
     private static final String PLAYFOP_URL = "https://www.dmanchester.com/playfop";
-
-    private static final String ABOUT_PAGE__ADDL_INFO_PROPERTY = "about.page.addl.info";
 
     private static Map<String, String> getImageNamesToPaths() {
 
@@ -81,11 +82,13 @@ public class Application extends Controller {
         return imageNamesToPaths;
     }
 
+    private Config config;
     private FormFactory formFactory;
     private PlayFop playFop;
 
     @Inject
-    public Application(FormFactory formFactory, PlayFop playFop) {
+    public Application(Config config, FormFactory formFactory, PlayFop playFop) {
+        this.config = config;
         this.formFactory = formFactory;
         this.playFop = playFop;
     }
@@ -110,12 +113,30 @@ public class Application extends Controller {
         initialLabel.setFontSizeInPoints(INITIAL_FONT_SIZE_IN_POINTS);
         initialLabel.setImageName(INITIAL_IMAGE_NAME);
 
-        // Confirm the initial font family is available.
         List<String> fontFamilies = getFontFamilies();
-        if (fontFamilies.contains(INITIAL_FONT_FAMILY)) {
-            initialLabel.setFontFamily(INITIAL_FONT_FAMILY);
+
+        if (config.hasPath(INITIAL_FONT_FAMILY_PROPERTY)) {
+
+            // The property has been set. Get its value and confirm that the
+            // font family is available.
+
+            String initialFontFamily = config.getString(INITIAL_FONT_FAMILY_PROPERTY);
+
+            if (fontFamilies.contains(initialFontFamily)) {
+
+                initialLabel.setFontFamily(initialFontFamily);
+
+            } else {
+
+                String message = String.format("Font family %s not found!", initialFontFamily);
+                throw new IllegalArgumentException(message);
+            }
+
         } else {
-            initialLabel.setFontFamily(fontFamilies.get(0));    // we presume the List has at least one element
+
+            // The property has not been set. Use the first font family in the
+            // list.
+            initialLabel.setFontFamily(fontFamilies.get(0));
         }
 
         return formFactory.form(Label.class).fill(initialLabel);
@@ -234,14 +255,10 @@ public class Application extends Controller {
     public Result showAbout() {
 
         String addlInfoAsHtml;
-        String addlInfoPath = System.getProperty(ABOUT_PAGE__ADDL_INFO_PROPERTY);
 
-        if (addlInfoPath == null) {
+        if (config.hasPath(ABOUT_PAGE_ADDL_INFO_PROPERTY)) {
 
-            addlInfoAsHtml = null;
-
-        } else {
-
+            String addlInfoPath = config.getString(ABOUT_PAGE_ADDL_INFO_PROPERTY);
             Path addlInfoPathObj = Paths.get(addlInfoPath);
 
             try {
@@ -252,6 +269,10 @@ public class Application extends Controller {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
+        } else {
+
+            addlInfoAsHtml = null;
         }
 
         return ok(views.html.about.render(PLAYFOP_URL, addlInfoAsHtml));
