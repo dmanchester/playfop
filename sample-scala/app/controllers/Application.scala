@@ -6,6 +6,7 @@ import java.nio.file.Paths
 
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import scala.collection.immutable.ListMap
+import scala.util.matching.Regex
 
 import org.apache.fop.apps.FOUserAgent
 import org.apache.fop.apps.Fop
@@ -35,6 +36,7 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
     extends AbstractController(cc) with I18nSupport {
 
   private val AboutPageAddlInfoProperty = "about.page.addl.info"
+  private val FontFamilyExclusionRegexProperty = "font.family.exclusion.regex"
   private val InitialFontFamilyProperty = "initial.font.family"
 
   private val SheetSizeAndWhiteSpaceInMM = new PaperSizeAndWhiteSpace(
@@ -117,7 +119,19 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
 
     val typefaces: Iterable[Typeface] = fontInfo.getFonts().values().asScala
 
-    typefaces.map(_.getFullName()).toList.sorted
+    val fontNamesUnfiltered = typefaces.map(_.getFullName()).toList
+
+    val fontFamilyExclusionRegex: Option[Regex] = config.get[Option[String]](FontFamilyExclusionRegexProperty).map(_.r)
+
+    // If an exclusion regex was provided, filter out any font names that
+    // match it.
+    val fontNames = fontFamilyExclusionRegex.map { regex =>
+      fontNamesUnfiltered.filterNot { fontName =>
+        regex.findFirstIn(fontName).isDefined
+      }
+    }.getOrElse(fontNamesUnfiltered)
+
+    fontNames.sorted
   }
 
   private def getFontSizesAndText(): Map[String, String] = {

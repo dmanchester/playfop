@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -40,6 +42,7 @@ import views.util.Calc;
 public class Application extends Controller {
 
     private static final String ABOUT_PAGE_ADDL_INFO_PROPERTY = "about.page.addl.info";
+    private static final String FONT_FAMILY_EXCLUSION_REGEX_PROPERTY = "font.family.exclusion.regex";
     private static final String INITIAL_FONT_FAMILY_PROPERTY = "initial.font.family";
 
     private static final PaperSizeAndWhiteSpace SHEET_SIZE_AND_WHITESPACE_IN_MM =
@@ -158,9 +161,33 @@ public class Application extends Controller {
 
         Collection<Typeface> typefaces = fontInfo.getFonts().values();
 
-        List<String> fontNames = new ArrayList<String>(typefaces.size());
+        List<String> fontNamesUnfiltered = new ArrayList<String>(typefaces.size());
         for (Typeface typeface : typefaces) {
-            fontNames.add(typeface.getFullName());
+            fontNamesUnfiltered.add(typeface.getFullName());
+        }
+
+        List<String> fontNames;
+
+        // If an exclusion regex was provided, filter out any font names that
+        // match it.
+        if (config.hasPath(FONT_FAMILY_EXCLUSION_REGEX_PROPERTY)) {
+
+            fontNames = new ArrayList<String>();
+
+            String fontFamilyExclusionRegex = config.getString(FONT_FAMILY_EXCLUSION_REGEX_PROPERTY);
+            Pattern pattern = Pattern.compile(fontFamilyExclusionRegex);
+
+            for (String fontName : fontNamesUnfiltered) {
+                Matcher matcher = pattern.matcher(fontName);
+                if (!matcher.find()) {
+                    fontNames.add(fontName);
+                }
+            }
+
+        } else {
+
+            fontNames = fontNamesUnfiltered;
+
         }
 
         Collections.sort(fontNames);
