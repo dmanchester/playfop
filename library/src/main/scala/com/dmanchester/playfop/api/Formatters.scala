@@ -7,10 +7,10 @@ import play.twirl.api.XmlFormat
   */
 object Formatters {
 
-  private def NBSP = '\u00A0'  // non-breaking space
-  private def NBSPAsXml = "&#xa0;"
-  private def CRLF = "\r\n"
-  private def LF = "\n"
+  private val NBSP = '\u00A0'  // non-breaking space
+  private val NBSPAsXml = "&#xa0;"
+  private val CRLF = "\r\n"
+  private val LF = "\n"
 
   /** Replaces each "regular" space (U+0020) with a no-break one (U+00A0).
     *
