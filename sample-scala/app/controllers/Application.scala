@@ -79,37 +79,7 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
     )(Label.apply)(Label.unapply)
   )
 
-  def index() = Action {
-    Redirect(routes.Application.designLabels())
-  }
-
-  def designLabels() = Action { implicit request =>
-    val imageNames = "" :: ImageNamesToPaths.keys.toList  // at top of list, offer a no-image option
-    Ok(views.html.labelDesign(getInitialForm(), getFontFamilies(), getFontSizesAndText(), imageNames))
-  }
-
-  private def getInitialForm(): Form[Label] = {
-
-    val fontFamilies = getFontFamilies()
-
-    val initialFontFamily: Option[String] = config.get[Option[String]](InitialFontFamilyProperty)
-
-    // If the property has been set, confirm that the font family is available.
-    initialFontFamily.foreach { initialFontFamily =>
-      if (!fontFamilies.contains(initialFontFamily)) {
-        throw new IllegalArgumentException(s"Font family $initialFontFamily not found!")
-      }
-    }
-
-    val label =  Label(
-      InitialText,
-      initialFontFamily.getOrElse(fontFamilies.head),  // if property not set, use first font family in list
-      InitialFontSizeInPoints,
-      Some(InitialImageName)
-    )
-
-    LabelForm.fill(label)
-  }
+  private val fontFamilies = getFontFamilies()  // getFontFamilies() is an expensive operation, so cache its result
 
   private def getFontFamilies(): List[String] = {
 
@@ -132,6 +102,36 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
     }.getOrElse(fontNamesUnfiltered)
 
     fontNames.sorted
+  }
+
+  def index() = Action {
+    Redirect(routes.Application.designLabels())
+  }
+
+  def designLabels() = Action { implicit request =>
+    val imageNames = "" :: ImageNamesToPaths.keys.toList  // at top of list, offer a no-image option
+    Ok(views.html.labelDesign(getInitialForm(), fontFamilies, getFontSizesAndText(), imageNames))
+  }
+
+  private def getInitialForm(): Form[Label] = {
+
+    val initialFontFamily: Option[String] = config.get[Option[String]](InitialFontFamilyProperty)
+
+    // If the property has been set, confirm that the font family is available.
+    initialFontFamily.foreach { initialFontFamily =>
+      if (!fontFamilies.contains(initialFontFamily)) {
+        throw new IllegalArgumentException(s"Font family $initialFontFamily not found!")
+      }
+    }
+
+    val label =  Label(
+      InitialText,
+      initialFontFamily.getOrElse(fontFamilies.head),  // if property not set, use first font family in list
+      InitialFontSizeInPoints,
+      Some(InitialImageName)
+    )
+
+    LabelForm.fill(label)
   }
 
   private def getFontSizesAndText(): Map[String, String] = {

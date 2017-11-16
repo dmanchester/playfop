@@ -88,61 +88,16 @@ public class Application extends Controller {
     private Config config;
     private FormFactory formFactory;
     private PlayFop playFop;
+    private List<String> fontFamilies;
 
     @Inject
     public Application(Config config, FormFactory formFactory, PlayFop playFop) {
+
         this.config = config;
         this.formFactory = formFactory;
         this.playFop = playFop;
-    }
 
-    public Result index() {
-        return redirect(controllers.routes.Application.designLabels());
-    }
-
-    public Result designLabels() {
-
-        List<String> fontFamilies = getFontFamilies();
-        List<String> imageNames = new ArrayList<String>(IMAGE_NAMES_TO_PATHS.keySet());
-        imageNames.add(0, "");  // offer a no-image option
-
-        return ok(views.html.labelDesign.render(getInitialForm(), fontFamilies, getFontSizesAndText(), imageNames));
-    }
-
-    private Form<Label> getInitialForm() {
-
-        Label initialLabel = new Label();
-        initialLabel.setText(INITIAL_TEXT);
-        initialLabel.setFontSizeInPoints(INITIAL_FONT_SIZE_IN_POINTS);
-        initialLabel.setImageName(INITIAL_IMAGE_NAME);
-
-        List<String> fontFamilies = getFontFamilies();
-
-        if (config.hasPath(INITIAL_FONT_FAMILY_PROPERTY)) {
-
-            // The property has been set. Get its value and confirm that the
-            // font family is available.
-
-            String initialFontFamily = config.getString(INITIAL_FONT_FAMILY_PROPERTY);
-
-            if (fontFamilies.contains(initialFontFamily)) {
-
-                initialLabel.setFontFamily(initialFontFamily);
-
-            } else {
-
-                String message = String.format("Font family %s not found!", initialFontFamily);
-                throw new IllegalArgumentException(message);
-            }
-
-        } else {
-
-            // The property has not been set. Use the first font family in the
-            // list.
-            initialLabel.setFontFamily(fontFamilies.get(0));
-        }
-
-        return formFactory.form(Label.class).fill(initialLabel);
+        this.fontFamilies = getFontFamilies();  // getFontFamilies() is an expensive operation, so cache its result
     }
 
     private List<String> getFontFamilies() {
@@ -193,6 +148,52 @@ public class Application extends Controller {
         Collections.sort(fontNames);
 
         return fontNames;
+    }
+
+    public Result index() {
+        return redirect(controllers.routes.Application.designLabels());
+    }
+
+    public Result designLabels() {
+
+        List<String> imageNames = new ArrayList<String>(IMAGE_NAMES_TO_PATHS.keySet());
+        imageNames.add(0, "");  // offer a no-image option
+
+        return ok(views.html.labelDesign.render(getInitialForm(), fontFamilies, getFontSizesAndText(), imageNames));
+    }
+
+    private Form<Label> getInitialForm() {
+
+        Label initialLabel = new Label();
+        initialLabel.setText(INITIAL_TEXT);
+        initialLabel.setFontSizeInPoints(INITIAL_FONT_SIZE_IN_POINTS);
+        initialLabel.setImageName(INITIAL_IMAGE_NAME);
+
+        if (config.hasPath(INITIAL_FONT_FAMILY_PROPERTY)) {
+
+            // The property has been set. Get its value and confirm that the
+            // font family is available.
+
+            String initialFontFamily = config.getString(INITIAL_FONT_FAMILY_PROPERTY);
+
+            if (fontFamilies.contains(initialFontFamily)) {
+
+                initialLabel.setFontFamily(initialFontFamily);
+
+            } else {
+
+                String message = String.format("Font family %s not found!", initialFontFamily);
+                throw new IllegalArgumentException(message);
+            }
+
+        } else {
+
+            // The property has not been set. Use the first font family in the
+            // list.
+            initialLabel.setFontFamily(fontFamilies.get(0));
+        }
+
+        return formFactory.form(Label.class).fill(initialLabel);
     }
 
     private Map<String, String> getFontSizesAndText() {
