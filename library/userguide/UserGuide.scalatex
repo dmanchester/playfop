@@ -411,8 +411,3 @@
               @li{JARs of the Scaladoc and Javadoc}
               @li{a ZIP of the user guide}
               @li{a JAR of the source code}
-
-  @sect{Contributors}
-
-    @p
-      PlayFOP and this user guide were written by @lnk("Daniel Manchester", "https://www.dmanchester.com/").
