@@ -48,7 +48,8 @@
   @sect{Using PlayFOP}
 
     @p
-      Add PlayFOP as a dependency to your application's @code{build.sbt}:
+      PlayFOP is available in @lnk("Maven Central/the Central Repository", "https://search.maven.org/").
+      To use it, add PlayFOP as a dependency to your application's @code{build.sbt}:
 
     @code
       libraryDependencies ++= Seq(@br
@@ -59,7 +60,7 @@
     @p
       Then, inject a @code{PlayFop} object that is appropriate for your application's language.
 
-    @sect{Injecting a PlayFop Object Into a Scala Application}
+    @sect{Injecting a PlayFop Object into a Scala Application}
 
       @p
         In your @code{application.conf}, add:
@@ -85,7 +86,7 @@
         class MyController @@Inject() (val playFop: PlayFop) extends Controller {
           ...
 
-    @sect{Injecting a PlayFop Object Into a Java Application}
+    @sect{Injecting a PlayFop Object into a Java Application}
 
       @p
         In your @code{application.conf}, add:
@@ -259,7 +260,7 @@
 
       @p
         Both methods accept a @code{String} argument.
-        @code{makeSpacesNonBreaking} returns a @code{String}, while @code{makeNewlinesIntoFOBlocks} returns a a Play Twirl @code{Xml} instance.
+        @code{makeSpacesNonBreaking} returns a @code{String}, while @code{makeNewlinesIntoFOBlocks} returns a Play Twirl @code{Xml} instance.
         So, if you want both kinds of whitespace preservation, invoke @code{makeSpacesNonBreaking} first and pass its return value to @code{makeNewlinesIntoFOBlocks}.
 
       @p
@@ -295,7 +296,7 @@
 
       @p
         You can configure logging for PlayFOP and Apache FOP via your @code{logback.xml} file.
-        PlayFOP logs to the @code{com.dmanchester.playfop} package; Apache FOP, to the @code{org.apache.fop} and @code{logger.org.apache.xmlgraphics} packages.
+        PlayFOP logs to the @code{com.dmanchester.playfop} logger; Apache FOP, to the @code{org.apache.fop} and @code{org.apache.xmlgraphics} loggers.
         So, your logging configuration might include:
 
       @hl.xml
@@ -310,10 +311,10 @@
         However, there is an open question around the thread safety of Apache FOP itself.
         The Apache FOP documentation has long @lnk("included", "https://xmlgraphics.apache.org/fop/2.2/embedding.html#multithreading") the following statement:
 
-      @blockquote
-        Apache FOP may currently not be completely thread safe.
+      @p
+        "Apache FOP may currently not be completely thread safe.
         The code has not been fully tested for multi-threading issues, yet.
-        If you encounter any suspicious behaviour, please notify us.
+        If you encounter any suspicious behaviour, please notify us."
 
       @p
         Reviews of the @lnk("Apache FOP issue tracker", "https://issues.apache.org/jira/projects/FOP") and the @lnk("\"FOP Users\" mailing list", "http://apache-fop.1065347.n5.nabble.com/FOP-Users-f3.html")
@@ -336,8 +337,9 @@
       With sbt's @lnk("cross-building", "http://www.scala-sbt.org/0.13/docs/Cross-Build.html") support, PlayFOP can target Scala 2.11 and 2.12.
 
     @p
-      To begin developing changes to PlayFOP, update @code{build.sbt} and @code{UserGuide.scalatex} with a "@code{...-@lnk("SNAPSHOT", "http://stackoverflow.com/questions/5901378/what-exactly-is-a-maven-snapshot-and-why-do-we-need-it")}" version number.
+      To begin developing changes to PlayFOP, update @code{build.sbt} with a "@code{...-@lnk("SNAPSHOT", "http://stackoverflow.com/questions/5901378/what-exactly-is-a-maven-snapshot-and-why-do-we-need-it")}" version number.
       (Doing so will ensure locally published JARs and POMs are not undesirably cached by applications that use them.)
+      Update the version number in @code{UserGuide.scalatex} as well.
 
     @p
       As you develop your changes, you'll likely make use of a combination of the @code{sbt} commands in the table below.
