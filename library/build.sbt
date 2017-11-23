@@ -49,7 +49,16 @@ lazy val root = (project in file(".")).
             srcFile -> (publishDir.value / srcFile.getName())
         })
         IO.delete(publishDir.value / organizationPart1)
-      }
+      },
+      // Additional information for inclusion in POM file
+      licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
+      homepage := Some(url("https://www.dmanchester.com/playfop")),
+      scmInfo := Some(ScmInfo(url("https://github.com/dmanchester/playfop"),
+                                  "git@github.com:dmanchester/playfop.git")),
+      developers := List(Developer("dpmanchester",
+                                   "Daniel Manchester",
+                                   "dpmanchester@gmail.com",
+                                   url("https://www.dmanchester.com/")))
   )
 
 lazy val scaladocOnly = project.
