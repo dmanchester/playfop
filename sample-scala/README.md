@@ -8,8 +8,11 @@ This is the Scala version of PlayFOP Labels.
 
 A Java version of PlayFOP Labels with equivalent functionality is [also available](../sample-java).
 
-Miscellaneous
--------------
+Running PlayFOP Labels
+----------------------
+
+To run PlayFOP Labels, [configure](https://www.playframework.com/documentation/2.6.x/AllowedHostsFilter#Configuring-allowed-hosts) the [AllowedHostsFilter](https://www.playframework.com/documentation/2.6.x/AllowedHostsFilter).
+Then, start `sbt` and enter `run`.
 
 PlayFOP Labels supports the following optional system properties, passed via `-D` on application startup:
 
