@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.api_j;
+package com.dmanchester.playfop.japi;
 
 import java.io.OutputStream;
 

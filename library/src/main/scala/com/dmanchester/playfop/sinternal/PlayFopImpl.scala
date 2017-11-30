@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.internal_s
+package com.dmanchester.playfop.sinternal
 
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
@@ -10,7 +10,7 @@ import org.apache.fop.apps.FOUserAgent
 import org.apache.fop.apps.Fop
 import org.slf4j.LoggerFactory
 
-import com.dmanchester.playfop.api_s.PlayFop
+import com.dmanchester.playfop.sapi.PlayFop
 
 import javax.inject.Singleton
 import javax.xml.transform.TransformerFactory
@@ -18,7 +18,7 @@ import javax.xml.transform.sax.SAXResult
 import javax.xml.transform.stream.StreamSource
 import play.twirl.api.Xml
 
-/** The standard implementation of `[[com.dmanchester.playfop.api_s.PlayFop PlayFop]]`.
+/** The standard implementation of `[[com.dmanchester.playfop.sapi.PlayFop PlayFop]]`.
   *
   * While the code within this class is thread-safe, it is PlayFOP's primary
   * integration point with Apache FOP, and there is an open question around the

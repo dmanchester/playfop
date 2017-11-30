@@ -16,7 +16,7 @@ import org.apache.fop.fonts.Typeface
 import org.apache.xmlgraphics.util.MimeConstants
 
 import com.dmanchester.playfop.api.Units
-import com.dmanchester.playfop.api_s.PlayFop
+import com.dmanchester.playfop.sapi.PlayFop
 
 import javax.inject.Inject
 import models.Label

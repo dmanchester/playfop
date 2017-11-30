@@ -25,9 +25,9 @@ import org.apache.fop.fonts.Typeface;
 import org.apache.xmlgraphics.util.MimeConstants;
 
 import com.dmanchester.playfop.api.Units;
-import com.dmanchester.playfop.api_j.FOUserAgentBlock;
-import com.dmanchester.playfop.api_j.PlayFop;
-import com.dmanchester.playfop.api_j.ProcessOptions;
+import com.dmanchester.playfop.japi.FOUserAgentBlock;
+import com.dmanchester.playfop.japi.PlayFop;
+import com.dmanchester.playfop.japi.ProcessOptions;
 import com.typesafe.config.Config;
 
 import models.Label;

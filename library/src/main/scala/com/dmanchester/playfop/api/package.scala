@@ -4,7 +4,7 @@ package com.dmanchester.playfop
   * applications.
   *
   * For the additional portions that are specific to Scala applications, see the
-  * `[[com.dmanchester.playfop.api_s]]` package.
+  * `[[com.dmanchester.playfop.sapi]]` package.
   *
   * For the additional portions that are specific to Java applications, see the
   * Javadoc.

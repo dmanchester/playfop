@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.internal_s
+package com.dmanchester.playfop.sinternal
 
 import java.io.ByteArrayOutputStream
 import java.io.StringReader
@@ -12,7 +12,7 @@ import org.apache.xmlgraphics.util.MimeConstants
 import org.specs2.mutable.Specification
 
 import com.dmanchester.playfop.TestHelpers
-import com.dmanchester.playfop.api_s.PlayFop
+import com.dmanchester.playfop.sapi.PlayFop
 import com.dmanchester.playfop.playFopBlock
 
 import javax.xml.transform.TransformerFactory

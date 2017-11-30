@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.internal_j;
+package com.dmanchester.playfop.jinternal;
 
 import java.io.OutputStream;
 
@@ -7,9 +7,9 @@ import javax.inject.Singleton;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 
-import com.dmanchester.playfop.api_j.FOUserAgentBlock;
-import com.dmanchester.playfop.api_j.PlayFop;
-import com.dmanchester.playfop.api_j.ProcessOptions;
+import com.dmanchester.playfop.japi.FOUserAgentBlock;
+import com.dmanchester.playfop.japi.PlayFop;
+import com.dmanchester.playfop.japi.ProcessOptions;
 
 import play.twirl.api.Xml;
 import scala.Function1;
@@ -30,7 +30,7 @@ public class PlayFopImpl implements PlayFop {
 
     private static final ProcessOptions DEFAULT_PROCESS_OPTIONS = new ProcessOptions.Builder().build();
 
-    private com.dmanchester.playfop.api_s.PlayFop playFopScala = new com.dmanchester.playfop.internal_s.PlayFopImpl();
+    private com.dmanchester.playfop.sapi.PlayFop playFopScala = new com.dmanchester.playfop.sinternal.PlayFopImpl();
 
     @Override
     public byte[] process(Xml xslfo, String outputFormat) {

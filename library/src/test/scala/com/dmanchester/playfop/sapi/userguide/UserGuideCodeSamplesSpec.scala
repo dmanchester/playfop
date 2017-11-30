@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.api_s.userguide
+package com.dmanchester.playfop.sapi.userguide
 
 import org.apache.fop.apps.FOUserAgent
 import org.apache.xmlgraphics.util.MimeConstants

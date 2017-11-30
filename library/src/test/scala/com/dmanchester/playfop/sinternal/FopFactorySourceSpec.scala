@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.internal_s
+package com.dmanchester.playfop.sinternal
 
 import org.specs2.mutable.Specification
 

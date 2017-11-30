@@ -1,6 +1,6 @@
-package com.dmanchester.playfop.api_j;
+package com.dmanchester.playfop.japi;
 
-import com.dmanchester.playfop.internal_j.PlayFopImpl;
+import com.dmanchester.playfop.jinternal.PlayFopImpl;
 
 import play.api.Configuration;
 import play.api.Environment;

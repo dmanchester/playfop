@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.internal_s
+package com.dmanchester.playfop.sinternal
 
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory
   *
   * Instances of this class are thread-safe, but there are open questions around
   * the thread safety of `FopFactory` instances themselves. For more
-  * information, see {@link com.dmanchester.playfop.internal_s.PlayFopImpl} and
+  * information, see {@link com.dmanchester.playfop.sinternal.PlayFopImpl} and
   * the PlayFOP User Guide.
   */
 class FopFactorySource {

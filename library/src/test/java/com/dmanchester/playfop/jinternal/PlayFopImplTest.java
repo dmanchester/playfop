@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.internal_j;
+package com.dmanchester.playfop.jinternal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,9 +38,9 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.junit.Test;
 
-import com.dmanchester.playfop.api_j.FOUserAgentBlock;
-import com.dmanchester.playfop.api_j.PlayFop;
-import com.dmanchester.playfop.api_j.ProcessOptions;
+import com.dmanchester.playfop.japi.FOUserAgentBlock;
+import com.dmanchester.playfop.japi.PlayFop;
+import com.dmanchester.playfop.japi.ProcessOptions;
 
 import play.twirl.api.Xml;
 import play.twirl.api.XmlFormat;

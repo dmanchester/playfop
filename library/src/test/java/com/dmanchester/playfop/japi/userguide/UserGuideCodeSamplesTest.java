@@ -1,4 +1,4 @@
-package com.dmanchester.playfop.api_j.userguide;
+package com.dmanchester.playfop.japi.userguide;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,10 +8,10 @@ import org.apache.xmlgraphics.util.MimeConstants;
 import org.junit.Test;
 
 import com.dmanchester.playfop.TestHelpers;
-import com.dmanchester.playfop.api_j.FOUserAgentBlock;
-import com.dmanchester.playfop.api_j.PlayFop;
-import com.dmanchester.playfop.api_j.ProcessOptions;
-import com.dmanchester.playfop.internal_j.PlayFopImpl;
+import com.dmanchester.playfop.japi.FOUserAgentBlock;
+import com.dmanchester.playfop.japi.PlayFop;
+import com.dmanchester.playfop.japi.ProcessOptions;
+import com.dmanchester.playfop.jinternal.PlayFopImpl;
 
 public class UserGuideCodeSamplesTest {
 
