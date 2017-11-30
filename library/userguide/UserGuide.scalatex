@@ -1,6 +1,6 @@
 @import Main._
 
-@val version = "0.9"
+@val version = "1.0-SNAPSHOT"
 @val playFopUrl = "https://www.dmanchester.com/playfop"
 @val versionedPlayFopUrl = playFopUrl + "/" + version
 @val scaladocUrl = versionedPlayFopUrl + "/scaladoc/com/dmanchester/playfop/api/index.html"
