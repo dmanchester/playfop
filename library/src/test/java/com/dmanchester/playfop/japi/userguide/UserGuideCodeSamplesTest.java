@@ -23,7 +23,7 @@ public class UserGuideCodeSamplesTest {
 // BEGIN Simple Java 'process' sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
-byte[] png = playFop.process(
+byte[] png = playFop.processTwirlXml(
     views.xml.someTemplate.render("Hello world."),
     MimeConstants.MIME_PNG
 );
@@ -48,7 +48,7 @@ FOUserAgentBlock myFOUserAgentBlock = new FOUserAgentBlock() {
 ProcessOptions processOptions = new ProcessOptions.Builder().
         autoDetectFontsForPDF(true).foUserAgentBlock(myFOUserAgentBlock).build();
 
-byte[] pdf = playFop.process(
+byte[] pdf = playFop.processTwirlXml(
     views.xml.someTemplate.render("Hello again."),
     MimeConstants.MIME_PDF,
     processOptions
