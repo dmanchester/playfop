@@ -3,8 +3,11 @@ package com.dmanchester.playfop.sinternal
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.io.StringReader
+import java.io.StringWriter
 
 import scala.xml.Elem
+import scala.xml.Node
+import scala.xml.XML
 
 import org.apache.fop.apps.FOUserAgent
 import org.apache.fop.apps.Fop
@@ -32,7 +35,24 @@ class PlayFopImpl extends PlayFop {
 
   private val logger = LoggerFactory.getLogger(this.getClass())
 
-  def process[U](xslfo: Xml, outputFormat: String,
+  def processTwirlXml[U](xslfo: Xml, outputFormat: String,
+      autoDetectFontsForPDF: Boolean = false,
+      foUserAgentBlock: (FOUserAgent => U) = {_: FOUserAgent => }): Array[Byte] = {
+
+    processStringXml(xslfo.body, outputFormat, autoDetectFontsForPDF, foUserAgentBlock)
+  }
+
+  def processScalaXml[U](xslfo: Node, outputFormat: String,
+      autoDetectFontsForPDF: Boolean = false,
+      foUserAgentBlock: (FOUserAgent => U) = {_: FOUserAgent => }): Array[Byte] = {
+
+    val stringWriter = new StringWriter()
+    XML.write(stringWriter, xslfo, "utf-8", true /* xmlDecl */, null /* doctype */)
+
+    processStringXml(stringWriter.toString(), outputFormat, autoDetectFontsForPDF, foUserAgentBlock)
+  }
+
+  def processStringXml[U](xslfo: String, outputFormat: String,
       autoDetectFontsForPDF: Boolean = false,
       foUserAgentBlock: (FOUserAgent => U) = {_: FOUserAgent => }): Array[Byte] = {
 
@@ -46,7 +66,7 @@ class PlayFopImpl extends PlayFop {
 
     val transformer = TransformerFactory.newInstance().newTransformer()
 
-    val source = new StreamSource(new StringReader(xslfo.body))
+    val source = new StreamSource(new StringReader(xslfo))
 
     val result = new SAXResult(fop.getDefaultHandler())
 

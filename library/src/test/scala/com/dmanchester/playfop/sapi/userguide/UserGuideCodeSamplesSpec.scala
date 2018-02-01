@@ -15,7 +15,7 @@ class UserGuideCodeSamplesSpec extends Specification {
 // BEGIN Simple Scala 'process' sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
-val png: Array[Byte] = playFop.process(
+val png: Array[Byte] = playFop.processTwirlXml(
   views.xml.someTemplate.render("Hello world."),
   MimeConstants.MIME_PNG
 )
@@ -35,7 +35,7 @@ val myFOUserAgentBlock = { foUserAgent: FOUserAgent =>
   foUserAgent.setAuthor("PlayFOP Sample Code")
 }
 
-val pdf: Array[Byte] = playFop.process(
+val pdf: Array[Byte] = playFop.processTwirlXml(
   views.xml.someTemplate.render("Hello again."),
   MimeConstants.MIME_PDF,
   autoDetectFontsForPDF = true,

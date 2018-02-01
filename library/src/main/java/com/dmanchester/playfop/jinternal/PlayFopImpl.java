@@ -43,7 +43,7 @@ public class PlayFopImpl implements PlayFop {
 
         Function1<FOUserAgent, BoxedUnit> blockAsFunction = new BlockAsFunction(processOptions.getFoUserAgentBlock());
 
-        return playFopScala.process(xslfo, outputFormat, processOptions.isAutoDetectFontsForPDF(), blockAsFunction);
+        return playFopScala.processTwirlXml(xslfo, outputFormat, processOptions.isAutoDetectFontsForPDF(), blockAsFunction);
     }
 
     @Override

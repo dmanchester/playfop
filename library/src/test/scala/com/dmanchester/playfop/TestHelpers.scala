@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream
 import java.io.StringWriter
 
 import scala.collection.JavaConverters.iterableAsScalaIterableConverter
-import scala.xml.Elem
+import scala.xml.Node
 import scala.xml.Text
 import scala.xml.XML
 
@@ -19,37 +19,43 @@ import resource.managed
   */
 object TestHelpers {
 
-  /** Wraps text in a simple XSL-FO document, optionally applying a font.
-    * Returns the document as Twirl XML.
-    *
-    * @param text the text to wrap
-    * @fontFamily the font to apply (optional)
-    */
-  def wrapInXslfoDocument(text: String, fontFamily: Option[String] = None): Xml = {
+  def wrapInTwirlXmlDocument(text: String, fontFamily: Option[String] = None): Xml = {
+
+    toTwirlXml(wrapInScalaXmlDocument(text, fontFamily))
+  }
+
+  def wrapInScalaXmlDocument(text: String, fontFamily: Option[String] = None): Node = {
 
     val textAsXMLText = Text(text)
     val fontFamilyAsXMLText = fontFamily.map { Text(_) }
 
-    toTwirlXml(
-      <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-        <fo:layout-master-set>
-          <fo:simple-page-master master-name="label">
-            <fo:region-body region-name="xsl-region-body"/>
-          </fo:simple-page-master>
-        </fo:layout-master-set>
-        <fo:page-sequence master-reference="label">
-          <fo:flow flow-name="xsl-region-body">
-            <fo:block font-family={fontFamilyAsXMLText}>{textAsXMLText}</fo:block>
-          </fo:flow>
-        </fo:page-sequence>
-      </fo:root>
-    )
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="label">
+          <fo:region-body region-name="xsl-region-body"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="label">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block font-family={fontFamilyAsXMLText}>{textAsXMLText}</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
   }
 
-  private def toTwirlXml(xml: Elem): Xml = {
+  def wrapInStringXmlDocument(text: String, fontFamily: Option[String] = None): String = {
+
+    toStringXml(wrapInScalaXmlDocument(text, fontFamily))
+  }
+
+  private def toTwirlXml(xml: Node): Xml = {
+    XmlFormat.raw(toStringXml(xml))
+  }
+
+  private def toStringXml(xml: Node): String = {
     val stringWriter = new StringWriter()
     XML.write(stringWriter, xml, "utf-8", true /* xmlDecl */, null /* doctype */)
-    XmlFormat.raw(stringWriter.toString())
+    stringWriter.toString()
   }
 
   def textFromPDFBytes(pdfBytes: Array[Byte]) = {

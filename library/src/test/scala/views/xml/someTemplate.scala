@@ -10,5 +10,5 @@ import play.twirl.api.Xml
  */
 object someTemplate {
 
-  def render(someArg: String): Xml = TestHelpers.wrapInXslfoDocument(someArg)
+  def render(someArg: String): Xml = TestHelpers.wrapInTwirlXmlDocument(someArg)
 }
