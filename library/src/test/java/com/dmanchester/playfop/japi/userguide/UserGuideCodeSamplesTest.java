@@ -49,7 +49,7 @@ ProcessOptions processOptions = new ProcessOptions.Builder().
         autoDetectFontsForPDF(true).foUserAgentBlock(myFOUserAgentBlock).build();
 
 byte[] pdf = playFop.processTwirlXml(
-    views.xml.someTemplate.render("Hello again."),
+    views.xml.someTwirlTemplate.render("Hello again."),
     MimeConstants.MIME_PDF,
     processOptions
 );

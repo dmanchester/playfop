@@ -36,7 +36,7 @@ val myFOUserAgentBlock = { foUserAgent: FOUserAgent =>
 }
 
 val pdf: Array[Byte] = playFop.processTwirlXml(
-  views.xml.someTemplate.render("Hello again."),
+  views.xml.someTwirlTemplate.render("Hello again."),
   MimeConstants.MIME_PDF,
   autoDetectFontsForPDF = true,
   foUserAgentBlock = myFOUserAgentBlock

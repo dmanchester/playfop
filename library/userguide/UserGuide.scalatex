@@ -259,17 +259,17 @@
         PlayFOP's @code{Formatters} object offers methods for preserving both kinds of whitespace.
 
       @p
-        The @code{makeSpacesNonBreaking} method replaces "regular" spaces with no-break ones.
+        The @code{preserveSpaces} method replaces "regular" spaces with no-break ones.
         (No-break spaces are not subject to collapsing.)
 
       @p
-        The @code{makeNewlinesIntoFOBlocks} method takes newline-terminated runs of characters and wraps each one in an @code{<fo:block>} element.
+        The @code{preserveNewlinesForTwirlXml} method takes newline-terminated runs of characters and wraps each one in an @code{<fo:block>} element.
         With the characters wrapped in this fashion, the newlines are preserved in output.
 
       @p
         Both methods accept a @code{String} argument.
-        @code{makeSpacesNonBreaking} returns a @code{String}, while @code{makeNewlinesIntoFOBlocks} returns a Play Twirl @code{Xml} instance.
-        So, if you want both kinds of whitespace preservation, invoke @code{makeSpacesNonBreaking} first and pass its return value to @code{makeNewlinesIntoFOBlocks}.
+        @code{preserveSpaces} returns a @code{String}, while @code{preserveNewlinesForTwirlXml} returns a Play Twirl @code{Xml} instance.
+        So, if you want both kinds of whitespace preservation, invoke @code{preserveSpaces} first and pass its return value to @code{preserveNewlinesForTwirlXml}.
 
       @p
         @b{@code{Formatters} Example}
@@ -290,7 +290,7 @@
           </fo:layout-master-set>
           <fo:page-sequence master-reference="label">
             <fo:flow flow-name="xsl-region-body">
-              <fo:block font-family="Courier" font-size="24pt">@@Formatters.makeNewlinesIntoFOBlocks(Formatters.makeSpacesNonBreaking(text))</fo:block>
+              <fo:block font-family="Courier" font-size="24pt">@@Formatters.preserveNewlinesForTwirlXml(Formatters.preserveSpaces(text))</fo:block>
             </fo:flow>
           </fo:page-sequence>
         </fo:root>

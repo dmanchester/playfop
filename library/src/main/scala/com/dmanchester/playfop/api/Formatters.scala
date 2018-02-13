@@ -12,19 +12,20 @@ object Formatters {
   private val CRLF = "\r\n"
   private val LF = "\n"
 
-  /** Replaces each "regular" space (U+0020) with a no-break one (U+00A0).
+  /** Preserves "regular" spaces (U+0020) by replacing them with no-break
+    * ones (U+00A0).
     *
     * @param text
     * @return `text`, reflecting the replacements
     */
-  def makeSpacesNonBreaking(text: String): String = {
+  def preserveSpaces(text: String): String = {
     text.replace(' ', NBSP)
   }
 
-  /** Wraps each newline-terminated run of characters within `text` in
-    * `<fo:block>`...`</fo:block>`. If there are standalone newlines, and if
-    * they are not at the end of `text`, represents them with an `<fo:block>`
-    * that renders as a blank line.
+  /** Preserves newlines by wrapping each newline-terminated run of characters
+    * within `text` in `<fo:block>`...`</fo:block>`. If there are standalone
+    * newlines, and if they are not at the end of `text`, represents them with
+    * an `<fo:block>` that renders as a blank line.
     *
     * Disregards newlines at the end of `text`.
     *
@@ -32,7 +33,7 @@ object Formatters {
     * @return a Play Twirl `[[https://www.playframework.com/documentation/2.6.x/api/scala/index.html#play.twirl.api.Xml Xml]]`
     * instance reflecting the newline wrapping
     */
-  def makeNewlinesIntoFOBlocks(text: String): play.twirl.api.Xml = {
+  def preserveNewlinesForTwirlXml(text: String): play.twirl.api.Xml = {
 
     val paragraphs = text.split(CRLF + "|" + LF)
 
