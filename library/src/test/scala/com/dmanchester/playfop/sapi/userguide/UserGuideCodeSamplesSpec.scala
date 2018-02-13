@@ -12,14 +12,14 @@ class UserGuideCodeSamplesSpec extends Specification {
   "This code sample" should {
     "render the XSL-FO as PNG" in new playFopBlock {
 
-// BEGIN Simple Scala 'process' sample
+// BEGIN Simple Scala processing sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
 val png: Array[Byte] = playFop.processTwirlXml(
-  views.xml.someTemplate.render("Hello world."),
+  views.xml.someTwirlTemplate.render("Hello world."),
   MimeConstants.MIME_PNG
 )
-// END Simple Scala 'process' sample
+// END Simple Scala processing sample
 
       png.length must beGreaterThan(3000)  // If PNG generated correctly, it should be a little larger than 3K.
     }
@@ -28,7 +28,7 @@ val png: Array[Byte] = playFop.processTwirlXml(
   "This code sample" should {
     "render the XSL-FO as PDF, auto-detecting fonts and applying the FOUserAgent block" in new playFopBlock {
 
-// BEGIN Complex Scala 'process' sample
+// BEGIN Complex Scala processing sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
 val myFOUserAgentBlock = { foUserAgent: FOUserAgent =>
@@ -41,7 +41,7 @@ val pdf: Array[Byte] = playFop.processTwirlXml(
   autoDetectFontsForPDF = true,
   foUserAgentBlock = myFOUserAgentBlock
 )
-// END Complex Scala 'process' sample
+// END Complex Scala processing sample
 
       TestHelpers.textFromPDFBytes(pdf) must beEqualTo("Hello again.")  // for readability of code sample, we don't declare a constant for this String or the next one
       TestHelpers.authorFromPDFBytes(pdf) must beEqualTo("PlayFOP Sample Code")

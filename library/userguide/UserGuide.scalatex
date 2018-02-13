@@ -10,7 +10,7 @@
 
   @p
     PlayFOP is a library for generating PDFs, images, and other types of output in @lnk("Play Framework", "https://www.playframework.com/") applications.
-    PlayFOP accepts XSL-FO that an application has generated via a Play @lnk("Twirl", "https://www.playframework.com/documentation/2.6.x/ScalaTemplates") template and processes it with @lnk("Apache FOP", "https://xmlgraphics.apache.org/fop/").
+    PlayFOP accepts XSL-FO that an application has generated via a Play @lnk("Twirl", "https://www.playframework.com/documentation/2.6.x/ScalaTemplates") template, with the @code{@lnk("scala-xml", "https://github.com/scala/scala-xml")} library, or as a @code{String} and processes it with Apache FOP.
 
   @p
     For information on PlayFOP beyond this user guide, see its @lnk("homepage", playFopUrl).
@@ -119,12 +119,20 @@
         With the @code{PlayFop} object you inject into your application, you can generate the various kinds of output supported by Apache FOP.
 
       @p
-        At the point in your code where you wish to generate output, invoke the @code{PlayFop} object's @code{process} method.
+        At the point in your code where you wish to generate output, invoke one of the @code{PlayFop} object's processing methods: @code{processTwirlXml} or @code{processStringXml}, or @code{processScalaXml} (Scala API only).
         The method will return the output as a byte array, which can be returned in an HTTP response, saved to a file, etc.
 
       @p
-        The simplest @code{process} invocation involves two arguments: the XSL-FO output of a Twirl XML template; and an output format/MIME type, typically sourced from @code{org.apache.xmlgraphics.util.MimeConstants}.
-        For example, given @code{someTemplate.scala.xml}...
+        The simplest processing invocations involve two arguments:
+
+      @ul
+        @li
+          XSL-FO from a Twirl template, as a @code{scala-xml} @code{Node}, or as a @code{String}; and
+        @li
+          an output format/MIME type, typically sourced from @code{org.apache.xmlgraphics.util.MimeConstants}.
+
+      @p
+        For example, given @code{someTwirlTemplate.scala.xml}...
 
       @hl.xml
         @@(text: String)<?xml version='1.0' encoding='utf-8'?>
@@ -145,23 +153,23 @@
         ...you could generate a PNG image as follows:
 
       @p
-        @b{Simple @code{process} Example, Scala}
+        @b{Simple Processing Example, Scala}
         @hl.ref(
           wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
           start = "val png: Array[Byte] = playFop.processTwirlXml(",
-          end = "// END Simple Scala 'process' sample")
+          end = "// END Simple Scala processing sample")
 
       @p
-        @b{Simple @code{process} Example, Java}
+        @b{Simple Processing Example, Java}
         @hl.ref(
           wd/'src/'test/'java/'com/'dmanchester/'playfop/'japi/'userguide/"UserGuideCodeSamplesTest.java",
           start = "byte[] png = playFop.processTwirlXml(",
-          end = "// END Simple Java 'process' sample")
+          end = "// END Simple Java processing sample")
 
       @p
         The resulting PNG (Scala or Java):
 
-      @img(src:="simple-process-example--png.png", style:="border:1px solid #777;")
+      @img(src:="simple-processing-example--png.png", style:="border:1px solid #777;")
 
       @p
         You can also pass to @code{process} either or both of the following options:
@@ -185,23 +193,23 @@
         The following code examples present the syntax for using @code{autoDetectFontsForPDF} and an @code{FOUserAgent} block.
 
       @p
-        @b{Complex @code{process} Example, Scala}
+        @b{Complex Processing Example, Scala}
         @hl.ref(
           wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
           start = "val myFOUserAgentBlock = { foUserAgent: FOUserAgent =>",
-          end = "// END Complex Scala 'process' sample")
+          end = "// END Complex Scala processing sample")
 
       @p
-        @b{Complex @code{process} Example, Java}
+        @b{Complex Processing Example, Java}
         @hl.ref(
           wd/'src/'test/'java/'com/'dmanchester/'playfop/'japi/'userguide/"UserGuideCodeSamplesTest.java",
           start = "FOUserAgentBlock myFOUserAgentBlock = new FOUserAgentBlock() {",
-          end = "// END Complex Java 'process' sample")
+          end = "// END Complex Java processing sample")
 
       @p
         The resulting PDF (Scala or Java):
 
-      @img(src:="complex-process-example--pdf.png")
+      @img(src:="complex-processing-example--pdf.png")
 
     @sect{Applying Apache FOP Units to Values: the Units Class}
 
@@ -209,7 +217,7 @@
         To apply a numeric value to an XSL-FO element, you generally place the value in an attribute of the element. The value is labeled with the unit of measure (if any), without any intervening space: @code{29.7cm}, @code{9pt}, etc.
 
       @p
-        PlayFOP's @code{Units} class, which is typically used inside a Twirl template, handles this formatting. To use it:
+        PlayFOP's @code{Units} class handles this formatting. To use it:
 
       @ol
         @li
@@ -219,10 +227,10 @@
           Call the instance's @code{format} method, passing the value to be formatted.
 
       @p
-        @b{@code{Units} Example, Inside a Template}
+        @b{@code{Units} Example, Inside a Twirl Template}
 
       @hl.xml
-        ...beginning of a template that accepts a fontSizeInPoints argument...
+        ...beginning of a Twirl template that accepts a fontSizeInPoints argument...
 
         @@import com.dmanchester.playfop.api.Units
         @@pt = @@{new Units("pt", 0)}
