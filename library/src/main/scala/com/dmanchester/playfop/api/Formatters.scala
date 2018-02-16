@@ -37,17 +37,14 @@ object Formatters {
     */
   def preserveNewlinesForTwirlXml(text: String): play.twirl.api.Xml = {
 
-    val paragraphs = text.split(CRLF + "|" + LF)
+    preserveNewlines(text, XmlFormat.empty, { (foBlocks: play.twirl.api.Xml, blockValue) =>
 
-    paragraphs.foldLeft(XmlFormat.empty) { (foBlocks, paragraph) =>
-
-      val blockValue = if (paragraph.isEmpty())
-        NBSP
-      else
-        paragraph
-
-      XmlFormat.fill(foBlocks :: XmlFormat.raw("<fo:block>") :: XmlFormat.escape(blockValue) :: XmlFormat.raw("</fo:block>") :: Nil)
-    }
+      XmlFormat.fill(
+          foBlocks ::
+          XmlFormat.raw("<fo:block>") ::
+          XmlFormat.escape(blockValue) ::
+          XmlFormat.raw("</fo:block>") :: Nil)
+    })
   }
 
   /** Preserves newlines for use in [[https://github.com/scala/scala-xml scala-xml]]
@@ -63,16 +60,24 @@ object Formatters {
     */
   def preserveNewlinesForScalaXml(text: String): Seq[Node] = {
 
+    preserveNewlines(text, Seq.empty[Node], { (foBlocks: Seq[Node], blockValue) =>
+
+      foBlocks :+ <fo:block>{blockValue}</fo:block>
+    })
+  }
+
+  private def preserveNewlines[T](text: String, emptyFOBlocks: T, appendFOBlock: ((T, String) => T)): T = {
+
     val paragraphs = text.split(CRLF + "|" + LF)
 
-    paragraphs.foldLeft(Seq.empty[Node]) { (foBlocks, paragraph) =>
+    paragraphs.foldLeft(emptyFOBlocks) { (foBlocks, paragraph) =>
 
       val blockValue = if (paragraph.isEmpty())
         NBSP
       else
         paragraph
 
-      foBlocks :+ <fo:block>{blockValue}</fo:block>
+      appendFOBlock(foBlocks, blockValue)
     }
   }
 }
