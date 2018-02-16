@@ -1,14 +1,15 @@
 package com.dmanchester.playfop.api
 
+import scala.xml.Node
+
 import play.twirl.api.XmlFormat
 
 /** Miscellaneous methods that may be useful in formatting text before it is
-  * included in an XSL-FO template and rendered by Apache FOP.
+  * included in XSL-FO and rendered by Apache FOP.
   */
 object Formatters {
 
-  private val NBSP = '\u00A0'  // non-breaking space
-  private val NBSPAsXml = "&#xa0;"
+  private val NBSP = "\u00A0"  // non-breaking space
   private val CRLF = "\r\n"
   private val LF = "\n"
 
@@ -19,18 +20,19 @@ object Formatters {
     * @return `text`, reflecting the replacements
     */
   def preserveSpaces(text: String): String = {
-    text.replace(' ', NBSP)
+    text.replace(" ", NBSP)
   }
 
-  /** Preserves newlines by wrapping each newline-terminated run of characters
-    * within `text` in `<fo:block>`...`</fo:block>`. If there are standalone
-    * newlines, and if they are not at the end of `text`, represents them with
-    * an `<fo:block>` that renders as a blank line.
+  /** Preserves newlines for use in [[https://www.playframework.com/documentation/2.6.x/ScalaTemplates Twirl]]
+    * XML. Wraps each newline-terminated run of characters within `text` in
+    * `<fo:block>`...`</fo:block>`. If there are standalone newlines, and if
+    * they are not at the end of `text`, represents them with an `<fo:block>`
+    * that renders as a blank line.
     *
     * Disregards newlines at the end of `text`.
     *
     * @param text
-    * @return a Play Twirl `[[https://www.playframework.com/documentation/2.6.x/api/scala/index.html#play.twirl.api.Xml Xml]]`
+    * @return a Twirl `[[https://www.playframework.com/documentation/2.6.x/api/scala/index.html#play.twirl.api.Xml Xml]]`
     * instance reflecting the newline wrapping
     */
   def preserveNewlinesForTwirlXml(text: String): play.twirl.api.Xml = {
@@ -40,11 +42,37 @@ object Formatters {
     paragraphs.foldLeft(XmlFormat.empty) { (foBlocks, paragraph) =>
 
       val blockValue = if (paragraph.isEmpty())
-        XmlFormat.raw(NBSPAsXml)
+        NBSP
       else
-        XmlFormat.escape(paragraph)
+        paragraph
 
-      XmlFormat.fill(foBlocks :: XmlFormat.raw("<fo:block>") :: blockValue :: XmlFormat.raw("</fo:block>") :: Nil)
+      XmlFormat.fill(foBlocks :: XmlFormat.raw("<fo:block>") :: XmlFormat.escape(blockValue) :: XmlFormat.raw("</fo:block>") :: Nil)
+    }
+  }
+
+  /** Preserves newlines for use in [[https://github.com/scala/scala-xml scala-xml]]
+    * types. Wraps each newline-terminated run of characters within `text` in
+    * `<fo:block>`...`</fo:block>`. If there are standalone newlines, and if
+    * they are not at the end of `text`, represents them with an `<fo:block>`
+    * that renders as a blank line.
+    *
+    * Disregards newlines at the end of `text`.
+    *
+    * @param text
+    * @return a sequence of `Node` reflecting the newline wrapping
+    */
+  def preserveNewlinesForScalaXml(text: String): Seq[Node] = {
+
+    val paragraphs = text.split(CRLF + "|" + LF)
+
+    paragraphs.foldLeft(Seq.empty[Node]) { (foBlocks, paragraph) =>
+
+      val blockValue = if (paragraph.isEmpty())
+        NBSP
+      else
+        paragraph
+
+      foBlocks :+ <fo:block>{blockValue}</fo:block>
     }
   }
 }

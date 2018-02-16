@@ -17,14 +17,14 @@ class FormattersSpec extends Specification {
 
   "preserveNewlinesForTwirlXml" should {
     """place each CRLF-terminated run of characters in <fo:block>...</fo:block>,
-      |represent non-trailing standalone CRLFs as <fo:block>&#xa0;</fo:block>,
+      |represent non-trailing standalone CRLFs as <fo:block>NBSP</fo:block>,
       |disregard trailing CRLFs, and properly represent XML special
       |characters""".stripMargin in {
       Formatters.preserveNewlinesForTwirlXml(
         CRLF + "1 < 2" + CRLF + "4 > 3" + CRLF + CRLF + "5 = 5" + CRLF + CRLF
       ).body must beEqualTo(
-        "<fo:block>&#xa0;</fo:block><fo:block>1 &lt; 2</fo:block>" +
-        "<fo:block>4 &gt; 3</fo:block><fo:block>&#xa0;</fo:block>" +
+        "<fo:block>\u00A0</fo:block><fo:block>1 &lt; 2</fo:block>" +
+        "<fo:block>4 &gt; 3</fo:block><fo:block>\u00A0</fo:block>" +
         "<fo:block>5 = 5</fo:block>"
       )
     }
@@ -41,7 +41,26 @@ class FormattersSpec extends Specification {
       Formatters.preserveNewlinesForTwirlXml(
         ""
       ).body must beEqualTo(
-        "<fo:block>&#xa0;</fo:block>"
+        "<fo:block>\u00A0</fo:block>"
+      )
+    }
+  }
+
+  "preserveNewlinesForScalaXml" should {
+    """place each CRLF-terminated run of characters in <fo:block>...</fo:block>,
+      |represent non-trailing standalone CRLFs as <fo:block>NBSP</fo:block>,
+      |disregard trailing CRLFs, and properly represent XML special
+      |characters""".stripMargin in {
+      Formatters.preserveNewlinesForScalaXml(
+        CRLF + "1 < 2" + CRLF + "4 > 3" + CRLF + CRLF + "5 = 5" + CRLF + CRLF
+      ) must beEqualTo(
+        Seq(
+          <fo:block>\u00A0</fo:block>,
+          <fo:block>{"1 < 2"}</fo:block>,  // element value written as expression because "<" requires escaping
+          <fo:block>{"4 > 3"}</fo:block>,  // same with ">"
+          <fo:block>\u00A0</fo:block>,
+          <fo:block>5 = 5</fo:block>
+        )
       )
     }
   }
