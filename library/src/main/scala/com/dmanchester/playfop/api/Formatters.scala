@@ -1,6 +1,7 @@
 package com.dmanchester.playfop.api
 
 import scala.xml.Node
+import scala.xml.Utility
 
 import play.twirl.api.XmlFormat
 
@@ -63,6 +64,14 @@ object Formatters {
     preserveNewlines(text, Seq.empty[Node], { (foBlocks: Seq[Node], blockValue) =>
 
       foBlocks :+ <fo:block>{blockValue}</fo:block>
+    })
+  }
+
+  def preserveNewlinesForStringXml(text: String): String = {
+
+    preserveNewlines(text, "" /* empty string */, { (foBlocks: String, blockValue) =>
+
+      foBlocks + "<fo:block>" + Utility.escape(blockValue) + "</fo:block>"
     })
   }
 
