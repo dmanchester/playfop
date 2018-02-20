@@ -28,6 +28,8 @@ val png: Array[Byte] = playFop.processTwirlXml(
   "This code sample" should {
     "render the XSL-FO as PDF, auto-detecting fonts and applying the FOUserAgent block" in new playFopBlock {
 
+      val xslfo = TestHelpers.wrapInStringXmlDocument("Hello again.")
+
 // BEGIN Complex Scala processing sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
@@ -35,8 +37,8 @@ val myFOUserAgentBlock = { foUserAgent: FOUserAgent =>
   foUserAgent.setAuthor("PlayFOP Sample Code")
 }
 
-val pdf: Array[Byte] = playFop.processTwirlXml(
-  views.xml.someTwirlTemplate.render("Hello again."),
+val pdf: Array[Byte] = playFop.processStringXml(
+  xslfo,
   MimeConstants.MIME_PDF,
   autoDetectFontsForPDF = true,
   foUserAgentBlock = myFOUserAgentBlock

@@ -153,14 +153,14 @@
         ...you could generate a PNG image as follows:
 
       @p
-        @b{Simple Processing Example, Scala}
+        @b{Simple Processing Example, Twirl Template, Scala}
         @hl.ref(
           wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
           start = "val png: Array[Byte] = playFop.processTwirlXml(",
           end = "// END Simple Scala processing sample")
 
       @p
-        @b{Simple Processing Example, Java}
+        @b{Simple Processing Example, Twirl Template, Java}
         @hl.ref(
           wd/'src/'test/'java/'com/'dmanchester/'playfop/'japi/'userguide/"UserGuideCodeSamplesTest.java",
           start = "byte[] png = playFop.processTwirlXml(",
@@ -190,17 +190,18 @@
         The @code{FOUserAgent} block is an implementation of the single-method @code{FOUserAgentBlock} interface.
 
       @p
-        The following code examples present the syntax for using @code{autoDetectFontsForPDF} and an @code{FOUserAgent} block.
+        The following code samples present the syntax for using @code{autoDetectFontsForPDF} and an @code{FOUserAgent} block.
+        They presume a @code{String} literal @code{"xslfo"}, equivalent to the above Twirl template rendered with the text, "Hello again."
 
       @p
-        @b{Complex Processing Example, Scala}
+        @b{Complex Processing Example, String Literal, Scala}
         @hl.ref(
           wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
           start = "val myFOUserAgentBlock = { foUserAgent: FOUserAgent =>",
           end = "// END Complex Scala processing sample")
 
       @p
-        @b{Complex Processing Example, Java}
+        @b{Complex Processing Example, String Literal, Java}
         @hl.ref(
           wd/'src/'test/'java/'com/'dmanchester/'playfop/'japi/'userguide/"UserGuideCodeSamplesTest.java",
           start = "FOUserAgentBlock myFOUserAgentBlock = new FOUserAgentBlock() {",

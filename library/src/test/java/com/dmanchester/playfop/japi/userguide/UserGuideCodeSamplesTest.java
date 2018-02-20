@@ -13,6 +13,8 @@ import com.dmanchester.playfop.japi.PlayFop;
 import com.dmanchester.playfop.japi.ProcessOptions;
 import com.dmanchester.playfop.jinternal.PlayFopImpl;
 
+import scala.Option;
+
 public class UserGuideCodeSamplesTest {
 
     private PlayFop playFop = new PlayFopImpl();
@@ -35,6 +37,8 @@ byte[] png = playFop.processTwirlXml(
     @Test
     public void testComplexCodeSample() {
 
+        String xslfo = TestHelpers.wrapInStringXmlDocument("Hello again.", Option.empty());
+
 // BEGIN Complex Java processing sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
@@ -48,8 +52,8 @@ FOUserAgentBlock myFOUserAgentBlock = new FOUserAgentBlock() {
 ProcessOptions processOptions = new ProcessOptions.Builder().
         autoDetectFontsForPDF(true).foUserAgentBlock(myFOUserAgentBlock).build();
 
-byte[] pdf = playFop.processTwirlXml(
-    views.xml.someTwirlTemplate.render("Hello again."),
+byte[] pdf = playFop.processStringXml(
+    xslfo,
     MimeConstants.MIME_PDF,
     processOptions
 );
