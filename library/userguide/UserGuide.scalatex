@@ -264,40 +264,52 @@
         (No-break spaces are not subject to collapsing.)
 
       @p
-        The @code{preserveNewlinesForTwirlXml} method takes newline-terminated runs of characters and wraps each one in an @code{<fo:block>} element.
+        The newline-preservation methods (@code{preserveNewlinesForTwirlXml}, @code{preserveNewlinesForScalaXml}, and @code{preserveNewlinesForStringXml}) take newline-terminated runs of characters and wrap each one in an @code{<fo:block>} element.
         With the characters wrapped in this fashion, the newlines are preserved in output.
 
       @p
-        Both methods accept a @code{String} argument.
-        @code{preserveSpaces} returns a @code{String}, while @code{preserveNewlinesForTwirlXml} returns a Play Twirl @code{Xml} instance.
-        So, if you want both kinds of whitespace preservation, invoke @code{preserveSpaces} first and pass its return value to @code{preserveNewlinesForTwirlXml}.
+        All @code{Formatters} methods accept a @code{String} argument.
+        @code{preserveSpaces} returns a @code{String}, while the newline-preservation methods return an object of the type suggested by the method name:
+
+      @table(`class`:="pure-table pure-table-bordered")
+        @thead
+          @tr
+            @th{Method}
+            @th{Returns}
+        @tbody
+          @tr
+            @td
+              @code{preserveNewlinesForTwirlXml}
+            @td
+              a Twirl @code{Xml} instance
+          @tr
+            @td
+              @code{preserveNewlinesForScalaXml}
+            @td
+              a @code{scala-xml} @code{Seq[Node]}
+          @tr
+            @td
+              @code{preserveNewlinesForStringXml}
+            @td
+              a @code{String}
+
+      @p
+        So, if you want both kinds of whitespace preservation, invoke @code{preserveSpaces} first and pass its return value to a newline-preservation method.
 
       @p
         @b{@code{Formatters} Example}
 
       @p
-        Passing the string @code{"H  e  l  l  o\n\n  w  o  r  l  d"} to the following template...
-
-      @hl.xml
-        @@(text: String)<?xml version='1.0' encoding='utf-8'?>
-
-        @@import com.dmanchester.playfop.api.Formatters
-
-        <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-          <fo:layout-master-set>
-            <fo:simple-page-master master-name="label">
-              <fo:region-body region-name="xsl-region-body"/>
-            </fo:simple-page-master>
-          </fo:layout-master-set>
-          <fo:page-sequence master-reference="label">
-            <fo:flow flow-name="xsl-region-body">
-              <fo:block font-family="Courier" font-size="24pt">@@Formatters.preserveNewlinesForTwirlXml(Formatters.preserveSpaces(text))</fo:block>
-            </fo:flow>
-          </fo:page-sequence>
-        </fo:root>
+        Invoking the following code block with @code{text} set to the string @code{"H  e  l  l  o\n\n  w  o  r  l  d"}...
 
       @p
-        ...and rendering the result as a PDF leads to:
+        @hl.ref(
+          wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
+          start = "import com.dmanchester.playfop.api.Formatters",
+          end = "// END Formatters sample")
+
+      @p
+        ...and rendering @code{xslfo} as a PDF leads to:
 
       @img(src:="formatters-example--pdf.png", style:="border:1px solid #777;")
 
