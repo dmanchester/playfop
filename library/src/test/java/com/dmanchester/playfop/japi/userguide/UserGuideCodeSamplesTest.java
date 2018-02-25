@@ -13,6 +13,8 @@ import com.dmanchester.playfop.japi.PlayFop;
 import com.dmanchester.playfop.japi.ProcessOptions;
 import com.dmanchester.playfop.jinternal.PlayFopImpl;
 
+import scala.Option;
+
 public class UserGuideCodeSamplesTest {
 
     private PlayFop playFop = new PlayFopImpl();
@@ -20,14 +22,14 @@ public class UserGuideCodeSamplesTest {
     @Test
     public void testSimpleCodeSample() {
 
-// BEGIN Simple Java 'process' sample
+// BEGIN Simple Java processing sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
-byte[] png = playFop.process(
-    views.xml.someTemplate.render("Hello world."),
+byte[] png = playFop.processTwirlXml(
+    views.xml.someTwirlTemplate.render("Hello world."),
     MimeConstants.MIME_PNG
 );
-// END Simple Java 'process' sample
+// END Simple Java processing sample
 
         assertTrue(png.length > 3000);  // If PNG generated correctly, it should be a little larger than 3K.
     }
@@ -35,7 +37,9 @@ byte[] png = playFop.process(
     @Test
     public void testComplexCodeSample() {
 
-// BEGIN Complex Java 'process' sample
+        String xslfo = TestHelpers.wrapInStringXmlDocument("Hello again.", Option.empty());
+
+// BEGIN Complex Java processing sample
 // IMPORTANT: If following line is changed, UserGuide.scalatex must be changed
 // in kind!
 FOUserAgentBlock myFOUserAgentBlock = new FOUserAgentBlock() {
@@ -48,12 +52,12 @@ FOUserAgentBlock myFOUserAgentBlock = new FOUserAgentBlock() {
 ProcessOptions processOptions = new ProcessOptions.Builder().
         autoDetectFontsForPDF(true).foUserAgentBlock(myFOUserAgentBlock).build();
 
-byte[] pdf = playFop.process(
-    views.xml.someTemplate.render("Hello again."),
+byte[] pdf = playFop.processStringXml(
+    xslfo,
     MimeConstants.MIME_PDF,
     processOptions
 );
-// END Complex Java 'process' sample
+// END Complex Java processing sample
 
         assertEquals("Hello again.", TestHelpers.textFromPDFBytes(pdf));  // for readability of code sample, we don't declare a constant for this String or the next one
         assertEquals("PlayFOP Sample Code", TestHelpers.authorFromPDFBytes(pdf));

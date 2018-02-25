@@ -10,7 +10,7 @@
 
   @p
     PlayFOP is a library for generating PDFs, images, and other types of output in @lnk("Play Framework", "https://www.playframework.com/") applications.
-    PlayFOP accepts XSL-FO that an application has generated via a Play @lnk("Twirl", "https://www.playframework.com/documentation/2.6.x/ScalaTemplates") template and processes it with @lnk("Apache FOP", "https://xmlgraphics.apache.org/fop/").
+    PlayFOP accepts XSL-FO that an application has generated via a Play @lnk("Twirl", "https://www.playframework.com/documentation/2.6.x/ScalaTemplates") template, with the @code{@lnk("scala-xml", "https://github.com/scala/scala-xml")} library, or as a @code{String} and processes it with Apache FOP.
 
   @p
     For information on PlayFOP beyond this user guide, see its @lnk("homepage", playFopUrl).
@@ -119,12 +119,20 @@
         With the @code{PlayFop} object you inject into your application, you can generate the various kinds of output supported by Apache FOP.
 
       @p
-        At the point in your code where you wish to generate output, invoke the @code{PlayFop} object's @code{process} method.
+        At the point in your code where you wish to generate output, invoke one of the @code{PlayFop} object's processing methods: @code{processTwirlXml} or @code{processStringXml}, or @code{processScalaXml} (Scala API only).
         The method will return the output as a byte array, which can be returned in an HTTP response, saved to a file, etc.
 
       @p
-        The simplest @code{process} invocation involves two arguments: the XSL-FO output of a Twirl XML template; and an output format/MIME type, typically sourced from @code{org.apache.xmlgraphics.util.MimeConstants}.
-        For example, given @code{someTemplate.scala.xml}...
+        The simplest processing invocations involve two arguments:
+
+      @ul
+        @li
+          XSL-FO from a Twirl template, as a @code{scala-xml} @code{Node}, or as a @code{String}; and
+        @li
+          an output format/MIME type, typically sourced from @code{org.apache.xmlgraphics.util.MimeConstants}.
+
+      @p
+        For example, given @code{someTwirlTemplate.scala.xml}...
 
       @hl.xml
         @@(text: String)<?xml version='1.0' encoding='utf-8'?>
@@ -145,23 +153,23 @@
         ...you could generate a PNG image as follows:
 
       @p
-        @b{Simple @code{process} Example, Scala}
+        @b{Simple Processing Example, Twirl Template, Scala}
         @hl.ref(
           wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
-          start = "val png: Array[Byte] = playFop.process(",
-          end = "// END Simple Scala 'process' sample")
+          start = "val png: Array[Byte] = playFop.processTwirlXml(",
+          end = "// END Simple Scala processing sample")
 
       @p
-        @b{Simple @code{process} Example, Java}
+        @b{Simple Processing Example, Twirl Template, Java}
         @hl.ref(
           wd/'src/'test/'java/'com/'dmanchester/'playfop/'japi/'userguide/"UserGuideCodeSamplesTest.java",
-          start = "byte[] png = playFop.process(",
-          end = "// END Simple Java 'process' sample")
+          start = "byte[] png = playFop.processTwirlXml(",
+          end = "// END Simple Java processing sample")
 
       @p
         The resulting PNG (Scala or Java):
 
-      @img(src:="simple-process-example--png.png", style:="border:1px solid #777;")
+      @img(src:="simple-processing-example--png.png", style:="border:1px solid #777;")
 
       @p
         You can also pass to @code{process} either or both of the following options:
@@ -182,26 +190,27 @@
         The @code{FOUserAgent} block is an implementation of the single-method @code{FOUserAgentBlock} interface.
 
       @p
-        The following code examples present the syntax for using @code{autoDetectFontsForPDF} and an @code{FOUserAgent} block.
+        The following code samples present the syntax for using @code{autoDetectFontsForPDF} and an @code{FOUserAgent} block.
+        They presume a @code{String} literal @code{"xslfo"}, equivalent to the above Twirl template rendered with the text, "Hello again."
 
       @p
-        @b{Complex @code{process} Example, Scala}
+        @b{Complex Processing Example, String Literal, Scala}
         @hl.ref(
           wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
           start = "val myFOUserAgentBlock = { foUserAgent: FOUserAgent =>",
-          end = "// END Complex Scala 'process' sample")
+          end = "// END Complex Scala processing sample")
 
       @p
-        @b{Complex @code{process} Example, Java}
+        @b{Complex Processing Example, String Literal, Java}
         @hl.ref(
           wd/'src/'test/'java/'com/'dmanchester/'playfop/'japi/'userguide/"UserGuideCodeSamplesTest.java",
           start = "FOUserAgentBlock myFOUserAgentBlock = new FOUserAgentBlock() {",
-          end = "// END Complex Java 'process' sample")
+          end = "// END Complex Java processing sample")
 
       @p
         The resulting PDF (Scala or Java):
 
-      @img(src:="complex-process-example--pdf.png")
+      @img(src:="complex-processing-example--pdf.png")
 
     @sect{Applying Apache FOP Units to Values: the Units Class}
 
@@ -209,7 +218,7 @@
         To apply a numeric value to an XSL-FO element, you generally place the value in an attribute of the element. The value is labeled with the unit of measure (if any), without any intervening space: @code{29.7cm}, @code{9pt}, etc.
 
       @p
-        PlayFOP's @code{Units} class, which is typically used inside a Twirl template, handles this formatting. To use it:
+        PlayFOP's @code{Units} class handles this formatting. To use it:
 
       @ol
         @li
@@ -219,10 +228,10 @@
           Call the instance's @code{format} method, passing the value to be formatted.
 
       @p
-        @b{@code{Units} Example, Inside a Template}
+        @b{@code{Units} Example, Inside a Twirl Template}
 
       @hl.xml
-        ...beginning of a template that accepts a fontSizeInPoints argument...
+        ...beginning of a Twirl template that accepts a fontSizeInPoints argument...
 
         @@import com.dmanchester.playfop.api.Units
         @@pt = @@{new Units("pt", 0)}
@@ -251,44 +260,56 @@
         PlayFOP's @code{Formatters} object offers methods for preserving both kinds of whitespace.
 
       @p
-        The @code{makeSpacesNonBreaking} method replaces "regular" spaces with no-break ones.
+        The @code{preserveSpaces} method replaces "regular" spaces with no-break ones.
         (No-break spaces are not subject to collapsing.)
 
       @p
-        The @code{makeNewlinesIntoFOBlocks} method takes newline-terminated runs of characters and wraps each one in an @code{<fo:block>} element.
+        The newline-preservation methods (@code{preserveNewlinesForTwirlXml}, @code{preserveNewlinesForScalaXml}, and @code{preserveNewlinesForStringXml}) take newline-terminated runs of characters and wrap each one in an @code{<fo:block>} element.
         With the characters wrapped in this fashion, the newlines are preserved in output.
 
       @p
-        Both methods accept a @code{String} argument.
-        @code{makeSpacesNonBreaking} returns a @code{String}, while @code{makeNewlinesIntoFOBlocks} returns a Play Twirl @code{Xml} instance.
-        So, if you want both kinds of whitespace preservation, invoke @code{makeSpacesNonBreaking} first and pass its return value to @code{makeNewlinesIntoFOBlocks}.
+        All @code{Formatters} methods accept a @code{String} argument.
+        @code{preserveSpaces} returns a @code{String}, while the newline-preservation methods return an object of the type suggested by the method name:
+
+      @table(`class`:="pure-table pure-table-bordered")
+        @thead
+          @tr
+            @th{Method}
+            @th{Returns}
+        @tbody
+          @tr
+            @td
+              @code{preserveNewlinesForTwirlXml}
+            @td
+              a Twirl @code{Xml} instance
+          @tr
+            @td
+              @code{preserveNewlinesForScalaXml}
+            @td
+              a @code{scala-xml} @code{Seq[Node]}
+          @tr
+            @td
+              @code{preserveNewlinesForStringXml}
+            @td
+              a @code{String}
+
+      @p
+        So, if you want both kinds of whitespace preservation, invoke @code{preserveSpaces} first and pass its return value to a newline-preservation method.
 
       @p
         @b{@code{Formatters} Example}
 
       @p
-        Passing the string @code{"H  e  l  l  o\n\n  w  o  r  l  d"} to the following template...
-
-      @hl.xml
-        @@(text: String)<?xml version='1.0' encoding='utf-8'?>
-
-        @@import com.dmanchester.playfop.api.Formatters
-
-        <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-          <fo:layout-master-set>
-            <fo:simple-page-master master-name="label">
-              <fo:region-body region-name="xsl-region-body"/>
-            </fo:simple-page-master>
-          </fo:layout-master-set>
-          <fo:page-sequence master-reference="label">
-            <fo:flow flow-name="xsl-region-body">
-              <fo:block font-family="Courier" font-size="24pt">@@Formatters.makeNewlinesIntoFOBlocks(Formatters.makeSpacesNonBreaking(text))</fo:block>
-            </fo:flow>
-          </fo:page-sequence>
-        </fo:root>
+        Invoking the following code block with @code{text} set to the string @code{"H  e  l  l  o\n\n  w  o  r  l  d"}...
 
       @p
-        ...and rendering the result as a PDF leads to:
+        @hl.ref(
+          wd/'src/'test/'scala/'com/'dmanchester/'playfop/'sapi/'userguide/"UserGuideCodeSamplesSpec.scala",
+          start = "import com.dmanchester.playfop.api.Formatters",
+          end = "// END Formatters sample")
+
+      @p
+        ...and rendering @code{xslfo} as a PDF leads to:
 
       @img(src:="formatters-example--pdf.png", style:="border:1px solid #777;")
 

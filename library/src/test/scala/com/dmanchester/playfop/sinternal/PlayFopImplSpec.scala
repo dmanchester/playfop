@@ -29,17 +29,17 @@ class PlayFopImplSpec extends Specification {
     foUserAgent.setAuthor(PdfAuthor)
   }
 
-  "process(xslfo, outputFormat)" should {
+  "processTwirlXml(xslfo, outputFormat)" should {
     "render the XSL-FO in the chosen format" in new playFopBlock {
 
-      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
-      val pdfBytes = playFop.process(xslfo, MimeConstants.MIME_PDF)
+      val xslfo = TestHelpers.wrapInTwirlXmlDocument(PdfText)
+      val pdfBytes = playFop.processTwirlXml(xslfo, MimeConstants.MIME_PDF)
 
       TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
     }
   }
 
-  "process(xslfo, outputFormat, autoDetectFontsForPDF)" should {
+  "processTwirlXml(xslfo, outputFormat, autoDetectFontsForPDF)" should {
     "render the XSL-FO with the chosen font" in new playFopBlock {
 
       // To confirm a specific font is used, we choose one outside the PDF
@@ -48,19 +48,95 @@ class PlayFopImplSpec extends Specification {
       // the XSL-FO correctly.)
 
       val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(playFop)
-      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText, Some(fontFamily))
+      val xslfo = TestHelpers.wrapInTwirlXmlDocument(PdfText, Some(fontFamily))
 
-      val pdfBytes = playFop.process(xslfo, MimeConstants.MIME_PDF, autoDetectFontsForPDF = true)
+      val pdfBytes = playFop.processTwirlXml(xslfo, MimeConstants.MIME_PDF, autoDetectFontsForPDF = true)
 
       TestHelpers.fontsFromPDFBytes(pdfBytes) must containMatch(fontFamily)
     }
   }
 
-  "process(xslfo, outputFormat, foUserAgentBlock)" should {
+  "processTwirlXml(xslfo, outputFormat, foUserAgentBlock)" should {
     "render the XSL-FO in the chosen format, applying the FOUserAgent block" in new playFopBlock {
 
-      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
-      val pdfBytes = playFop.process(xslfo, MimeConstants.MIME_PDF, foUserAgentBlock = FOUserAgentBlock)
+      val xslfo = TestHelpers.wrapInTwirlXmlDocument(PdfText)
+      val pdfBytes = playFop.processTwirlXml(xslfo, MimeConstants.MIME_PDF, foUserAgentBlock = FOUserAgentBlock)
+
+      TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
+      TestHelpers.authorFromPDFBytes(pdfBytes) must beEqualTo(PdfAuthor)
+    }
+  }
+
+  "processScalaXml(xslfo, outputFormat)" should {
+    "render the XSL-FO in the chosen format" in new playFopBlock {
+
+      val xslfo = TestHelpers.wrapInScalaXmlDocument(PdfText)
+      val pdfBytes = playFop.processScalaXml(xslfo, MimeConstants.MIME_PDF)
+
+      TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
+    }
+  }
+
+  "processScalaXml(xslfo, outputFormat, autoDetectFontsForPDF)" should {
+    "render the XSL-FO with the chosen font" in new playFopBlock {
+
+      // To confirm a specific font is used, we choose one outside the PDF
+      // format's base 14 fonts. (If we were to choose a base font, it could
+      // potentially get used by default, even if process() weren't rendering
+      // the XSL-FO correctly.)
+
+      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(playFop)
+      val xslfo = TestHelpers.wrapInScalaXmlDocument(PdfText, Some(fontFamily))
+
+      val pdfBytes = playFop.processScalaXml(xslfo, MimeConstants.MIME_PDF, autoDetectFontsForPDF = true)
+
+      TestHelpers.fontsFromPDFBytes(pdfBytes) must containMatch(fontFamily)
+    }
+  }
+
+  "processScalaXml(xslfo, outputFormat, foUserAgentBlock)" should {
+    "render the XSL-FO in the chosen format, applying the FOUserAgent block" in new playFopBlock {
+
+      val xslfo = TestHelpers.wrapInScalaXmlDocument(PdfText)
+      val pdfBytes = playFop.processScalaXml(xslfo, MimeConstants.MIME_PDF, foUserAgentBlock = FOUserAgentBlock)
+
+      TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
+      TestHelpers.authorFromPDFBytes(pdfBytes) must beEqualTo(PdfAuthor)
+    }
+  }
+
+  "processStringXml(xslfo, outputFormat)" should {
+    "render the XSL-FO in the chosen format" in new playFopBlock {
+
+      val xslfo = TestHelpers.wrapInStringXmlDocument(PdfText)
+      val pdfBytes = playFop.processStringXml(xslfo, MimeConstants.MIME_PDF)
+
+      TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
+    }
+  }
+
+  "processStringXml(xslfo, outputFormat, autoDetectFontsForPDF)" should {
+    "render the XSL-FO with the chosen font" in new playFopBlock {
+
+      // To confirm a specific font is used, we choose one outside the PDF
+      // format's base 14 fonts. (If we were to choose a base font, it could
+      // potentially get used by default, even if process() weren't rendering
+      // the XSL-FO correctly.)
+
+      val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(playFop)
+      val xslfo = TestHelpers.wrapInStringXmlDocument(PdfText, Some(fontFamily))
+
+      val pdfBytes = playFop.processStringXml(xslfo, MimeConstants.MIME_PDF, autoDetectFontsForPDF = true)
+
+      TestHelpers.fontsFromPDFBytes(pdfBytes) must containMatch(fontFamily)
+    }
+  }
+
+  "processStringXml(xslfo, outputFormat, foUserAgentBlock)" should {
+    "render the XSL-FO in the chosen format, applying the FOUserAgent block" in new playFopBlock {
+
+      val xslfo = TestHelpers.wrapInStringXmlDocument(PdfText)
+      val pdfBytes = playFop.processStringXml(xslfo, MimeConstants.MIME_PDF, foUserAgentBlock = FOUserAgentBlock)
 
       TestHelpers.textFromPDFBytes(pdfBytes) must beEqualTo(PdfText)
       TestHelpers.authorFromPDFBytes(pdfBytes) must beEqualTo(PdfAuthor)
@@ -72,7 +148,7 @@ class PlayFopImplSpec extends Specification {
 
       val output = new ByteArrayOutputStream()
       val fop = playFop.newFop(MimeConstants.MIME_PDF, output)
-      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
+      val xslfo = TestHelpers.wrapInTwirlXmlDocument(PdfText)
 
       process(xslfo, fop)
 
@@ -86,7 +162,7 @@ class PlayFopImplSpec extends Specification {
       val output = new ByteArrayOutputStream()
       val fop = playFop.newFop(MimeConstants.MIME_PDF, output, autoDetectFontsForPDF = true)
       val fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName(playFop)
-      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText, Some(fontFamily))
+      val xslfo = TestHelpers.wrapInTwirlXmlDocument(PdfText, Some(fontFamily))
 
       process(xslfo, fop)
 
@@ -99,7 +175,7 @@ class PlayFopImplSpec extends Specification {
 
       val output = new ByteArrayOutputStream()
       val fop = playFop.newFop(MimeConstants.MIME_PDF, output, foUserAgentBlock = FOUserAgentBlock)
-      val xslfo = TestHelpers.wrapInXslfoDocument(PdfText)
+      val xslfo = TestHelpers.wrapInTwirlXmlDocument(PdfText)
 
       process(xslfo, fop)
 

@@ -22,7 +22,7 @@
           </fo:block>
         </fo:table-cell>
         <fo:table-cell padding-top="@units.format(padding)">
-          @Formatters.makeNewlinesIntoFOBlocks(Formatters.makeSpacesNonBreaking(label.text))
+          @Formatters.preserveNewlinesForTwirlXml(Formatters.preserveSpaces(label.text))
         </fo:table-cell>
       </fo:table-row>
     </fo:table-body>

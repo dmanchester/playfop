@@ -12,25 +12,48 @@ import play.twirl.api.Xml;
 public interface PlayFop {
 
     /**
-     * Processes XSL-FO with Apache FOP. Generates output in the specified
-     * format.
+     * Processes XSL-FO generated from a <a href="https://www.playframework.com/documentation/2.6.x/ScalaTemplates">Twirl</a>
+     * XML template. Generates output in the specified format.
      *
      * @param xslfo the XSL-FO to process
      * @param outputFormat the format to generate
      * @return the Apache FOP output
      */
-    public byte[] process(Xml xslfo, String outputFormat);
+    public byte[] processTwirlXml(Xml xslfo, String outputFormat);
 
     /**
-     * Processes XSL-FO with Apache FOP, applying the processing options.
-     * Generates output in the specified format.
+     * Processes XSL-FO generated from a <a href="https://www.playframework.com/documentation/2.6.x/ScalaTemplates">Twirl</a>
+     * XML template, applying the processing options. Generates output in the
+     * specified format.
      *
      * @param xslfo the XSL-FO to process
      * @param outputFormat the format to generate
      * @param processOptions the processing options
      * @return the Apache FOP output
      */
-    public byte[] process(Xml xslfo, String outputFormat, ProcessOptions processOptions);
+    public byte[] processTwirlXml(Xml xslfo, String outputFormat, ProcessOptions processOptions);
+
+
+    /**
+     * Processes XSL-FO provided as a <code>String</code> of XML. Generates
+     * output in the specified format.
+     *
+     * @param xslfo the XSL-FO to process
+     * @param outputFormat the format to generate
+     * @return the Apache FOP output
+     */
+    public byte[] processStringXml(String xslfo, String outputFormat);
+
+    /**
+     * Processes XSL-FO provided as a <code>String</code> of XML, applying the
+     * processing options. Generates output in the specified format.
+     *
+     * @param xslfo the XSL-FO to process
+     * @param outputFormat the format to generate
+     * @param processOptions the processing options
+     * @return the Apache FOP output
+     */
+    public byte[] processStringXml(String xslfo, String outputFormat, ProcessOptions processOptions);
 
     /**
      * Creates a new <code>Fop</code> instance. Sets it up to save output to the

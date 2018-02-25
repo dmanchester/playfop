@@ -33,17 +33,31 @@ public class PlayFopImpl implements PlayFop {
     private com.dmanchester.playfop.sapi.PlayFop playFopScala = new com.dmanchester.playfop.sinternal.PlayFopImpl();
 
     @Override
-    public byte[] process(Xml xslfo, String outputFormat) {
+    public byte[] processTwirlXml(Xml xslfo, String outputFormat) {
 
-        return process(xslfo, outputFormat, DEFAULT_PROCESS_OPTIONS);
+        return processTwirlXml(xslfo, outputFormat, DEFAULT_PROCESS_OPTIONS);
     }
 
     @Override
-    public byte[] process(Xml xslfo, String outputFormat, ProcessOptions processOptions) {
+    public byte[] processTwirlXml(Xml xslfo, String outputFormat, ProcessOptions processOptions) {
 
         Function1<FOUserAgent, BoxedUnit> blockAsFunction = new BlockAsFunction(processOptions.getFoUserAgentBlock());
 
-        return playFopScala.process(xslfo, outputFormat, processOptions.isAutoDetectFontsForPDF(), blockAsFunction);
+        return playFopScala.processTwirlXml(xslfo, outputFormat, processOptions.isAutoDetectFontsForPDF(), blockAsFunction);
+    }
+
+    @Override
+    public byte[] processStringXml(String xslfo, String outputFormat) {
+
+        return processStringXml(xslfo, outputFormat, DEFAULT_PROCESS_OPTIONS);
+    }
+
+    @Override
+    public byte[] processStringXml(String xslfo, String outputFormat, ProcessOptions processOptions) {
+
+            Function1<FOUserAgent, BoxedUnit> blockAsFunction = new BlockAsFunction(processOptions.getFoUserAgentBlock());
+
+            return playFopScala.processStringXml(xslfo, outputFormat, processOptions.isAutoDetectFontsForPDF(), blockAsFunction);
     }
 
     @Override

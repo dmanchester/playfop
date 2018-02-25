@@ -64,30 +64,60 @@ public class PlayFopImplTest {
     private PlayFop playFop = new PlayFopImpl();
 
     @Test
-    public void testProcess_xslfo_outputFormat() throws IOException {
+    public void testProcessTwirlXml_xslfo_outputFormat() throws IOException {
 
-        byte[] pdfBytes = playFop.process(wrapInXslfoDocument(PDF_TEXT), MimeConstants.MIME_PDF);
+        byte[] pdfBytes = playFop.processTwirlXml(wrapInTwirlXmlDocument(PDF_TEXT), MimeConstants.MIME_PDF);
         checkText(pdfBytes, PDF_TEXT);
     }
 
     @Test
-    public void testProcess_xslfo_outputFormat_autoDetectFontsForPDF() throws IOException {
+    public void testProcessTwirlXml_xslfo_outputFormat_autoDetectFontsForPDF() throws IOException {
 
         String fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName();
 
         ProcessOptions processOptions = new ProcessOptions.Builder().
                 autoDetectFontsForPDF(true).build();
-        byte[] pdfBytes = playFop.process(wrapInXslfoDocument(PDF_TEXT, fontFamily), MimeConstants.MIME_PDF, processOptions);
+        byte[] pdfBytes = playFop.processTwirlXml(wrapInTwirlXmlDocument(PDF_TEXT, fontFamily), MimeConstants.MIME_PDF, processOptions);
 
         checkForFontFamily(pdfBytes, fontFamily);
     }
 
     @Test
-    public void testProcess_xslfo_outputFormat_foUserAgentBlock() throws IOException {
+    public void testProcessTwirlXml_xslfo_outputFormat_foUserAgentBlock() throws IOException {
 
         ProcessOptions processOptions = new ProcessOptions.Builder().
                 foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
-        byte[] pdfBytes = playFop.process(wrapInXslfoDocument(PDF_TEXT), MimeConstants.MIME_PDF, processOptions);
+        byte[] pdfBytes = playFop.processTwirlXml(wrapInTwirlXmlDocument(PDF_TEXT), MimeConstants.MIME_PDF, processOptions);
+
+        checkText(pdfBytes, PDF_TEXT);
+        checkForAuthorFromFOUserAgentBlock(pdfBytes, PDF_AUTHOR);
+    }
+
+    @Test
+    public void testProcessStringXml_xslfo_outputFormat() throws IOException {
+
+        byte[] pdfBytes = playFop.processStringXml(wrapInStringXmlDocument(PDF_TEXT), MimeConstants.MIME_PDF);
+        checkText(pdfBytes, PDF_TEXT);
+    }
+
+    @Test
+    public void testProcessStringXml_xslfo_outputFormat_autoDetectFontsForPDF() throws IOException {
+
+        String fontFamily = chooseFontFamilyOutsideBase14WithSingleWordName();
+
+        ProcessOptions processOptions = new ProcessOptions.Builder().
+                autoDetectFontsForPDF(true).build();
+        byte[] pdfBytes = playFop.processStringXml(wrapInStringXmlDocument(PDF_TEXT, fontFamily), MimeConstants.MIME_PDF, processOptions);
+
+        checkForFontFamily(pdfBytes, fontFamily);
+    }
+
+    @Test
+    public void testProcessStringXml_xslfo_outputFormat_foUserAgentBlock() throws IOException {
+
+        ProcessOptions processOptions = new ProcessOptions.Builder().
+                foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
+        byte[] pdfBytes = playFop.processStringXml(wrapInStringXmlDocument(PDF_TEXT), MimeConstants.MIME_PDF, processOptions);
 
         checkText(pdfBytes, PDF_TEXT);
         checkForAuthorFromFOUserAgentBlock(pdfBytes, PDF_AUTHOR);
@@ -98,7 +128,7 @@ public class PlayFopImplTest {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Fop fop = playFop.newFop(MimeConstants.MIME_PDF, output);
-        process(wrapInXslfoDocument(PDF_TEXT), fop);
+        process(wrapInTwirlXmlDocument(PDF_TEXT), fop);
 
         checkText(output.toByteArray(), PDF_TEXT);
     }
@@ -112,7 +142,7 @@ public class PlayFopImplTest {
                 autoDetectFontsForPDF(true).build();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Fop fop = playFop.newFop(MimeConstants.MIME_PDF, output, processOptions);
-        process(wrapInXslfoDocument(PDF_TEXT, fontFamily), fop);
+        process(wrapInTwirlXmlDocument(PDF_TEXT, fontFamily), fop);
 
         checkForFontFamily(output.toByteArray(), fontFamily);
     }
@@ -124,35 +154,43 @@ public class PlayFopImplTest {
                 foUserAgentBlock(FO_USER_AGENT_BLOCK).build();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Fop fop = playFop.newFop(MimeConstants.MIME_PDF, output, processOptions);
-        process(wrapInXslfoDocument(PDF_TEXT), fop);
+        process(wrapInTwirlXmlDocument(PDF_TEXT), fop);
 
         byte[] pdfBytes = output.toByteArray();
         checkText(pdfBytes, PDF_TEXT);
         checkForAuthorFromFOUserAgentBlock(pdfBytes, PDF_AUTHOR);
     }
 
-    private Xml wrapInXslfoDocument(String text) {
-        return wrapInXslfoDocument(text, null);
+    private Xml wrapInTwirlXmlDocument(String text) {
+        return wrapInTwirlXmlDocument(text, null);
     }
 
-    private Xml wrapInXslfoDocument(String text, String fontFamily) {
+    private Xml wrapInTwirlXmlDocument(String text, String fontFamily) {
+
+        return XmlFormat.raw(wrapInStringXmlDocument(text, fontFamily));
+    }
+
+    private String wrapInStringXmlDocument(String text) {
+        return wrapInStringXmlDocument(text, null);
+    }
+
+    private String wrapInStringXmlDocument(String text, String fontFamily) {
 
         String foBlockStartTag = (fontFamily == null) ? "<fo:block>" : "<fo:block font-family=\"" + fontFamily + "\">";
         String foBlock = foBlockStartTag + text + "</fo:block>";
 
-        return XmlFormat.raw(
-                "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">" +
-                "    <fo:layout-master-set>" +
-                "        <fo:simple-page-master master-name=\"label\">" +
-                "            <fo:region-body region-name=\"xsl-region-body\"/>" +
-                "        </fo:simple-page-master>" +
-                "    </fo:layout-master-set>" +
-                "    <fo:page-sequence master-reference=\"label\">" +
-                "        <fo:flow flow-name=\"xsl-region-body\">" +
-                             foBlock +
-                "        </fo:flow>" +
-                "    </fo:page-sequence>" +
-                "</fo:root>");
+        return "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">" +
+               "    <fo:layout-master-set>" +
+               "        <fo:simple-page-master master-name=\"label\">" +
+               "            <fo:region-body region-name=\"xsl-region-body\"/>" +
+               "        </fo:simple-page-master>" +
+               "    </fo:layout-master-set>" +
+               "    <fo:page-sequence master-reference=\"label\">" +
+               "        <fo:flow flow-name=\"xsl-region-body\">" +
+                            foBlock +
+               "        </fo:flow>" +
+               "    </fo:page-sequence>" +
+               "</fo:root>";
     }
 
     private String chooseFontFamilyOutsideBase14WithSingleWordName() {
