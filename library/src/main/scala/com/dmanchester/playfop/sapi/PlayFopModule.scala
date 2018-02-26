@@ -7,7 +7,7 @@ import play.api.Environment
 import play.api.inject.Module
 
 /** A Play `[[https://playframework.com/documentation/2.6.x/api/scala/index.html#play.api.inject.Module Module]]`
-  * for dependency-injecting PlayFOP into Scala applications.
+  * for dependency-injecting PlayFOP into Scala applications at runtime.
   */
 class PlayFopModule extends Module {
 
