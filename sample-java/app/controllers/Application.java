@@ -229,7 +229,7 @@ public class Application extends Controller {
         double labelHeightInMM = SINGLE_LABEL_SCALE_FACTOR * Calc.getLabelHeight(SHEET_SIZE_AND_WHITESPACE_IN_MM, SHEET_ROWS);
         double intraLabelPaddingInMM = SINGLE_LABEL_SCALE_FACTOR * SHEET_SIZE_AND_WHITESPACE_IN_MM.getIntraLabelPadding();
 
-        return ok(playFop.process(
+        return ok(playFop.processTwirlXml(
                 views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, MM, imageURI, label.scale(SINGLE_LABEL_SCALE_FACTOR)),
                 mimeType
             )).as(mimeType);
@@ -273,7 +273,7 @@ public class Application extends Controller {
         String contentDispHeader = String.format("attachment; filename=%s", SHEET_FILENAME);
         response().setHeader(HeaderNames.CONTENT_DISPOSITION, contentDispHeader);
 
-        return ok(playFop.process(
+        return ok(playFop.processTwirlXml(
                 views.xml.labelsSheet.render(SHEET_SIZE_AND_WHITESPACE_IN_MM, MM, SHEET_ROWS, SHEET_COLS, imageURI, label),
                 mimeType,
                 processOptions

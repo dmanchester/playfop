@@ -159,7 +159,7 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
         val intraLabelPaddingInMM = SingleLabelScaleFactor * SheetSizeAndWhiteSpaceInMM.intraLabelPadding
 
         Ok(
-          playFop.process(
+          playFop.processTwirlXml(
             views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, mm, imageURI, label.scale(SingleLabelScaleFactor)),
             mimeType
           )
@@ -193,7 +193,7 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
         }
 
         Ok(
-          playFop.process(
+          playFop.processTwirlXml(
             views.xml.labelsSheet.render(SheetSizeAndWhiteSpaceInMM, mm, SheetRows, SheetCols, imageURI, label),
             mimeType,
             autoDetectFontsForPDF = true,
