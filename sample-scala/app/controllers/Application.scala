@@ -18,7 +18,6 @@ import org.apache.xmlgraphics.util.MimeConstants
 import com.dmanchester.playfop.api.Units
 import com.dmanchester.playfop.sapi.PlayFop
 
-import javax.inject.Inject
 import models.Label
 import models.PaperSizeAndWhiteSpace
 import play.api.Configuration
@@ -32,7 +31,7 @@ import play.api.mvc.AbstractController
 import play.api.mvc.ControllerComponents
 import views.util.Calc
 
-class Application @Inject() (config: Configuration, cc: ControllerComponents, val playFop: PlayFop)
+class Application (config: Configuration, cc: ControllerComponents, val playFop: PlayFop)
     extends AbstractController(cc) with I18nSupport {
 
   private val AboutPageAddlInfoProperty = "about.page.addl.info"

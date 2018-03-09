@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -90,7 +88,6 @@ public class Application extends Controller {
     private PlayFop playFop;
     private List<String> fontFamilies;
 
-    @Inject
     public Application(Config config, FormFactory formFactory, PlayFop playFop) {
 
         this.config = config;
