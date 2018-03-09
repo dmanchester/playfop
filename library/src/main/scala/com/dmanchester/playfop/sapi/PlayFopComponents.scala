@@ -6,6 +6,5 @@ import com.dmanchester.playfop.sinternal.PlayFopImpl
   * compile time.
   */
 trait PlayFopComponents {
-  // TODO Should this be a singleton?
   lazy val playFop: PlayFop = new PlayFopImpl()
 }
