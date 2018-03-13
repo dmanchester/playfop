@@ -5,3 +5,4 @@ PlayFOP is a library for generating PDFs, images, and other types of output in [
 
 For more information on PlayFOP, see its [homepage](https://www.dmanchester.com/playfop).
 
+_On this branch, the PlayFOP sample applications rely on compile-time dependency injection (DI). For runtime DI versions, see the "master" branch._
