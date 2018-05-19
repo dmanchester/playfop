@@ -10,7 +10,7 @@
 
   @p
     PlayFOP is a library for generating PDFs, images, and other types of output in @lnk("Play Framework", "https://www.playframework.com/") applications.
-    PlayFOP accepts XSL-FO that an application has generated via a Play @lnk("Twirl", "https://www.playframework.com/documentation/2.6.x/ScalaTemplates") template, with the @code{@lnk("scala-xml", "https://github.com/scala/scala-xml")} library, or as a @code{String} and processes it with Apache FOP.
+    PlayFOP accepts XSL-FO that an application has generated—via a Play @lnk("Twirl", "https://www.playframework.com/documentation/2.6.x/ScalaTemplates") template, with the @code{@lnk("scala-xml", "https://github.com/scala/scala-xml")} library, or as a @code{String}—and processes it with Apache FOP.
 
   @p
     For information on PlayFOP beyond this user guide, see its @lnk("homepage", playFopUrl).
@@ -58,60 +58,63 @@
       )
 
     @p
-      Then, inject a @code{PlayFop} object that is appropriate for your application's language.
+      Then, inject a @code{PlayFop} object via dependency injection (DI), following the guidance for your scenario (guidance assumes you are using constructor-based DI):
 
-    @sect{Injecting a PlayFop Object into a Scala Application}
-
-      @p
-        In your @code{application.conf}, add:
-
-      @code
-        play.modules.enabled += "com.dmanchester.playfop.sapi.PlayFopModule"
-
-      @p
-        Then, inject a @code{PlayFop} object into your controller.
-        More specifically, and assuming you're using constructor injection, add a @code{PlayFop} class parameter (package @code{com.dmanchester.playfop.sapi}),
-        and if you aren't already using the @code{@@Inject} annotation (package @code{javax.inject}), apply it, too.
-
-      @b{Scala Constructor Injection Example, Play 2.6}
-
-      @hl.scala
-        class MyController @@Inject() (cc: ControllerComponents, val playFop: PlayFop)
-            extends AbstractController(cc) {
-          ...
-
-      @b{Scala Constructor Injection Example, Play 2.4 and Play 2.5}
-
-      @hl.scala
-        class MyController @@Inject() (val playFop: PlayFop) extends Controller {
-          ...
-
-    @sect{Injecting a PlayFop Object into a Java Application}
-
-      @p
-        In your @code{application.conf}, add:
-
-      @code
-        play.modules.enabled += "com.dmanchester.playfop.japi.PlayFopModule"
-
-      @p
-        Then, inject a @code{PlayFop} instance into your controller.
-        More specifically, and assuming you're using constructor injection, add a @code{PlayFop} field (package @code{com.dmanchester.playfop.japi}).
-        Add a constructor parameter to set it and apply the @code{@@Inject} annotation (package @code{javax.inject}).
-
-      @b{Java Constructor Injection Example}
-
-      @hl.scala
-        public class MyController extends Controller {
-
-          private PlayFop playFop;
-
-          @@Inject
-          public Application(PlayFop playFop) {
-              this.playFop = playFop;
-          }
-
-          ...
+    @table(`class`:="pure-table pure-table-bordered")
+      @thead
+        @tr
+          @th{Scenario}
+          @th{Guidance}
+          @th{Example}
+      @tbody
+        @tr
+          @td
+            @b{@lnk("Scala Application, Runtime DI", "https://playframework.com/documentation/2.6.x/ScalaDependencyInjection")}
+          @td
+            @ul
+              @li
+                In your controller, add a @code{PlayFop} constructor parameter (package @code{com.dmanchester.playfop.sapi}).
+              @li
+                In @code{application.conf}, add: @code{play.modules.enabled += "com.dmanchester.playfop.sapi.PlayFopModule"}
+          @td
+            @lnk("Scala sample application, \"master\" branch", "https://github.com/dmanchester/playfop/tree/master/sample-scala")
+        @tr
+          @td
+            @b{@lnk("Scala Application, Compile-Time DI", "https://playframework.com/documentation/2.6.x/ScalaCompileTimeDependencyInjection")}
+          @td
+            @ul
+              @li
+                In your controller, add a @code{PlayFop} constructor parameter (package @code{com.dmanchester.playfop.sapi}).
+              @li
+                In your "components" class, add @code{PlayFopComponents} (package @code{com.dmanchester.playfop.sapi}) to the list of traits you mix in via @code{with}.
+                Pass @code{playFop} to the controller constructor.
+          @td
+            @lnk("Scala sample application, alternate branch", "https://github.com/dmanchester/playfop/tree/sample-apps--compile-time-di/sample-scala")
+        @tr
+          @td
+            @b{@lnk("Java Application, Runtime DI", "https://playframework.com/documentation/2.6.x/JavaDependencyInjection")}
+          @td
+            @ul
+              @li
+                In your controller, add a @code{PlayFop} constructor parameter and field (package @code{com.dmanchester.playfop.japi}).
+                Set the field from the constructor parameter.
+              @li
+                In @code{application.conf}, add: @code{play.modules.enabled += "com.dmanchester.playfop.japi.PlayFopModule"}
+          @td
+            @lnk("Java sample application, \"master\" branch", "https://github.com/dmanchester/playfop/tree/master/sample-java")
+        @tr
+          @td
+            @b{@lnk("Java Application, Compile-Time DI", "https://playframework.com/documentation/2.6.x/JavaCompileTimeDependencyInjection")}
+          @td
+            @ul
+              @li
+                In your controller, add a @code{PlayFop} constructor parameter and field (package @code{com.dmanchester.playfop.japi}).
+                Set the field from the constructor parameter.
+              @li
+                In your "components" class, add @code{PlayFopComponents} (package @code{com.dmanchester.playfop.japi}) to the list of interfaces your class @code{implements}.
+                Invoke @code{playFop()} and pass the resulting value to the controller constructor.
+          @td
+            @lnk("Java sample application, alternate branch", "https://github.com/dmanchester/playfop/tree/sample-apps--compile-time-di/sample-java")
 
     @sect{Generating PDFs, Images, and Other Output: Using the PlayFop Object}
 
@@ -172,7 +175,7 @@
       @img(src:="simple-processing-example--png.png", style:="border:1px solid #777;")
 
       @p
-        You can also pass to @code{process} either or both of the following options:
+        You can also pass to a processing method either or both of the following options:
 
         @ul
           @li
@@ -328,7 +331,7 @@
     @sect{Thread Safety}
 
       @p
-        PlayFOP seeks to provide thread safety everywhere it makes sense to do so, and classes' status is documented in the Scaladoc and Javadoc.
+        PlayFOP seeks to provide thread safety everywhere it makes sense to do so, and classes' thread safety is documented in the Scaladoc and Javadoc.
         However, there is an open question around the thread safety of Apache FOP itself.
         The Apache FOP documentation has long @lnk("included", "https://xmlgraphics.apache.org/fop/2.2/embedding.html#multithreading") the following statement:
 
