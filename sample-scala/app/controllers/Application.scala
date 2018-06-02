@@ -158,12 +158,12 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
         val labelHeightInMM = SingleLabelScaleFactor * Calc.labelHeight(SheetSizeAndWhiteSpaceInMM, SheetRows)
         val intraLabelPaddingInMM = SingleLabelScaleFactor * SheetSizeAndWhiteSpaceInMM.intraLabelPadding
 
-        Ok(
-          playFop.processTwirlXml(
-            views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, mm, imageURI, label.scale(SingleLabelScaleFactor)),
-            mimeType
-          )
-        ).as(mimeType)
+        val pngBytes: Array[Byte] = playFop.processTwirlXml(
+          views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, mm, imageURI, label.scale(SingleLabelScaleFactor)),
+          mimeType
+        )
+
+        Ok(pngBytes).as(mimeType)
       }
     )
   }
@@ -192,16 +192,14 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
           foUserAgent.setCreator(SheetPdfCreator)
         }
 
-        Ok(
-          playFop.processTwirlXml(
-            views.xml.labelsSheet.render(SheetSizeAndWhiteSpaceInMM, mm, SheetRows, SheetCols, imageURI, label),
-            mimeType,
-            autoDetectFontsForPDF = true,
-            foUserAgentBlock = foUserAgentBlock
-          )
-        ).as(mimeType).withHeaders(
-          CONTENT_DISPOSITION -> s"attachment; filename=$SheetFilename"
+        val pdfBytes: Array[Byte] = playFop.processTwirlXml(
+          views.xml.labelsSheet.render(SheetSizeAndWhiteSpaceInMM, mm, SheetRows, SheetCols, imageURI, label),
+          mimeType,
+          autoDetectFontsForPDF = true,
+          foUserAgentBlock = foUserAgentBlock
         )
+
+        Ok(pdfBytes).as(mimeType).withHeaders(CONTENT_DISPOSITION -> s"attachment; filename=$SheetFilename")
       }
     )
   }
