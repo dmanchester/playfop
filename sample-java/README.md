@@ -11,10 +11,12 @@ A Scala version of PlayFOP Labels with equivalent functionality is [also availab
 Running PlayFOP Labels
 ----------------------
 
-To run PlayFOP Labels, [configure](https://www.playframework.com/documentation/2.6.x/AllowedHostsFilter#Configuring-allowed-hosts) the [AllowedHostsFilter](https://www.playframework.com/documentation/2.6.x/AllowedHostsFilter).
-Then, start `sbt` and enter `run`.
+The simplest way to run PlayFOP Labels is to start `sbt` and enter `run`.
+You can also [deploy it separate from sbt](https://www.playframework.com/documentation/2.6.x/Deploying).
 
-PlayFOP Labels supports the following optional system properties, passed via `-D` on application startup:
+If you wish to access PlayFOP Labels via a hostname other than `localhost`, you may need to [configure](https://www.playframework.com/documentation/2.6.x/AllowedHostsFilter#Configuring-allowed-hosts) the [AllowedHostsFilter](https://www.playframework.com/documentation/2.6.x/AllowedHostsFilter).
+
+PlayFOP Labels supports the following optional configuration settings, passed via `-D` on application startup or placed in `application.conf`:
 
 * `about.page.addl.info`: The name and path of an HTML file whose contents should be added to the About page.
 * `font.family.exclusion.regex`: A regular expression indicating the font families that should be excluded from the Design page's drop-down list.
