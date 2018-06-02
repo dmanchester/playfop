@@ -35,9 +35,9 @@ import views.util.Calc
 class Application @Inject() (config: Configuration, cc: ControllerComponents, val playFop: PlayFop)
     extends AbstractController(cc) with I18nSupport {
 
-  private val AboutPageAddlInfoProperty = "about.page.addl.info"
-  private val FontFamilyExclusionRegexProperty = "font.family.exclusion.regex"
-  private val InitialFontFamilyProperty = "initial.font.family"
+  private val AboutPageAddlInfoConfigPath = "about.page.addl.info"
+  private val FontFamilyExclusionRegexConfigPath = "font.family.exclusion.regex"
+  private val InitialFontFamilyConfigPath = "initial.font.family"
 
   private val SheetSizeAndWhiteSpaceInMM = new PaperSizeAndWhiteSpace(
       height = 297 /* A4 */, width = 210 /* A4 */, margin = 20,
@@ -91,7 +91,7 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
 
     val fontNamesUnfiltered = typefaces.map(_.getFullName()).toList
 
-    val fontFamilyExclusionRegex: Option[Regex] = config.get[Option[String]](FontFamilyExclusionRegexProperty).map(_.r)
+    val fontFamilyExclusionRegex: Option[Regex] = config.get[Option[String]](FontFamilyExclusionRegexConfigPath).map(_.r)
 
     // If an exclusion regex was provided, filter out any font names that
     // match it.
@@ -115,7 +115,7 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
 
   private def getInitialForm(): Form[Label] = {
 
-    val initialFontFamily: Option[String] = config.get[Option[String]](InitialFontFamilyProperty)
+    val initialFontFamily: Option[String] = config.get[Option[String]](InitialFontFamilyConfigPath)
 
     // If the property has been set, confirm that the font family is available.
     initialFontFamily.foreach { initialFontFamily =>
@@ -206,7 +206,7 @@ class Application @Inject() (config: Configuration, cc: ControllerComponents, va
 
   def showAbout() = Action {
 
-    val addlInfoPath: Option[String] = config.get[Option[String]](AboutPageAddlInfoProperty)
+    val addlInfoPath: Option[String] = config.get[Option[String]](AboutPageAddlInfoConfigPath)
 
     val addlInfoAsHtml: Option[String] = addlInfoPath.map { thePath =>
 
