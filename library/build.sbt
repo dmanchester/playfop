@@ -124,7 +124,7 @@ lazy val commonSettings = Seq(
                    |Play Framework applications. Accepts XSL-FO that an application has generated
                    |via a Play Twirl template and processes it with Apache FOP.""".stripMargin,
   organization := "com.dmanchester",
-  version := "1.0-SNAPSHOT",
+  version := "1.0",
   scalaVersion := "2.12.3",
   crossScalaVersions := Seq("2.11.11", "2.12.3"),
   autoScalaLibrary := false,
