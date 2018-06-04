@@ -175,7 +175,7 @@
       @img(src:="simple-processing-example--png.png", style:="border:1px solid #777;")
 
       @p
-        You can also pass to a processing method either or both of the following options:
+        You can also pass to a @code{process...} method either or both of the following options:
 
         @ul
           @li

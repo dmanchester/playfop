@@ -67,6 +67,17 @@ object Formatters {
     })
   }
 
+  /** Preserves newlines for use in `String`-based XML. XML-escapes `text` and
+    * wraps each newline-terminated run of characters in
+    * `<fo:block>`...`</fo:block>`. If there are standalone newlines, and if
+    * they are not at the end of `text`, represents them with an `<fo:block>`
+    * that renders as a blank line.
+    *
+    * Disregards newlines at the end of `text`.
+    *
+    * @param text
+    * @return an XML-escaped `String` reflecting the newline wrapping
+    */
   def preserveNewlinesForStringXml(text: String): String = {
 
     preserveNewlines(text, "" /* empty string */, { (foBlocks: String, blockValue) =>

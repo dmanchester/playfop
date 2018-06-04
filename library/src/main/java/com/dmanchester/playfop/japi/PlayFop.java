@@ -62,7 +62,7 @@ public interface PlayFop {
      * <b>Note:</b> This method is offered primarily for client code to
      * interrogate the Apache FOP environment (for example, to determine
      * available fonts). Code wishing to process XSL-FO with Apache FOP should
-     * rely on the <code>process</code> method instead.
+     * rely on a <code>process...</code> method instead.
      *
      * @param outputFormat the format the <code>Fop</code> should generate
      * @param output the <code>OutputStream</code> to which the <code>Fop</code>
@@ -79,7 +79,7 @@ public interface PlayFop {
      * <b>Note:</b> This method is offered primarily for client code to
      * interrogate the Apache FOP environment (for example, to determine
      * available fonts). Code wishing to process XSL-FO with Apache FOP should
-     * rely on a <code>process</code> method instead.
+     * rely on a <code>process...</code> method instead.
      *
      * @param outputFormat the format the <code>Fop</code> should generate
      * @param output the <code>OutputStream</code> to which the <code>Fop</code>

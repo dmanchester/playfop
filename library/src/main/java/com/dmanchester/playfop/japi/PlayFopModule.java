@@ -10,7 +10,7 @@ import scala.collection.Seq;
 
 /**
  * A Play <a href="https://playframework.com/documentation/2.6.x/api/scala/index.html#play.api.inject.Module"><code>Module</code></a>
- * for dependency-injecting PlayFOP into Java applications.
+ * for dependency-injecting PlayFOP into Java applications at runtime.
  */
 public class PlayFopModule extends Module {
 
