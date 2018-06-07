@@ -125,7 +125,7 @@ lazy val commonSettings = Seq(
                    |generated--via a Play Twirl template, with the scala-xml library, or as a
                    |String--and processes it with Apache FOP.""".stripMargin,
   organization := "com.dmanchester",
-  version := "1.0",
+  version := "1.1-SNAPSHOT",
   scalaVersion := "2.12.3",
   crossScalaVersions := Seq("2.11.11", "2.12.3"),
   autoScalaLibrary := false,
