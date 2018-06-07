@@ -50,7 +50,9 @@ FOUserAgentBlock myFOUserAgentBlock = new FOUserAgentBlock() {
 };
 
 ProcessOptions processOptions = new ProcessOptions.Builder().
-        autoDetectFontsForPDF(true).foUserAgentBlock(myFOUserAgentBlock).build();
+        autoDetectFontsForPDF(true).
+        foUserAgentBlock(myFOUserAgentBlock).
+        build();
 
 byte[] pdf = playFop.processStringXml(
     xslfo,

@@ -34,9 +34,9 @@ import views.util.Calc
 class Application (config: Configuration, cc: ControllerComponents, val playFop: PlayFop)
     extends AbstractController(cc) with I18nSupport {
 
-  private val AboutPageAddlInfoProperty = "about.page.addl.info"
-  private val FontFamilyExclusionRegexProperty = "font.family.exclusion.regex"
-  private val InitialFontFamilyProperty = "initial.font.family"
+  private val AboutPageAddlInfoConfigPath = "about.page.addl.info"
+  private val FontFamilyExclusionRegexConfigPath = "font.family.exclusion.regex"
+  private val InitialFontFamilyConfigPath = "initial.font.family"
 
   private val SheetSizeAndWhiteSpaceInMM = new PaperSizeAndWhiteSpace(
       height = 297 /* A4 */, width = 210 /* A4 */, margin = 20,
@@ -90,7 +90,7 @@ class Application (config: Configuration, cc: ControllerComponents, val playFop:
 
     val fontNamesUnfiltered = typefaces.map(_.getFullName()).toList
 
-    val fontFamilyExclusionRegex: Option[Regex] = config.get[Option[String]](FontFamilyExclusionRegexProperty).map(_.r)
+    val fontFamilyExclusionRegex: Option[Regex] = config.get[Option[String]](FontFamilyExclusionRegexConfigPath).map(_.r)
 
     // If an exclusion regex was provided, filter out any font names that
     // match it.
@@ -114,7 +114,7 @@ class Application (config: Configuration, cc: ControllerComponents, val playFop:
 
   private def getInitialForm(): Form[Label] = {
 
-    val initialFontFamily: Option[String] = config.get[Option[String]](InitialFontFamilyProperty)
+    val initialFontFamily: Option[String] = config.get[Option[String]](InitialFontFamilyConfigPath)
 
     // If the property has been set, confirm that the font family is available.
     initialFontFamily.foreach { initialFontFamily =>
@@ -157,12 +157,12 @@ class Application (config: Configuration, cc: ControllerComponents, val playFop:
         val labelHeightInMM = SingleLabelScaleFactor * Calc.labelHeight(SheetSizeAndWhiteSpaceInMM, SheetRows)
         val intraLabelPaddingInMM = SingleLabelScaleFactor * SheetSizeAndWhiteSpaceInMM.intraLabelPadding
 
-        Ok(
-          playFop.processTwirlXml(
-            views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, mm, imageURI, label.scale(SingleLabelScaleFactor)),
-            mimeType
-          )
-        ).as(mimeType)
+        val pngBytes: Array[Byte] = playFop.processTwirlXml(
+          views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, mm, imageURI, label.scale(SingleLabelScaleFactor)),
+          mimeType
+        )
+
+        Ok(pngBytes).as(mimeType)
       }
     )
   }
@@ -191,23 +191,21 @@ class Application (config: Configuration, cc: ControllerComponents, val playFop:
           foUserAgent.setCreator(SheetPdfCreator)
         }
 
-        Ok(
-          playFop.processTwirlXml(
-            views.xml.labelsSheet.render(SheetSizeAndWhiteSpaceInMM, mm, SheetRows, SheetCols, imageURI, label),
-            mimeType,
-            autoDetectFontsForPDF = true,
-            foUserAgentBlock = foUserAgentBlock
-          )
-        ).as(mimeType).withHeaders(
-          CONTENT_DISPOSITION -> s"attachment; filename=$SheetFilename"
+        val pdfBytes: Array[Byte] = playFop.processTwirlXml(
+          views.xml.labelsSheet.render(SheetSizeAndWhiteSpaceInMM, mm, SheetRows, SheetCols, imageURI, label),
+          mimeType,
+          autoDetectFontsForPDF = true,
+          foUserAgentBlock = foUserAgentBlock
         )
+
+        Ok(pdfBytes).as(mimeType).withHeaders(CONTENT_DISPOSITION -> s"attachment; filename=$SheetFilename")
       }
     )
   }
 
   def showAbout() = Action {
 
-    val addlInfoPath: Option[String] = config.get[Option[String]](AboutPageAddlInfoProperty)
+    val addlInfoPath: Option[String] = config.get[Option[String]](AboutPageAddlInfoConfigPath)
 
     val addlInfoAsHtml: Option[String] = addlInfoPath.map { thePath =>
 

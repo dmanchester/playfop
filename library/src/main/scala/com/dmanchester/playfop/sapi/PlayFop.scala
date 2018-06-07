@@ -69,7 +69,7 @@ trait PlayFop {
     * '''Note:''' This method is offered primarily for client code to
     * interrogate the Apache FOP environment (for example, to determine
     * available fonts). Code wishing to process XSL-FO with Apache FOP should
-    * rely on the `process` method instead.
+    * rely on a `process...` method instead.
     *
     * @tparam U the return type of `foUserAgentBlock` (typically inferred, as
     *           opposed to explicitly specified)

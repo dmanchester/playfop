@@ -121,10 +121,11 @@ lazy val userguide = scalatex.ScalatexReadme(
 lazy val commonSettings = Seq(
   name := "playfop",
   description := """A library for generating PDFs, images, and other types of output in
-                   |Play Framework applications. Accepts XSL-FO that an application has generated
-                   |via a Play Twirl template and processes it with Apache FOP.""".stripMargin,
+                   |Play Framework applications. Accepts XSL-FO that an application has
+                   |generated--via a Play Twirl template, with the scala-xml library, or as a
+                   |String--and processes it with Apache FOP.""".stripMargin,
   organization := "com.dmanchester",
-  version := "1.0-SNAPSHOT",
+  version := "1.0",
   scalaVersion := "2.12.3",
   crossScalaVersions := Seq("2.11.11", "2.12.3"),
   autoScalaLibrary := false,

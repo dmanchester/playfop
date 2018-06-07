@@ -39,9 +39,9 @@ import views.util.Calc;
 
 public class Application extends Controller {
 
-    private static final String ABOUT_PAGE_ADDL_INFO_PROPERTY = "about.page.addl.info";
-    private static final String FONT_FAMILY_EXCLUSION_REGEX_PROPERTY = "font.family.exclusion.regex";
-    private static final String INITIAL_FONT_FAMILY_PROPERTY = "initial.font.family";
+    private static final String ABOUT_PAGE_ADDL_INFO_CONFIG_PATH = "about.page.addl.info";
+    private static final String FONT_FAMILY_EXCLUSION_REGEX_CONFIG_PATH = "font.family.exclusion.regex";
+    private static final String INITIAL_FONT_FAMILY_CONFIG_PATH = "initial.font.family";
 
     private static final PaperSizeAndWhiteSpace SHEET_SIZE_AND_WHITESPACE_IN_MM =
             new PaperSizeAndWhiteSpace(297 /* height (A4) */,
@@ -122,11 +122,11 @@ public class Application extends Controller {
 
         // If an exclusion regex was provided, filter out any font names that
         // match it.
-        if (config.hasPath(FONT_FAMILY_EXCLUSION_REGEX_PROPERTY)) {
+        if (config.hasPath(FONT_FAMILY_EXCLUSION_REGEX_CONFIG_PATH)) {
 
             fontNames = new ArrayList<String>();
 
-            String fontFamilyExclusionRegex = config.getString(FONT_FAMILY_EXCLUSION_REGEX_PROPERTY);
+            String fontFamilyExclusionRegex = config.getString(FONT_FAMILY_EXCLUSION_REGEX_CONFIG_PATH);
             Pattern pattern = Pattern.compile(fontFamilyExclusionRegex);
 
             for (String fontName : fontNamesUnfiltered) {
@@ -166,12 +166,12 @@ public class Application extends Controller {
         initialLabel.setFontSizeInPoints(INITIAL_FONT_SIZE_IN_POINTS);
         initialLabel.setImageName(INITIAL_IMAGE_NAME);
 
-        if (config.hasPath(INITIAL_FONT_FAMILY_PROPERTY)) {
+        if (config.hasPath(INITIAL_FONT_FAMILY_CONFIG_PATH)) {
 
             // The property has been set. Get its value and confirm that the
             // font family is available.
 
-            String initialFontFamily = config.getString(INITIAL_FONT_FAMILY_PROPERTY);
+            String initialFontFamily = config.getString(INITIAL_FONT_FAMILY_CONFIG_PATH);
 
             if (fontFamilies.contains(initialFontFamily)) {
 
@@ -226,10 +226,12 @@ public class Application extends Controller {
         double labelHeightInMM = SINGLE_LABEL_SCALE_FACTOR * Calc.getLabelHeight(SHEET_SIZE_AND_WHITESPACE_IN_MM, SHEET_ROWS);
         double intraLabelPaddingInMM = SINGLE_LABEL_SCALE_FACTOR * SHEET_SIZE_AND_WHITESPACE_IN_MM.getIntraLabelPadding();
 
-        return ok(playFop.processTwirlXml(
-                views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, MM, imageURI, label.scale(SINGLE_LABEL_SCALE_FACTOR)),
-                mimeType
-            )).as(mimeType);
+        byte[] pngBytes = playFop.processTwirlXml(
+            views.xml.labelSingle.render(labelWidthInMM, labelHeightInMM, intraLabelPaddingInMM, MM, imageURI, label.scale(SINGLE_LABEL_SCALE_FACTOR)),
+            mimeType
+        );
+
+        return ok(pngBytes).as(mimeType);
     }
 
     private String getImageURI(String imageName) {
@@ -270,20 +272,22 @@ public class Application extends Controller {
         String contentDispHeader = String.format("attachment; filename=%s", SHEET_FILENAME);
         response().setHeader(HeaderNames.CONTENT_DISPOSITION, contentDispHeader);
 
-        return ok(playFop.processTwirlXml(
-                views.xml.labelsSheet.render(SHEET_SIZE_AND_WHITESPACE_IN_MM, MM, SHEET_ROWS, SHEET_COLS, imageURI, label),
-                mimeType,
-                processOptions
-            )).as(mimeType);
+        byte[] pdfBytes = playFop.processTwirlXml(
+            views.xml.labelsSheet.render(SHEET_SIZE_AND_WHITESPACE_IN_MM, MM, SHEET_ROWS, SHEET_COLS, imageURI, label),
+            mimeType,
+            processOptions
+        );
+
+        return ok(pdfBytes).as(mimeType);
     }
 
     public Result showAbout() {
 
         String addlInfoAsHtml;
 
-        if (config.hasPath(ABOUT_PAGE_ADDL_INFO_PROPERTY)) {
+        if (config.hasPath(ABOUT_PAGE_ADDL_INFO_CONFIG_PATH)) {
 
-            String addlInfoPath = config.getString(ABOUT_PAGE_ADDL_INFO_PROPERTY);
+            String addlInfoPath = config.getString(ABOUT_PAGE_ADDL_INFO_CONFIG_PATH);
             Path addlInfoPathObj = Paths.get(addlInfoPath);
 
             try {
