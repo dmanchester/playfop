@@ -4,7 +4,7 @@ import org.specs2.mutable.Specification
 
 class FormattersSpec extends Specification {
 
-  private val NBSP = '\u00A0'  // non-breaking space
+  private val NBSP = "\u00A0"  // non-breaking space
   private val CRLF = "\r\n"
   private val LF = "\n"
 
@@ -55,10 +55,10 @@ class FormattersSpec extends Specification {
         CRLF + "1 < 2" + CRLF + "4 > 3" + CRLF + CRLF + "5 = 5" + CRLF + CRLF
       ) must beEqualTo(
         Seq(
-          <fo:block>\u00A0</fo:block>,
+          <fo:block>{NBSP}</fo:block>,
           <fo:block>{"1 < 2"}</fo:block>,  // element value written as expression because "<" requires escaping
           <fo:block>{"4 > 3"}</fo:block>,  // same with ">"
-          <fo:block>\u00A0</fo:block>,
+          <fo:block>{NBSP}</fo:block>,
           <fo:block>5 = 5</fo:block>
         )
       )
@@ -80,7 +80,7 @@ class FormattersSpec extends Specification {
         ""
       ) must beEqualTo(
         Seq(
-          <fo:block>\u00A0</fo:block>
+          <fo:block>{NBSP}</fo:block>
         )
       )
     }
