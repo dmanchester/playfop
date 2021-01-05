@@ -118,6 +118,8 @@ lazy val userguide = scalatex.ScalatexReadme(
     }
   )
 
+resolvers += ("JBoss" at "https://repository.jboss.org/nexus/content/groups/public")
+
 lazy val commonSettings = Seq(
   name := "playfop",
   description := """A library for generating PDFs, images, and other types of output in
@@ -126,28 +128,28 @@ lazy val commonSettings = Seq(
                    |String--and processes it with Apache FOP.""".stripMargin,
   organization := "com.dmanchester",
   version := "1.1-SNAPSHOT",
-  scalaVersion := "2.12.3",
-  crossScalaVersions := Seq("2.11.11", "2.12.3"),
+  scalaVersion := "2.13.4",
+  crossScalaVersions := Seq("2.12.12", "2.13.4"),
   autoScalaLibrary := false,
   publishDir := new File("./dist-" + CrossVersion.binaryScalaVersion(scalaVersion.value)),
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-library" % scalaVersion.value % "provided",
     "com.typesafe.play" %% "play" % scalaVersionToPlayVersion(scalaVersion.value) % "provided",
-    "org.apache.xmlgraphics" % "fop" % "2.2",
-    "org.specs2" %% "specs2-core" % "3.9.4" % "test",
-    "org.apache.commons" % "commons-collections4" % "4.1" % "test",
-    "com.jsuereth" %% "scala-arm" % "2.0" % "test",
+    "org.apache.xmlgraphics" % "fop" % "2.5",
+    "org.specs2" %% "specs2-core" % "4.8.3" % "test",
+    "org.apache.commons" % "commons-collections4" % "4.4" % "test",
+    "com.michaelpollmeier" %% "scala-arm" % "2.1" % "test",
     // The following PlayFOP dependencies are shared with other libraries
     // specified in this file. We allow those libraries' use of them to
     // determine the version numbers below. Consult
     // ".../target/scala-2.12/resolution-cache/reports" for more information.
-    "com.typesafe.play" %% "twirl-api" % "1.3.4" % "provided",
-    "org.slf4j" % "slf4j-api" % "1.7.21",
-    "org.scala-lang.modules" %% "scala-xml" % "1.0.6",
-    "junit" % "junit" % "4.11" % "test",
+    "com.typesafe.play" %% "twirl-api" % "1.5.0" % "provided",
+    "org.slf4j" % "slf4j-api" % "1.7.30",
+    "org.scala-lang.modules" %% "scala-xml" % "1.2.0",
+    "junit" % "junit" % "4.13" % "test",
     "com.novocode" % "junit-interface" % "0.11" % "test",
     "ch.qos.logback" % "logback-classic" % "1.2.3" % "test",
-    "org.apache.pdfbox" % "pdfbox" % "2.0.4" % "test"
+    "org.apache.pdfbox" % "pdfbox" % "2.0.22" % "test"
     // ...end shared dependencies.
   ),
   scalacOptions ++= Seq("-deprecation", "-feature"),  // per http://alvinalexander.com/scala/scala-sbt-re-run-with-deprecation-feature-message
@@ -166,8 +168,7 @@ lazy val commonSettings = Seq(
 lazy val scalaVersionToPlayVersion = { scalaVersion: String =>
 
   CrossVersion.binaryScalaVersion(scalaVersion) match {
-    case "2.12" => "2.6.3"
-    case "2.11" => "2.4.11"
+    case "2.12" | "2.13" => "2.8.2"
     case _ => throw new UnsupportedOperationException(s"Unsupported Scala version: '$scalaVersion'")
   }
 }
