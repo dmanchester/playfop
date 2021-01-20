@@ -14,7 +14,7 @@ class Units private (formatString: String) {
     *                  value
     * @throws `IllegalArgumentException` if `precision` is negative
     */
-  def this(label: String, precision: Int) {
+  def this(label: String, precision: Int) = {
     this(Units.formatString(label, precision))
   }
 

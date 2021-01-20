@@ -1,1 +1,1 @@
-addSbtPlugin("com.lihaoyi" % "scalatex-sbt-plugin" % "0.3.9")
+addSbtPlugin("org.openmole" % "scalatex-sbt-plugin" % "0.4.6")
